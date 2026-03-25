@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodie.merchant.mapper.SetmealMapper">
+
+    <!-- 分页查询套餐 -->
+    <select id="pageQuery" resultType="com.foodie.vo.merchant.SetmealVO">
+        SELECT
+        s.id,
+        s.merchant_id,
+        s.category_id,
+        c.name AS category_name,
+        s.name,
+        s.price,
+        s.image,
+        s.description,
+        s.status,
+        s.create_time,
+        s.update_time
+        FROM setmeal s
+        LEFT JOIN category c ON s.category_id = c.id
+        WHERE s.merchant_id = #{query.merchantId}
+        <if test="query.name != null and query.name != ''">
+            AND s.name LIKE CONCAT('%', #{query.name}, '%')
+        </if>
+        <if test="query.categoryId != null">
+            AND s.category_id = #{query.categoryId}
+        </if>
+        <if test="query.status != null">
+            AND s.status = #{query.status}
+        </if>
+        ORDER BY s.create_time DESC
+    </select>
+
+    <!-- 查询套餐详情 -->
+    <select id="getSetmealDetail" resultType="com.foodie.vo.merchant.SetmealVO">
+        SELECT
+            s.id,
+            s.merchant_id,
+            s.category_id,
+            c.name AS category_name,
+            s.name,
+            s.price,
+            s.image,
+            s.description,
+            s.status,
+            s.create_time,
+            s.update_time
+        FROM setmeal s
+                 LEFT JOIN category c ON s.category_id = c.id
+        WHERE s.id = #{setmealId}
+          AND s.merchant_id = #{merchantId}
+    </select>
+
+    <!-- 查询套餐中停售菜品数量 -->
+    <select id="countStopSaleDishBySetmealId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM setmeal_dish sd
+                 LEFT JOIN dish d ON sd.dish_id = d.id
+        WHERE sd.setmeal_id = #{setmealId}
+          AND d.status = 0
+    </select>
+
+</mapper>

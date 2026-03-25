@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodie.user.mapper.SystemNoticeMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="NoticeVOMap" type="com.foodie.pojo.vo.SystemNoticeVO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="target" property="target"/>
+        <result column="status" property="status"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 分页查询公告列表（用户端） -->
+    <select id="selectNoticePage" resultMap="NoticeVOMap">
+        SELECT
+        id,
+        title,
+        content,
+        type,
+        target,
+        status,
+        publish_time,
+        create_time
+        FROM system_notice
+        <where>
+            status = 1
+            AND (target = 2 OR target = 3)
+
+            <!-- 公告类型筛选 -->
+            <if test="query.type != null">
+                AND type = #{query.type}
+            </if>
+        </where>
+        ORDER BY publish_time DESC, create_time DESC
+        LIMIT #{query.offset}, #{query.pageSize}
+    </select>
+
+    <!-- 查询公告总数 -->
+    <select id="countNotices" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM system_notice
+        <where>
+            status = 1
+            AND (target = 2 OR target = 3)
+
+            <if test="query.type != null">
+                AND type = #{query.type}
+            </if>
+        </where>
+    </select>
+
+</mapper>

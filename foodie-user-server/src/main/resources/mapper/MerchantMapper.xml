@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodie.user.mapper.MerchantMapper">
+
+    <!-- 分页查询商户 -->
+    <select id="pageQuery" resultType="com.foodie.vo.user.MerchantVO">
+        SELECT
+        m.id,
+        m.merchant_name,
+        m.logo,
+        m.description,
+        m.business_hours,
+        m.min_delivery_amount,
+        m.delivery_fee,
+        m.status,
+        m.longitude,
+        m.latitude
+        <if test="query.longitude != null and query.latitude != null">
+            ,
+            ROUND(
+            6371 * 2 * ASIN(
+            SQRT(
+            POW(SIN((#{query.latitude} - m.latitude) * PI() / 180 / 2), 2) +
+            COS(#{query.latitude} * PI() / 180) *
+            COS(m.latitude * PI() / 180) *
+            POW(SIN((#{query.longitude} - m.longitude) * PI() / 180 / 2), 2)
+            )
+            ),
+            2
+            ) AS distance
+        </if>
+        FROM merchant m
+        WHERE m.audit_status = 1
+        AND m.status IN (1, 2)
+        <if test="query.name != null and query.name != ''">
+            AND m.merchant_name LIKE CONCAT('%', #{query.name}, '%')
+        </if>
+        <choose>
+            <when test="query.sortType == 1 and query.longitude != null and query.latitude != null">
+                ORDER BY distance ASC
+            </when>
+            <otherwise>
+                ORDER BY m.create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 查询商户详情 -->
+    <select id="getMerchantDetail" resultType="com.foodie.vo.user.MerchantVO">
+        SELECT
+            id,
+            merchant_name,
+            logo,
+            description,
+            business_hours,
+            min_delivery_amount,
+            delivery_fee,
+            status,
+            longitude,
+            latitude
+        FROM merchant
+        WHERE id = #{merchantId}
+          AND audit_status = 1
+    </select>
+
+</mapper>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodie.user.mapper.OrderReviewMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ReviewVOMap" type="com.foodie.vo.user.OrderReviewVO">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_nickname" property="userNickname"/>
+        <result column="user_avatar" property="userAvatar"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="rating" property="rating"/>
+        <result column="content" property="content"/>
+        <result column="images" property="imageList"/>
+        <result column="merchant_reply" property="merchantReply"/>
+        <result column="reply_time" property="replyTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="order_detail" property="orderDetail"/>
+    </resultMap>
+
+    <!-- 分页查询评价列表 -->
+    <select id="selectReviewPage" resultMap="ReviewVOMap">
+        SELECT
+        r.id,
+        r.order_id,
+        r.user_id,
+        u.nickname as user_nickname,
+        u.avatar as user_avatar,
+        r.merchant_id,
+        m.merchant_name,
+        r.rating,
+        r.content,
+        r.images,
+        r.merchant_reply,
+        r.reply_time,
+        r.create_time,
+        GROUP_CONCAT(CONCAT(od.name, ' x', od.number) SEPARATOR '、') as order_detail
+        FROM order_review r
+        LEFT JOIN user u ON r.user_id = u.id
+        LEFT JOIN merchant m ON r.merchant_id = m.id
+        LEFT JOIN order_detail od ON r.order_id = od.order_id
+        <where>
+            r.merchant_id = #{query.merchantId}
+
+            <!-- 评分筛选 -->
+            <if test="query.ratingFilter != null and query.ratingFilter == 5">
+                AND r.rating = 5
+            </if>
+            <if test="query.ratingFilter != null and query.ratingFilter == 3">
+                AND r.rating BETWEEN 3 AND 4
+            </if>
+            <if test="query.ratingFilter != null and query.ratingFilter == 1">
+                AND r.rating BETWEEN 1 AND 2
+            </if>
+
+            <!-- 只看有图 -->
+            <if test="query.hasImage != null and query.hasImage == true">
+                AND r.images IS NOT NULL AND r.images != ''
+            </if>
+        </where>
+        GROUP BY r.id
+        ORDER BY r.create_time DESC
+        LIMIT #{query.offset}, #{query.pageSize}
+    </select>
+
+    <!-- 查询评价总数 -->
+    <select id="countReviews" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM order_review r
+        <where>
+            r.merchant_id = #{query.merchantId}
+
+            <!-- 评分筛选 -->
+            <if test="query.ratingFilter != null and query.ratingFilter == 5">
+                AND r.rating = 5
+            </if>
+            <if test="query.ratingFilter != null and query.ratingFilter == 3">
+                AND r.rating BETWEEN 3 AND 4
+            </if>
+            <if test="query.ratingFilter != null and query.ratingFilter == 1">
+                AND r.rating BETWEEN 1 AND 2
+            </if>
+
+            <!-- 只看有图 -->
+            <if test="query.hasImage != null and query.hasImage == true">
+                AND r.images IS NOT NULL AND r.images != ''
+            </if>
+        </where>
+    </select>
+
+</mapper>

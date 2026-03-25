@@ -1,0 +1,22 @@
+spring:
+  # -------------------------
+  # ???????????
+  # -------------------------
+  profiles:
+    active: dev   # ??????? dev
+
+  # -------------------------
+  # ????
+  # -------------------------
+  application:
+    name: foodie-platform-server
+
+  # -------------------------
+  # ?????
+  # -------------------------
+server:
+    port: 8083
+
+upload:
+      dir: D:/upload/images/  # 本地存储目录
+      urlPrefix: http://localhost:8083/images/

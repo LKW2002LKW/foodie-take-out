@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodie.merchant.mapper.MerchantEmployeeMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="EmployeeVOMap" type="com.foodie.vo.merchant.MerchantEmployeeVO">
+        <id column="id" property="id"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="id_card" property="idCard"/>
+        <result column="role" property="role"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 分页查询员工列表 -->
+    <select id="selectEmployeePage" resultMap="EmployeeVOMap">
+        SELECT
+        id,
+        merchant_id,
+        username,
+        name,
+        phone,
+        id_card,
+        role,
+        status,
+        create_time,
+        update_time
+        FROM merchant_admin
+        <where>
+            merchant_id = #{query.merchantId}
+
+            <!-- 关键字搜索 -->
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (name LIKE CONCAT('%', #{query.keyword}, '%')
+                OR username LIKE CONCAT('%', #{query.keyword}, '%')
+                OR phone LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+
+            <!-- 角色筛选 -->
+            <if test="query.role != null">
+                AND role = #{query.role}
+            </if>
+
+            <!-- 状态筛选 -->
+            <if test="query.status != null">
+                AND status = #{query.status}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{query.offset}, #{query.pageSize}
+    </select>
+
+    <!-- 查询员工总数 -->
+    <select id="countEmployees" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM merchant_admin
+        <where>
+            merchant_id = #{query.merchantId}
+
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (name LIKE CONCAT('%', #{query.keyword}, '%')
+                OR username LIKE CONCAT('%', #{query.keyword}, '%')
+                OR phone LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+
+            <if test="query.role != null">
+                AND role = #{query.role}
+            </if>
+
+            <if test="query.status != null">
+                AND status = #{query.status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

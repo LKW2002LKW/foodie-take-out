@@ -1,0 +1,30 @@
+spring:
+  # -------------------------
+  # 激活环境（多环境配置）
+  # -------------------------
+  profiles:
+    active: dev   # 当前激活环境为 dev
+
+  # -------------------------
+  # 应用名称
+  # -------------------------
+  application:
+    name: foodie-merchant-server
+
+
+
+  # -------------------------
+  # 服务器端口
+  # -------------------------
+server:
+  port: 8082
+
+foodie:
+  jwt:
+    merchant-secret-key: mySecretKey123
+    merchant-ttl: 86400000          # 24小时
+    merchant-token-name: Authorization
+
+upload:
+  dir: D:/upload/images/  # 本地存储目录
+  urlPrefix: http://localhost:8082/images/
