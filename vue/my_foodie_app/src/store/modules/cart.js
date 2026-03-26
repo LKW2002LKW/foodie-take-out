@@ -8,53 +8,93 @@ export const useCartStore = defineStore('cart', () => {
     
     // 计算属性：购物车总件数
     const totalNum = computed(() => {
-        return list.value.reduce((total, item) => total + item.number, 0);
+        return list.value.reduce((total, item) => {
+            const count = item.number || item.count || item.quantity || 0;
+            return total + Number(count);
+        }, 0);
     });
 
     // 计算属性：购物车总金额 (前端计算)
     const totalPrice = computed(() => {
         return list.value.reduce((total, item) => {
-            return total + (item.number * item.amount);
+             const count = item.number || item.count || item.quantity || 0;
+             const price = item.amount || item.price || 0;
+            return total + (Number(count) * Number(price));
         }, 0);
     });
 
     // 获取当前购物车状态
-    const fetchCartList = async () => {
+    const fetchCartList = async (data) => {
         try {
-            const res = await getCartList();
-            if (res.code === 1) {
+            const res = await getCartList(data);
+             if (res.code === 1) {
                 list.value = res.data || [];
+                // Debug log to help diagnose data structure
+                if (list.value.length > 0) {
+                    console.log("First item structure:", JSON.stringify(list.value[0]));
+                    if (list.value[0].number === undefined) {
+                        console.warn("Field 'number' is missing in cart item!");
+                    }
+                }
+            } else {
+                console.warn("Fetch cart list returned code:", res.code, res.msg);
             }
         } catch (e) {
             console.error('Fetch cart failed', e);
         }
     };
 
-    // 添加商品 (核心逻辑)
-    const addToCart = async (item, flavorSelect = null) => {
+    const addToCart = async (item, flavorSelect = null, explicitMerchantId = null) => {
+        const mId = explicitMerchantId || item.merchantId;
+
+        // --- 数据适配 ---
+        // 兼容菜品对象(List Item) 和 购物车对象(Cart Item)
+        // 1. 金额：Cart Item 使用 amount, List Item 使用 price
+        const actualAmount = (item.amount !== undefined) ? item.amount : item.price;
+        
+        // 2. ID处理
+        // List Item: id 通常是 dishId/setmealId
+        // Cart Item: dishId/setmealId 是明确的, id 可能是购物车记录ID
+        let actualDishId = item.dishId;
+        let actualSetmealId = item.setmealId;
+
+        // 如果既没有 dishId 也没有 setmealId，说明这是 Menu List Item，id 就是 dishId
+        if (!actualDishId && !actualSetmealId) {
+            actualDishId = item.id;
+        }
+
+        // 3. 口味处理
+        // 如果重新选择了 specific flavor (flavorSelect), 使用它
+        // 否则如果已经有 dishFlavor (Cart Item), 沿用它
+        let finalFlavor = undefined;
+        if (flavorSelect) {
+            finalFlavor = JSON.stringify(flavorSelect);
+        } else if (item.dishFlavor) {
+            finalFlavor = item.dishFlavor;
+        }
+
         // 构建请求参数
         const params = {
-            amount: item.price, // 使用当前单价
-            dishFlavor: flavorSelect ? JSON.stringify(flavorSelect) : undefined,
-            merchantId: item.merchantId, // 必传，商家ID
+            merchantId: mId,
+            dishFlavor: finalFlavor,
+            amount: actualAmount,
+            number: 1, 
         };
 
-        // 区分套餐还是菜品
-        if (item.setmealId) {
-            params.setmealId = item.setmealId;
-            params.name = item.name;     // 冗余字段方便后端
-            params.image = item.image;
+        if (actualSetmealId) {
+            params.setmealId = actualSetmealId;
         } else {
-            params.dishId = item.id;
-            params.name = item.name;
-            params.image = item.image;
+            params.dishId = actualDishId;
         }
+        
+        params.name = item.name;
+        params.image = item.image || item.pic; // 兼容图片字段
 
         try {
             const res = await addCart(params);
             if (res.code === 1) {
                 // 成功，刷新列表
-                await fetchCartList();
+                await fetchCartList({ merchantId: mId });
             } else {
                 // 业务异常处理，例如跨商户
                 // 假设后端返回特定msg提示跨商户 (这里模拟常见的业务判断)
@@ -99,7 +139,7 @@ export const useCartStore = defineStore('cart', () => {
         try {
             const res = await subCart(params);
             if (res.code === 1) {
-                await fetchCartList();
+                await fetchCartList({ merchantId: item.merchantId });
             } else {
                 showFailToast(res.msg);
             }

@@ -334,6 +334,14 @@ const filterParams = ref({
     hasImage: false
 });
 
+// Watch cart list for debugging
+watch(() => cartStore.list, (newVal) => {
+    console.log('Cart List Updated in View:', newVal);
+    if (newVal && newVal.length > 0) {
+        console.log('First item details:', newVal[0]);
+    }
+}, { deep: true });
+
 const fetchReviewStats = async () => {
     try {
         const res = await getReviewStats(merchantId);
@@ -662,9 +670,9 @@ const onAddItem = (item) => {
         openSpecPopup(item);
     } else {
         // 直接加入
-        // 确保传入 merchantId (数据源可能缺这个字段，需补齐)
-        item.merchantId = merchantId;
-        cartStore.addToCart(item);
+        // 确保传入 merchantId (数据源可能缺这个字段，需补齐)，且转换为数值
+        item.merchantId = Number(merchantId);
+        cartStore.addToCart(item, null, Number(merchantId));
     }
 };
 
@@ -674,7 +682,7 @@ const onSubItem = (item) => {
         showToast('多规格商品请在购物车中减少');
         return;
     }
-    item.merchantId = merchantId;
+    item.merchantId = Number(merchantId);
     cartStore.subFromCart(item);
 };
 
@@ -703,8 +711,9 @@ const confirmAddWithSpec = () => {
         value: currentSpecs.value[k]
     }));
     
-    const item = { ...selectedDish.value, merchantId };
-    cartStore.addToCart(item, flavorArr);
+    // 确保 merchantId 是数值
+    const item = { ...selectedDish.value, merchantId: Number(merchantId) };
+    cartStore.addToCart(item, flavorArr, Number(merchantId));
     showSpecPopup.value = false;
 };
 
@@ -747,7 +756,7 @@ onMounted(() => {
     loadMerchant();
     loadCategories();
     // 每次进入必须刷新购物车
-    cartStore.fetchCartList();
+    cartStore.fetchCartList({ merchantId: Number(merchantId) });
 });
 </script>
 

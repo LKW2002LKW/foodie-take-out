@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class ShoppingCartController {
 
-    @Autowired
+    @Resource
     private ShoppingCartService shoppingCartService;
 
     /**
@@ -45,11 +46,11 @@ public class ShoppingCartController {
      */
     @GetMapping("/list")
     @ApiOperation("查看购物车")
-    public Result<List<ShoppingCartVO>> listCart(HttpServletRequest request) {
+    public Result<List<ShoppingCartVO>> listCart(@RequestParam Long merchantId, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        log.info("查看购物车：userId={}", userId);
+        log.info("查看购物车：userId={},merchantId={}", userId,merchantId);
 
-        List<ShoppingCartVO> cartList = shoppingCartService.listCart(userId);
+        List<ShoppingCartVO> cartList = shoppingCartService.listCart(merchantId,userId);
         return Result.success(cartList);
     }
 
@@ -72,11 +73,11 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/clean")
     @ApiOperation("清空购物车")
-    public Result<String> cleanCart(HttpServletRequest request) {
+    public Result<String> cleanCart(@RequestParam Long merchantId, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        log.info("清空购物车：userId={}", userId);
+        log.info("清空购物车：userId={},merchantId={}", userId,merchantId);
 
-        shoppingCartService.cleanCart(userId);
+        shoppingCartService.cleanCartByMerchant(userId,merchantId);
         return Result.success(MessageConstant.CART_CLEAR_SUCCESS);
     }
 }

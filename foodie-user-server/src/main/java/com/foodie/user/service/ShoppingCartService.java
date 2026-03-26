@@ -17,7 +17,7 @@ public interface ShoppingCartService extends IService<ShoppingCart> {
     /**
      * 查看购物车
      */
-    List<ShoppingCartVO> listCart(Long userId);
+    List<ShoppingCartVO> listCart(Long merchantId, Long userId);
 
     /**
      * 减少购物车商品数量
