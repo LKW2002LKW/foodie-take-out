@@ -3,6 +3,7 @@ package com.foodie.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.foodie.common.constant.*;
+import com.foodie.common.enumeration.UserType;
 import com.foodie.common.exception.BaseException;
 import com.foodie.common.exception.BusinessException;
 import com.foodie.common.properties.JwtProperties;
@@ -294,6 +295,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 jwtProperties.getUserTtl(),
                 claims
         );
+
+        String tokenKey = String.format(RedisKeyConstant.TOKEN, UserType.USER.name(), user.getId());
+        try {
+            redisTemplate.opsForValue().set(tokenKey, token, jwtProperties.getUserTtl(), TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            log.warn("写入用户token缓存失败：userId={}", user.getId(), e);
+        }
 
         return token;
     }

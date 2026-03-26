@@ -2,12 +2,15 @@ package com.foodie.merchant.interceptor;
 
 import com.foodie.common.constant.JwtClaimsConstant;
 import com.foodie.common.constant.MessageConstant;
+import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.context.BaseContext;
+import com.foodie.common.enumeration.UserType;
 import com.foodie.common.properties.JwtProperties;
 import com.foodie.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -24,6 +27,9 @@ public class JwtTokenMerchantInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JwtProperties jwtProperties;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 前置处理：校验JWT令牌
@@ -80,6 +86,16 @@ public class JwtTokenMerchantInterceptor implements HandlerInterceptor {
             Long adminId = Long.valueOf(claims.get(JwtClaimsConstant.ADMIN_ID).toString());
             Long merchantId = Long.valueOf(claims.get(JwtClaimsConstant.MERCHANT_ID).toString());
             String username = claims.get(JwtClaimsConstant.USERNAME).toString();
+
+            String tokenKey = String.format(RedisKeyConstant.TOKEN, UserType.MERCHANT.name(), adminId);
+            Object cachedToken = redisTemplate.opsForValue().get(tokenKey);
+            if (cachedToken == null || !token.equals(cachedToken.toString())) {
+                log.error("JWT令牌已失效或被替换：adminId={}", adminId);
+                response.setStatus(401);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"code\":0,\"msg\":\"" + MessageConstant.TOKEN_INVALID + "\"}");
+                return false;
+            }
 
             log.info("当前商户管理员ID：{}, 商户ID：{}, 用户名：{}", adminId, merchantId, username);
 

@@ -3,8 +3,10 @@ package com.foodie.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.foodie.common.constant.JwtClaimsConstant;
 import com.foodie.common.constant.MessageConstant;
+import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.constant.ResultCodeConstant;
 import com.foodie.common.constant.StatusConstant;
+import com.foodie.common.enumeration.UserType;
 import com.foodie.common.exception.AccountLockedException;
 import com.foodie.common.exception.AccountNotFoundException;
 import com.foodie.common.exception.BaseException;
@@ -26,6 +28,7 @@ import com.foodie.vo.merchant.MerchantRegisterVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -49,6 +53,9 @@ public class MerchantAdminServiceImpl implements MerchantAdminService {
 
     @Autowired
     private SystemConfigService systemConfigService;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 商户注册
@@ -189,6 +196,13 @@ public class MerchantAdminServiceImpl implements MerchantAdminService {
                 jwtProperties.getMerchantTtl(),
                 claims
         );
+
+        String tokenKey = String.format(RedisKeyConstant.TOKEN, UserType.MERCHANT.name(), merchantAdmin.getId());
+        try {
+            redisTemplate.opsForValue().set(tokenKey, token, jwtProperties.getMerchantTtl(), TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            log.warn("写入商户token缓存失败：adminId={}", merchantAdmin.getId(), e);
+        }
 
         // 7. 返回结果
         return MerchantLoginVO.builder()

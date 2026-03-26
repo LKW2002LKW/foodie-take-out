@@ -2,12 +2,15 @@ package com.foodie.user.interceptor;
 
 import com.foodie.common.constant.JwtClaimsConstant;
 import com.foodie.common.constant.MessageConstant;
+import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.context.BaseContext;
+import com.foodie.common.enumeration.UserType;
 import com.foodie.common.properties.JwtProperties;
 import com.foodie.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -24,6 +27,9 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JwtProperties jwtProperties;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -56,6 +62,16 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
 
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
             Long userId = Long.valueOf(claims.get("userId").toString());
+
+            String tokenKey = String.format(RedisKeyConstant.TOKEN, UserType.USER.name(), userId);
+            String cachedToken = redisTemplate.opsForValue().get(tokenKey);
+            if (cachedToken == null || !token.equals(cachedToken)) {
+                log.error("JWT令牌已失效或被替换：userId={}", userId);
+                response.setStatus(401);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"code\":0,\"msg\":\"" + MessageConstant.TOKEN_INVALID + "\"}");
+                return false;
+            }
 
             log.info("当前用户ID：{}", userId);
 

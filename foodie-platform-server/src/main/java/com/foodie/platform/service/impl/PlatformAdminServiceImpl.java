@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.foodie.common.constant.JwtClaimsConstant;
 import com.foodie.common.constant.MessageConstant;
+import com.foodie.common.constant.RedisKeyConstant;
+import com.foodie.common.enumeration.UserType;
 
 import com.foodie.common.exception.AccountLockedException;
 import com.foodie.common.exception.AccountNotFoundException;
@@ -20,11 +22,13 @@ import com.foodie.platform.service.PlatformAdminService;
 import com.foodie.vo.platform.AdminLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 管理员服务实现
@@ -37,6 +41,9 @@ public class PlatformAdminServiceImpl implements PlatformAdminService {
     private PlatformAdminMapper platformAdminMapper;
     @Autowired
     private JwtProperties jwtProperties;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 管理员登录
@@ -80,6 +87,13 @@ public class PlatformAdminServiceImpl implements PlatformAdminService {
         claims.put(JwtClaimsConstant.NAME, admin.getName());
         claims.put(JwtClaimsConstant.ROLE_TYPE, admin.getRoleType());
         String token = JwtUtil.createJWT(jwtProperties.getPlatformSecretKey(),jwtProperties.getPlatformTtl(),claims);
+
+        String tokenKey = String.format(RedisKeyConstant.TOKEN, UserType. PLATFORMADMIN.name(), admin.getId());
+        try {
+            redisTemplate.opsForValue().set(tokenKey, token, jwtProperties.getPlatformTtl(), TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            log.warn("写入平台token缓存失败：adminId={}", admin.getId(), e);
+        }
 
         // 5. 返回登录信息
         return AdminLoginVO.builder()
