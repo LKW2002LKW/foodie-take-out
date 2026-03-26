@@ -24,6 +24,8 @@ foodie:
     merchant-secret-key: mySecretKey123
     merchant-ttl: 86400000          # 24小时
     merchant-token-name: Authorization
+  cache:
+    merchant-status-ttl-hours: 24
 
 upload:
   dir: D:/upload/images/  # 本地存储目录

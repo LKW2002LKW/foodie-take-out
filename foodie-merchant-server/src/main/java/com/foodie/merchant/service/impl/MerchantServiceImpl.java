@@ -3,6 +3,7 @@ package com.foodie.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.foodie.common.constant.MessageConstant;
+import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.constant.StatusConstant;
 import com.foodie.common.exception.BaseException;
 import com.foodie.dto.merchant.MerchantBusinessHoursDTO;
@@ -14,12 +15,25 @@ import com.foodie.merchant.service.MerchantService;
 import com.foodie.vo.merchant.MerchantVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> implements MerchantService {
+
+    @Value("${foodie.cache.merchant-status-ttl-hours:24}")
+    private long merchantStatusTtlHours;
+
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    public MerchantServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 获取商户信息
@@ -92,6 +106,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> i
         // 更新状态
         merchant.setStatus(merchantStatusDTO.getStatus());
         this.updateById(merchant);
+
+        String cacheKey = String.format(RedisKeyConstant.MERCHANT_STATUS, merchantId);
+        try {
+            redisTemplate.opsForValue().set(
+                    cacheKey,
+                    merchantStatusDTO.getStatus().toString(),
+                    merchantStatusTtlHours,
+                    TimeUnit.HOURS
+            );
+        } catch (Exception e) {
+            log.warn("更新商户状态缓存失败：merchantId={}, status={}", merchantId, merchantStatusDTO.getStatus(), e);
+        }
 
         log.info("营业状态修改成功：merchantId={}, status={}", merchantId, merchantStatusDTO.getStatus());
     }

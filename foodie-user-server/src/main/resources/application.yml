@@ -17,6 +17,10 @@ spring:
 server:
     port: 8083
 
+foodie:
+  cache:
+    merchant-status-ttl-hours: 24
+
 upload:
       dir: D:/upload/images/  # 本地存储目录
       urlPrefix: http://localhost:8083/images/
