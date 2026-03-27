@@ -51,6 +51,20 @@ foodie:
     user-secret-key: foodie-user-20260109-secret-key
     user-ttl: 7200000
     user-token-name: user-token
+  minio:
+    endpoint: http://192.168.1.11:9000
+    accessKey: admin
+    secretKey: lkw2468LKW@
+    bucket: foodie-images
+    publicUrl: http://192.168.1.11:9000/foodie-images
+    basePath: upload
+    maxSize: 5
+    allowedTypes:
+      - jpg
+      - jpeg
+      - png
+      - gif
+      - webp
 
 
 # -------------------------

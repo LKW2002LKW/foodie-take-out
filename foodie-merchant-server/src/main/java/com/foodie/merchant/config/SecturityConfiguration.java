@@ -42,8 +42,6 @@ public class SecturityConfiguration  {
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 放行商户登录接口
                 .antMatchers("/merchant/**").permitAll()
-                //静态图片资源访问
-                .antMatchers("/images/**").permitAll()
                 // ===== 接口文档放行（关键）=====
                 .antMatchers(
                         "/doc.html",

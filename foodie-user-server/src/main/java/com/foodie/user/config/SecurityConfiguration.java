@@ -40,8 +40,6 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // ✅ 放行短信验证码接口
                 .antMatchers("/user/**").permitAll()
-                //静态图片资源访问
-                .antMatchers("/images/**").permitAll()
 
                 // ===== 接口文档放行（关键）=====
                 // ===== 接口文档放行（关键）=====

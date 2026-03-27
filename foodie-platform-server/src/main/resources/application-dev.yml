@@ -88,16 +88,20 @@ foodie:
     platform-secret-key: foodie-platform-20260109-secret-key  # JWT 秘钥
     platform-ttl: 7200000                                      # token 有效期：2小时
     platform-token-name: platform-token                         # token 名称（header 或 cookie）
-
-  # -------------------------
-  # 阿里云 OSS 配置
-  # -------------------------
-  alioss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    bucket-name: foodie-alliance
-    upload-path: platform/                                       # 上传路径
+  minio:
+    endpoint: http://192.168.1.11:9000
+    accessKey: admin
+    secretKey: lkw2468LKW@
+    bucket: foodie-images
+    publicUrl: http://192.168.1.11:9000/foodie-images
+    basePath: upload
+    maxSize: 5
+    allowedTypes:
+      - jpg
+      - jpeg
+      - png
+      - gif
+      - webp
 
 # -------------------------
 # Knife4j 接口文档配置

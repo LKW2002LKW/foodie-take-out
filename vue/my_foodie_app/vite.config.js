@@ -11,5 +11,9 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  server:{
+    port:5275,
+    strictPort:true
   }
 })

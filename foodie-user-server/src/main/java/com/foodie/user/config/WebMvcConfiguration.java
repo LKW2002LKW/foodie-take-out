@@ -2,10 +2,8 @@ package com.foodie.user.config;
 
 import com.foodie.common.json.JacksonObjectMapper;
 import com.foodie.user.interceptor.JwtTokenUserInterceptor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -21,7 +19,6 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -33,13 +30,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Autowired
     private JwtTokenUserInterceptor jwtTokenUserInterceptor;
-
-    @Value("${upload.dir}")
-    private String uploadDir;
-
-    @Value("${upload.urlPrefix}")
-    private String urlPrefix;
-
 
     /**
      * 注册自定义拦截器
@@ -92,17 +82,8 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
-
-
-        addResourceHandlers1(registry);
     }
 
-    public void addResourceHandlers1(ResourceHandlerRegistry registry) {
-        // 映射 URL /images/** 到 D:/upload/images/
-        registry.addResourceHandler("/images/**")
-
-                .addResourceLocations("file:/D:/upload/images/");
-    }
     /**
      * 扩展消息转换器
      */
@@ -117,9 +98,12 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/images/**")
-                .allowedOrigins("http://localhost:8082") // 商家端地址
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowCredentials(true);
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedOrigins("http://localhost:5177")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }

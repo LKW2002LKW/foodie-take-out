@@ -52,16 +52,20 @@ foodie:
     merchant-secret-key: foodie-merchant-20260109-secret-key
     merchant-ttl: 7200000
     merchant-token-name: merchant-token
-
-  # -------------------------
-  # 阿里云 OSS 配置
-  # -------------------------
-  alioss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    bucket-name: foodie-alliance
-    upload-path: merchant/
+  minio:
+    endpoint: http://192.168.1.11:9000
+    accessKey: admin
+    secretKey: lkw2468LKW@
+    bucket: foodie-images
+    publicUrl: http://192.168.1.11:9000/foodie-images
+    basePath: upload
+    maxSize: 5
+    allowedTypes:
+      - jpg
+      - jpeg
+      - png
+      - gif
+      - webp
 
 # -------------------------
 # Knife4j 接口文档配置

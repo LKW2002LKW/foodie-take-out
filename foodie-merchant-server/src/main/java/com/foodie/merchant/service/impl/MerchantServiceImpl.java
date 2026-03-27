@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.foodie.common.constant.MessageConstant;
 import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.constant.StatusConstant;
+import com.foodie.common.context.BaseContext;
 import com.foodie.common.exception.BaseException;
 import com.foodie.dto.merchant.MerchantBusinessHoursDTO;
 import com.foodie.dto.merchant.MerchantStatusDTO;
@@ -15,6 +16,7 @@ import com.foodie.merchant.service.MerchantService;
 import com.foodie.vo.merchant.MerchantVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -144,8 +146,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> i
 
     @Override
     @Transactional
-    public void updateLogo(Long merchantId, String logoUrl) {
+    public void updateLogo( Long id,String logoUrl) {
 
+        Long merchantId = BaseContext.getCurrentId(); // 获取当前商户ID
         // 方法2：也可以用 UpdateWrapper（可选）
 
         UpdateWrapper<Merchant> wrapper = new UpdateWrapper<>();

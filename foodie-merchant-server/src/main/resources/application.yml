@@ -26,7 +26,3 @@ foodie:
     merchant-token-name: Authorization
   cache:
     merchant-status-ttl-hours: 24
-
-upload:
-  dir: D:/upload/images/  # 本地存储目录
-  urlPrefix: http://localhost:8082/images/

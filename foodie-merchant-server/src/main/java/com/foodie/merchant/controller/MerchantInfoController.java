@@ -2,9 +2,8 @@ package com.foodie.merchant.controller;
 
 import com.foodie.common.constant.MessageConstant;
 import com.foodie.common.context.BaseContext;
-import com.foodie.common.properties.AliOssProperties;
 import com.foodie.common.result.Result;
-import com.foodie.common.utils.AliOssUtil;
+import com.foodie.common.service.FileStorageService;
 import com.foodie.dto.merchant.MerchantBusinessHoursDTO;
 import com.foodie.dto.merchant.MerchantStatusDTO;
 import com.foodie.dto.merchant.MerchantUpdateDTO;
@@ -14,7 +13,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,10 +32,7 @@ public class MerchantInfoController {
     private MerchantService merchantService;
 
     @Autowired
-    private AliOssProperties aliOssProperties;
-
-    @Autowired
-    private CommonController commonController;
+    private FileStorageService fileStorageService;
 
 
     /**
@@ -105,42 +100,10 @@ public class MerchantInfoController {
     public Result uploadLogo(@RequestParam("file") MultipartFile file) throws IOException {
         log.info("上传商户Logo，文件名：{}", file.getOriginalFilename());
 
-        /*try {
-            // 检查文件类型
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null ||
-                    (!originalFilename.endsWith(".jpg") &&
-                            !originalFilename.endsWith(".jpeg") &&
-                            !originalFilename.endsWith(".png"))) {
-                return Result.error(MessageConstant.FILE_TYPE_ERROR);
-            }
-
-            // 生成文件名
-            String fileName = AliOssUtil.generateFileName(originalFilename);
-            String objectName = aliOssProperties.getUploadPath() + fileName;
-
-            // 上传文件
-            AliOssUtil aliOssUtil = new AliOssUtil(
-                    aliOssProperties.getEndpoint(),
-                    aliOssProperties.getAccessKeyId(),
-                    aliOssProperties.getAccessKeySecret(),
-                    aliOssProperties.getBucketName()
-            );
-
-            String url = aliOssUtil.upload(file.getBytes(), objectName);
-
-            return Result.success(url);
-
-        } catch (IOException e) {
-            log.error("文件上传失败：{}", e.getMessage());
-            return Result.error(MessageConstant.FILE_UPLOAD_FAILED);
-        }
-    }*/
-
         // 1️⃣ 上传图片，获取 URL
-        Result uploadResult = commonController.upload(file);
+        String logoUrl = fileStorageService.upload(file, "merchant");
 
-        String logoUrl = (String) uploadResult.getData();
+
 
         // 2️⃣ 更新数据库
         Long merchantId = BaseContext.getCurrentId(); // 获取当前商户ID
