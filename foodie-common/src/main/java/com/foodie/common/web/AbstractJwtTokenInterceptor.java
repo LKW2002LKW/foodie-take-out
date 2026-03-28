@@ -34,6 +34,14 @@ public abstract class AbstractJwtTokenInterceptor implements HandlerInterceptor 
 
     protected abstract void fillRequestAttributes(HttpServletRequest request, Claims claims);
 
+    protected Long getClaimAsLong(Claims claims, String key) {
+        return Long.valueOf(claims.get(key).toString());
+    }
+
+    protected String getClaimAsString(Claims claims, String key) {
+        return claims.get(key).toString();
+    }
+
     protected boolean allowOptions() {
         return true;
     }

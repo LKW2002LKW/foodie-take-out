@@ -39,12 +39,12 @@ public class JwtTokenUserInterceptor extends AbstractJwtTokenInterceptor {
 
     @Override
     protected Long getUserId(Claims claims) {
-        return Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+        return getClaimAsLong(claims, JwtClaimsConstant.USER_ID);
     }
 
     @Override
     protected void fillRequestAttributes(HttpServletRequest request, Claims claims) {
-        Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+        Long userId = getClaimAsLong(claims, JwtClaimsConstant.USER_ID);
         request.setAttribute("userId", userId);
     }
 }

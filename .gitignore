@@ -1,0 +1,7 @@
+# Build outputs
+**/target/
+
+# Maven/Gradle build directories
+/target/
+
+/.claude

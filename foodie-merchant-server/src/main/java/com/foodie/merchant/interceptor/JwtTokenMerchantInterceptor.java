@@ -39,14 +39,14 @@ public class JwtTokenMerchantInterceptor extends AbstractJwtTokenInterceptor {
 
     @Override
     protected Long getUserId(Claims claims) {
-        return Long.valueOf(claims.get(JwtClaimsConstant.ADMIN_ID).toString());
+        return getClaimAsLong(claims, JwtClaimsConstant.ADMIN_ID);
     }
 
     @Override
     protected void fillRequestAttributes(HttpServletRequest request, Claims claims) {
-        Long adminId = Long.valueOf(claims.get(JwtClaimsConstant.ADMIN_ID).toString());
-        Long merchantId = Long.valueOf(claims.get(JwtClaimsConstant.MERCHANT_ID).toString());
-        String username = claims.get(JwtClaimsConstant.USERNAME).toString();
+        Long adminId = getClaimAsLong(claims, JwtClaimsConstant.ADMIN_ID);
+        Long merchantId = getClaimAsLong(claims, JwtClaimsConstant.MERCHANT_ID);
+        String username = getClaimAsString(claims, JwtClaimsConstant.USERNAME);
 
         request.setAttribute("merchantId", merchantId);
         request.setAttribute("adminId", adminId);
