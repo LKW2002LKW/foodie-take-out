@@ -1,13 +1,15 @@
-package com.foodie.user.handler;
+package com.foodie.common.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
-public class MyMetaObjectHandler implements MetaObjectHandler {
+@ConditionalOnMissingBean(MetaObjectHandler.class)
+public class CommonMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
