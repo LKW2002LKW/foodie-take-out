@@ -8,8 +8,8 @@ import com.foodie.dto.platform.ConfigDTO;
 import com.foodie.entity.SystemConfig;
 import com.foodie.platform.mapper.SystemConfigMapper;
 import com.foodie.platform.service.ConfigService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +20,10 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ConfigServiceImpl implements ConfigService {
 
-    @Autowired
-    private SystemConfigMapper configMapper;
+    private final SystemConfigMapper configMapper;
 
     /**
      * 查询所有配置

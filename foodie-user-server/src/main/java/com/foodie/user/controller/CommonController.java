@@ -2,9 +2,8 @@ package com.foodie.user.controller;
 
 import com.foodie.common.result.Result;
 import com.foodie.user.service.CommonService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,10 +17,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user/common")
 @Slf4j
+@RequiredArgsConstructor
 public class CommonController {
 
-    @Autowired
-    private CommonService uploadService;
+    private final CommonService uploadService;
 
     @PostMapping("/upload")
     public Result upload(@RequestParam("file") MultipartFile file) {

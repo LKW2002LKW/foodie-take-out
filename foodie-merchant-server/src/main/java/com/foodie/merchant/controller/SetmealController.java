@@ -9,8 +9,8 @@ import com.foodie.merchant.service.SetmealService;
 import com.foodie.vo.merchant.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +23,10 @@ import java.util.List;
 @RequestMapping("/merchant/setmeal")
 @Api(tags = "套餐管理")
 @Slf4j
+@RequiredArgsConstructor
 public class SetmealController {
 
-    @Autowired
-    private SetmealService setmealService;
+    private final SetmealService setmealService;
 
     /**
      * 新增套餐

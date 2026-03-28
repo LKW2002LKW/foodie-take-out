@@ -16,15 +16,14 @@ import com.foodie.user.mapper.UserMapper;
 import com.foodie.user.service.UserService;
 import com.foodie.vo.user.UserInfoVO;
 import com.foodie.vo.user.UserLoginVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -32,19 +31,14 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
-    @Resource
-    private UserMapper userMapper;
-
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private final UserMapper userMapper;
 
     /**
      * 发送短信验证码
@@ -428,7 +422,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 验证验证码
         String codeKey = UserConstant.SMS_CODE_PREFIX + dto.getPhone();
-        String cachedCode = stringRedisTemplate.opsForValue().get(codeKey);
+        String cachedCode = redisTemplate.opsForValue().get(codeKey);
 
         if (!StringUtils.hasText(cachedCode)) {
             throw new BusinessException("验证码已过期，请重新获取");
@@ -470,7 +464,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // 删除验证码
-        stringRedisTemplate.delete(codeKey);
+        redisTemplate.delete(codeKey);
 
         log.info("用户绑定手机号成功: userId={}, phone={}", userId, dto.getPhone());
     }
@@ -491,7 +485,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 存储到Redis，有效期5分钟
         String codeKey = UserConstant.SMS_CODE_PREFIX + phone;
-        stringRedisTemplate.opsForValue().set(
+        redisTemplate.opsForValue().set(
                 codeKey,
                 code,
                 UserConstant.SMS_CODE_EXPIRE_MINUTES,

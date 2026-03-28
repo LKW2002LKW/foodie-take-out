@@ -14,9 +14,9 @@ import com.foodie.merchant.mapper.SetmealDishMapper;
 import com.foodie.merchant.mapper.SetmealMapper;
 import com.foodie.merchant.service.SetmealService;
 import com.foodie.vo.merchant.SetmealVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> implements SetmealService {
 
-    @Autowired
-    private SetmealDishMapper setmealDishMapper;
+    private final SetmealDishMapper setmealDishMapper;
 
     /**
      * 新增套餐（含菜品）

@@ -17,9 +17,9 @@ import com.foodie.platform.mapper.*;
 import com.foodie.platform.service.FinanceService;
 import com.foodie.vo.platform.FinanceReportVO;
 import com.foodie.vo.platform.SettlementVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -36,19 +36,16 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FinanceServiceImpl implements FinanceService {
 
-    @Autowired
-    private MerchantSettlementMapper settlementMapper;
+    private final MerchantSettlementMapper settlementMapper;
 
-    @Autowired
-    private PlatformCommissionMapper commissionMapper;
+    private final PlatformCommissionMapper commissionMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
-    @Autowired
-    private OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
     /**
      * 结算单分页查询

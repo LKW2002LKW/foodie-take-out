@@ -11,13 +11,10 @@ import com.foodie.vo.user.OrderReviewVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -27,10 +24,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user/review")
 @Api(tags = "用户端-订单评价")
+@RequiredArgsConstructor
 public class OrderReviewController {
 
-    @Resource
-    private OrderReviewService orderReviewService;
+    private final OrderReviewService orderReviewService;
     /**
      * 分页查询商户评价列表
      */

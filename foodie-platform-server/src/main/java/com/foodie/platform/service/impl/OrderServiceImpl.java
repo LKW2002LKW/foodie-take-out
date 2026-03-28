@@ -17,9 +17,9 @@ import com.foodie.platform.mapper.OrderMapper;
 import com.foodie.platform.mapper.UserMapper;
 import com.foodie.platform.service.OrderService;
 import com.foodie.vo.platform.OrderDetailVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -31,19 +31,16 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
-    @Autowired
-    private OrderDetailMapper orderDetailMapper;
+    private final OrderDetailMapper orderDetailMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     /**
      * 订单分页查询

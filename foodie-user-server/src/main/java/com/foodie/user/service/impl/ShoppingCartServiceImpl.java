@@ -18,9 +18,9 @@ import com.foodie.user.mapper.SetmealMapper;
 import com.foodie.user.mapper.ShoppingCartMapper;
 import com.foodie.user.service.ShoppingCartService;
 import com.foodie.vo.user.ShoppingCartVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,19 +32,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, ShoppingCart> implements ShoppingCartService {
 
-    @Autowired
-    private DishMapper dishMapper;
+    private final DishMapper dishMapper;
 
-    @Autowired
-    private SetmealMapper setmealMapper;
+    private final SetmealMapper setmealMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 添加购物车

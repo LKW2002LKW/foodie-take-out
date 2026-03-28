@@ -10,8 +10,8 @@ import com.foodie.platform.service.MerchantService;
 import com.foodie.vo.platform.MerchantDetailVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/platform/merchant")
 @Api(tags = "平台端-商户管理接口")
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantController {
 
-    @Autowired
-    private MerchantService merchantService;
+    private final MerchantService merchantService;
 
     /**
      * 商户分页查询

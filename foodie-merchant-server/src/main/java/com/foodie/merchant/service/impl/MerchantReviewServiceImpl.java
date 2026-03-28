@@ -19,8 +19,8 @@ import com.foodie.merchant.mapper.UserMapper;
 import com.foodie.merchant.service.MerchantReviewService;
 
 import com.foodie.vo.merchant.MerchantReviewVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -34,16 +34,14 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantReviewServiceImpl implements MerchantReviewService {
 
-    @Autowired
-    private OrderReviewMapper reviewMapper;
+    private final OrderReviewMapper reviewMapper;
 
-    @Autowired
-    private OrdersMapper orderMapper;
+    private final OrdersMapper orderMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     /**
      * 评价分页查询

@@ -5,8 +5,8 @@ import com.foodie.user.service.SetmealService;
 import com.foodie.vo.user.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +18,10 @@ import java.util.List;
 @RequestMapping("/user/setmeal")
 @Api(tags = "套餐浏览")
 @Slf4j
+@RequiredArgsConstructor
 public class SetmealController {
 
-    @Autowired
-    private SetmealService setmealService;
+    private final SetmealService setmealService;
 
     /**
      * 根据商户ID和分类ID查询套餐

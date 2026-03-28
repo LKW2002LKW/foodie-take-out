@@ -12,8 +12,8 @@ import com.foodie.vo.platform.FinanceReportVO;
 import com.foodie.vo.platform.SettlementVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/platform/finance")
 @Api(tags = "平台端-财务管理接口")
 @Slf4j
+@RequiredArgsConstructor
 public class FinanceController {
 
-    @Autowired
-    private FinanceService financeService;
+    private final FinanceService financeService;
 
     /**
      * 结算单分页查询

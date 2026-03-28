@@ -9,21 +9,20 @@ import com.foodie.vo.merchant.MerchantLoginVO;
 import com.foodie.vo.merchant.MerchantRegisterVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/merchant/admin")
 @Api(tags = "商户管理员接口")
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantAdminController {
 
-    @Autowired
-    private MerchantAdminService merchantAdminService;
+    private final MerchantAdminService merchantAdminService;
 
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
     /**
      * 商户注册

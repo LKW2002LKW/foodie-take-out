@@ -14,9 +14,9 @@ import com.foodie.platform.mapper.OrderReviewMapper;
 import com.foodie.platform.mapper.UserMapper;
 import com.foodie.platform.service.ReviewService;
 import com.foodie.vo.platform.ReviewVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,19 +28,16 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    @Autowired
-    private OrderReviewMapper reviewMapper;
+    private final OrderReviewMapper reviewMapper;
 
-    @Autowired
-    private OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
     /**
      * 评价分页查询

@@ -8,8 +8,8 @@ import com.foodie.user.service.OrderService;
 import com.foodie.vo.user.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +22,10 @@ import javax.validation.Valid;
 @RequestMapping("/user/order")
 @Api(tags = "订单管理")
 @Slf4j
+@RequiredArgsConstructor
 public class  OrdersController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     /**
      * 提交订单

@@ -10,8 +10,8 @@ import com.foodie.vo.platform.RevenueReportVO;
 import com.foodie.vo.platform.UserGrowthReportVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +25,10 @@ import java.util.List;
 @RequestMapping("/platform/report")
 @Api(tags = "平台端-数据报表接口")
 @Slf4j
+@RequiredArgsConstructor
 public class ReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final ReportService reportService;
 
     /**
      * 营业额报表

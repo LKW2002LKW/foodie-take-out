@@ -8,18 +8,18 @@ import com.foodie.user.mapper.SetmealDishMapper;
 import com.foodie.user.mapper.SetmealMapper;
 import com.foodie.user.service.SetmealService;
 import com.foodie.vo.user.SetmealVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> implements SetmealService {
 
-    @Autowired
-    private SetmealDishMapper setmealDishMapper;
+    private final SetmealDishMapper setmealDishMapper;
 
     /**
      * 根据商户ID和分类ID查询套餐

@@ -8,9 +8,9 @@ import com.foodie.entity.SystemNotice;
 import com.foodie.common.exception.BaseException;
 import com.foodie.platform.mapper.SystemNoticeMapper;
 import com.foodie.platform.service.NoticeService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +21,10 @@ import java.time.LocalDateTime;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
 
-    @Autowired
-    private SystemNoticeMapper noticeMapper;
+    private final SystemNoticeMapper noticeMapper;
 
     /**
      * 公告分页查询

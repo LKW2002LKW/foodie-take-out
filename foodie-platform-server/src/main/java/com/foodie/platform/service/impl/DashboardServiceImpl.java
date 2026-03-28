@@ -13,8 +13,8 @@ import com.foodie.platform.mapper.UserMapper;
 import com.foodie.platform.service.DashboardService;
 import com.foodie.vo.platform.DashboardVO;
 import com.foodie.vo.platform.TrendDataVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,16 +29,14 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
 
-    @Autowired
-    private OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
     /**
      * 获取数据统计面板数据

@@ -14,12 +14,12 @@ import com.foodie.user.mapper.OrdersMapper;
 import com.foodie.user.service.OrderReviewService;
 import com.foodie.vo.user.OrderReviewVO;
 import com.foodie.entity.OrderReview;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -29,12 +29,12 @@ import java.util.*;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OrderReviewServiceImpl implements OrderReviewService {
 
-    @Resource
-    private OrderReviewMapper orderReviewMapper;
-    @Resource
-    private OrdersMapper ordersMapper;
+    private final OrderReviewMapper orderReviewMapper;
+
+    private final OrdersMapper ordersMapper;
 
     @Override
     public Map<String, Object> getReviewPage(ReviewQueryDTO query) {

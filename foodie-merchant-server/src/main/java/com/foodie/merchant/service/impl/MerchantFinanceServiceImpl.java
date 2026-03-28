@@ -16,9 +16,9 @@ import com.foodie.merchant.service.MerchantFinanceService;
 
 import com.foodie.vo.merchant.IncomeDetailVO;
 import com.foodie.vo.merchant.SettlementRecordVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -35,13 +35,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantFinanceServiceImpl implements MerchantFinanceService {
 
-    @Autowired
-    private MerchantSettlementMapper settlementMapper;
+    private final MerchantSettlementMapper settlementMapper;
 
-    @Autowired
-    private OrdersMapper orderMapper;
+    private final OrdersMapper orderMapper;
 
 
 

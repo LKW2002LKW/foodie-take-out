@@ -12,8 +12,8 @@ import com.foodie.vo.platform.HotDishVO;
 import com.foodie.vo.platform.OrderReportVO;
 import com.foodie.vo.platform.RevenueReportVO;
 import com.foodie.vo.platform.UserGrowthReportVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,13 +31,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
-    @Autowired
-    private ReportMapper reportMapper;
+    private final ReportMapper reportMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     /**
      * 营业额报表
