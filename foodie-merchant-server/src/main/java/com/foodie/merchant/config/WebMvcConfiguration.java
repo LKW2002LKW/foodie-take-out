@@ -1,8 +1,8 @@
 package com.foodie.merchant.config;
 
 import com.foodie.common.config.AbstractWebMvcConfiguration;
+import com.foodie.common.config.WebMvcModuleMetadata;
 import com.foodie.merchant.interceptor.JwtTokenMerchantInterceptor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,29 +12,18 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
  */
 @Configuration
 @Slf4j
-@RequiredArgsConstructor
 public class WebMvcConfiguration extends AbstractWebMvcConfiguration {
 
     private final JwtTokenMerchantInterceptor jwtTokenMerchantInterceptor;
 
-    @Override
-    protected String getSwaggerBasePackage() {
-        return "com.foodie.merchant.controller";
-    }
-
-    @Override
-    protected String getSwaggerTitle() {
-        return "吃货联盟商户管理端接口文档";
-    }
-
-    @Override
-    protected String getSwaggerDescription() {
-        return "吃货联盟商户管理端接口文档";
-    }
-
-    @Override
-    protected String[] getAllowedOrigins() {
-        return new String[]{"http://localhost:5177"};
+    public WebMvcConfiguration(JwtTokenMerchantInterceptor jwtTokenMerchantInterceptor) {
+        super(new WebMvcModuleMetadata(
+                "com.foodie.merchant.controller",
+                "吃货联盟商户管理端接口文档",
+                "吃货联盟商户管理端接口文档",
+                new String[]{"http://localhost:5177"}
+        ));
+        this.jwtTokenMerchantInterceptor = jwtTokenMerchantInterceptor;
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.foodie.platform.config;
 
 import com.foodie.common.config.AbstractWebMvcConfiguration;
+import com.foodie.common.config.WebMvcModuleMetadata;
 import com.foodie.platform.interceptor.JwtTokenPlatformInterceptor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,29 +12,18 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
  */
 @Configuration
 @Slf4j
-@RequiredArgsConstructor
 public class WebMvcConfiguration extends AbstractWebMvcConfiguration {
 
     private final JwtTokenPlatformInterceptor jwtTokenPlatformInterceptor;
 
-    @Override
-    protected String getSwaggerBasePackage() {
-        return "com.foodie.platform.controller";
-    }
-
-    @Override
-    protected String getSwaggerTitle() {
-        return "吃货联盟平台端接口文档";
-    }
-
-    @Override
-    protected String getSwaggerDescription() {
-        return "吃货联盟平台端接口文档";
-    }
-
-    @Override
-    protected String[] getAllowedOrigins() {
-        return new String[]{"http://localhost:5178"};
+    public WebMvcConfiguration(JwtTokenPlatformInterceptor jwtTokenPlatformInterceptor) {
+        super(new WebMvcModuleMetadata(
+                "com.foodie.platform.controller",
+                "吃货联盟平台端接口文档",
+                "吃货联盟平台端接口文档",
+                new String[]{"http://localhost:5178"}
+        ));
+        this.jwtTokenPlatformInterceptor = jwtTokenPlatformInterceptor;
     }
 
     /**

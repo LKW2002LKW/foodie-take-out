@@ -20,13 +20,27 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractWebMvcConfiguration extends WebMvcConfigurationSupport {
 
-    protected abstract String getSwaggerBasePackage();
+    private final WebMvcModuleMetadata metadata;
 
-    protected abstract String getSwaggerTitle();
+    protected AbstractWebMvcConfiguration(WebMvcModuleMetadata metadata) {
+        this.metadata = metadata;
+    }
 
-    protected abstract String getSwaggerDescription();
+    protected String getSwaggerBasePackage() {
+        return metadata.getSwaggerBasePackage();
+    }
 
-    protected abstract String[] getAllowedOrigins();
+    protected String getSwaggerTitle() {
+        return metadata.getSwaggerTitle();
+    }
+
+    protected String getSwaggerDescription() {
+        return metadata.getSwaggerDescription();
+    }
+
+    protected String[] getAllowedOrigins() {
+        return metadata.getAllowedOrigins();
+    }
 
     @Bean
     public Docket docket() {
