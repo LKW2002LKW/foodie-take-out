@@ -1,6 +1,7 @@
 package com.foodie.user.handler;
 
 import com.foodie.common.exception.BusinessException;
+import com.foodie.common.handler.AbstractGlobalExceptionHandler;
 import com.foodie.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends AbstractGlobalExceptionHandler {
 
     /**
      * 处理业务异常
@@ -49,8 +50,13 @@ public class GlobalExceptionHandler {
      * 处理其他异常
      */
     @ExceptionHandler(Exception.class)
-    public Result<?> handleException(Exception e) {
+    public Result<String> handleException(Exception e) {
         log.error("系统异常: {}", e.getMessage(), e);
-        return Result.error("系统异常，请联系管理员");
+        return Result.error(getGenericErrorMessage());
+    }
+
+    @Override
+    protected String getGenericErrorMessage() {
+        return "系统异常，请联系管理员";
     }
 }

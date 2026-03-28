@@ -1,96 +1,50 @@
 package com.foodie.user.interceptor;
 
 import com.foodie.common.constant.JwtClaimsConstant;
-import com.foodie.common.constant.MessageConstant;
-import com.foodie.common.constant.RedisKeyConstant;
-import com.foodie.common.context.BaseContext;
 import com.foodie.common.enumeration.UserType;
 import com.foodie.common.properties.JwtProperties;
-import com.foodie.common.utils.JwtUtil;
+import com.foodie.common.web.AbstractJwtTokenInterceptor;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * JWT令牌校验拦截器（用户端）
  */
 @Component
 @Slf4j
-public class JwtTokenUserInterceptor implements HandlerInterceptor {
+public class JwtTokenUserInterceptor extends AbstractJwtTokenInterceptor {
 
-    @Autowired
-    private JwtProperties jwtProperties;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String uri = request.getRequestURI();
-
-        // ===== ① 接口文档 & 静态资源直接放行 =====
-        if (uri.startsWith("/doc.html")
-                || uri.startsWith("/swagger-ui")
-                || uri.startsWith("/v3/api-docs")
-                || uri.startsWith("/webjars")) {
-            return true;
-        }
-
-        if (!(handler instanceof HandlerMethod)) {
-            return true;
-        }
-
-        String token = request.getHeader(jwtProperties.getUserTokenName());
-
-        log.info("JWT拦截器（用户端）：token={}", token);
-
-        try {
-            if (token == null || token.isEmpty()) {
-                log.error("JWT令牌为空");
-                response.setStatus(401);
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"code\":0,\"msg\":\"" + MessageConstant.USER_NOT_LOGIN + "\"}");
-                return false;
-            }
-
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
-            Long userId = Long.valueOf(claims.get("userId").toString());
-
-            String tokenKey = String.format(RedisKeyConstant.TOKEN, UserType.USER.name(), userId);
-            String cachedToken = redisTemplate.opsForValue().get(tokenKey);
-            if (cachedToken == null || !token.equals(cachedToken)) {
-                log.error("JWT令牌已失效或被替换：userId={}", userId);
-                response.setStatus(401);
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"code\":0,\"msg\":\"" + MessageConstant.TOKEN_INVALID + "\"}");
-                return false;
-            }
-
-            log.info("当前用户ID：{}", userId);
-
-            BaseContext.setCurrentId(userId);
-            request.setAttribute("userId", userId);
-
-            return true;
-
-        } catch (Exception ex) {
-            log.error("JWT令牌校验失败：{}", ex.getMessage());
-            response.setStatus(401);
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"code\":0,\"msg\":\"" + MessageConstant.TOKEN_INVALID + "\"}");
-            return false;
-        }
+    public JwtTokenUserInterceptor(JwtProperties jwtProperties, StringRedisTemplate redisTemplate) {
+        super(jwtProperties, redisTemplate);
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        BaseContext.removeCurrentId();
+    protected String getTokenName(JwtProperties jwtProperties) {
+        return jwtProperties.getUserTokenName();
+    }
+
+    @Override
+    protected String getSecretKey(JwtProperties jwtProperties) {
+        return jwtProperties.getUserSecretKey();
+    }
+
+    @Override
+    protected UserType getUserType() {
+        return UserType.USER;
+    }
+
+    @Override
+    protected Long getUserId(Claims claims) {
+        return Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+    }
+
+    @Override
+    protected void fillRequestAttributes(HttpServletRequest request, Claims claims) {
+        Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+        request.setAttribute("userId", userId);
     }
 }

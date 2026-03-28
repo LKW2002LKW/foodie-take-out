@@ -5,6 +5,7 @@ import com.foodie.common.exception.AccountLockedException;
 import com.foodie.common.exception.AccountNotFoundException;
 import com.foodie.common.exception.BaseException;
 import com.foodie.common.exception.PasswordErrorException;
+import com.foodie.common.handler.AbstractGlobalExceptionHandler;
 import com.foodie.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends AbstractGlobalExceptionHandler {
 
     /**
      * 捕获账号不存在异常
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
      * 捕获业务异常
      */
     @ExceptionHandler(BaseException.class)
-    public Result<Void> handleBaseException(BaseException ex) {
+    public Result<String> handleBaseException(BaseException ex) {
         log.error("业务异常：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
@@ -68,7 +69,7 @@ public class GlobalExceptionHandler {
      * 捕获通用异常
      */
     @ExceptionHandler(Exception.class)
-    public Result<Void> handleException(Exception ex) {
+    public Result<String> handleException(Exception ex) {
         log.error("系统异常：", ex);
         return Result.error(MessageConstant.UNKNOWN_ERROR);
     }
