@@ -52,20 +52,8 @@ foodie:
     merchant-secret-key: foodie-merchant-20260109-secret-key
     merchant-ttl: 7200000
     merchant-token-name: merchant-token
-  minio:
-    endpoint: http://192.168.1.11:9000
-    accessKey: admin
-    secretKey: lkw2468LKW@
-    bucket: foodie-images
-    publicUrl: http://192.168.1.11:9000/foodie-images
-    basePath: upload
-    maxSize: 5
-    allowedTypes:
-      - jpg
-      - jpeg
-      - png
-      - gif
-      - webp
+  upload:
+    service-path: merchant
 
 # -------------------------
 # Knife4j 接口文档配置

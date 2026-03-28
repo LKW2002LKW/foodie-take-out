@@ -1,13 +1,14 @@
 package com.foodie.common.config;
 
 import com.foodie.common.properties.MinioProperties;
+import com.foodie.common.properties.UploadModuleProperties;
 import io.minio.MinioClient;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(MinioProperties.class)
+@EnableConfigurationProperties({MinioProperties.class, UploadModuleProperties.class})
 public class MinioConfiguration {
 
     @Bean

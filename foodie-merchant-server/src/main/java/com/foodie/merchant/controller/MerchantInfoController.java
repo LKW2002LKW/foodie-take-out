@@ -3,7 +3,7 @@ package com.foodie.merchant.controller;
 import com.foodie.common.constant.MessageConstant;
 import com.foodie.common.context.BaseContext;
 import com.foodie.common.result.Result;
-import com.foodie.common.service.FileStorageService;
+import com.foodie.common.service.UploadFacade;
 import com.foodie.dto.merchant.MerchantBusinessHoursDTO;
 import com.foodie.dto.merchant.MerchantStatusDTO;
 import com.foodie.dto.merchant.MerchantUpdateDTO;
@@ -31,7 +31,7 @@ public class MerchantInfoController {
 
     private final MerchantService merchantService;
 
-    private final FileStorageService fileStorageService;
+    private final UploadFacade uploadFacade;
 
 
     /**
@@ -100,7 +100,7 @@ public class MerchantInfoController {
         log.info("上传商户Logo，文件名：{}", file.getOriginalFilename());
 
         // 1️⃣ 上传图片，获取 URL
-        String logoUrl = fileStorageService.upload(file, "merchant");
+        String logoUrl = uploadFacade.upload(file);
 
 
 

@@ -11,6 +11,9 @@ spring:
   application:
     name: foodie-merchant-server
 
+  config:
+    import: optional:classpath:application-common.yml
+
 
 
   # -------------------------

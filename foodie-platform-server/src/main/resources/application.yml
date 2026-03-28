@@ -11,6 +11,9 @@ spring:
   application:
     name: foodie-platform-server
 
+  config:
+    import: optional:classpath:application-common.yml
+
   # -------------------------
   # 服务器端口
   # -------------------------
