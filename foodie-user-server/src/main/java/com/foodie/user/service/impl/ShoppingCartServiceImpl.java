@@ -130,32 +130,42 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
      * 查看购物车
      */
     @Override
-    public List<ShoppingCartVO> listCart(Long merchantId,Long userId) {
-        log.info("查看购物车：userId={}", userId);
+    public List<ShoppingCartVO> listCart(String merchantIds, Long userId) {
+        log.info("查看购物车：userId={}, merchantIds={}", userId, merchantIds);
 
-        String redisKey = String.format(RedisKeyConstant.SHOPPING_CART, userId, merchantId);
-        Map<Object, Object> cachedEntries = redisTemplate.opsForHash().entries(redisKey);
-        if (cachedEntries != null && !cachedEntries.isEmpty()) {
-            List<ShoppingCart> cachedList = new ArrayList<>(cachedEntries.size());
-            for (Object value : cachedEntries.values()) {
-                if (value == null) {
-                    continue;
+        List<Long> merchantIdList = new ArrayList<>();
+        if (merchantIds != null && !merchantIds.trim().isEmpty()) {
+            String[] ids = merchantIds.split(",");
+            for (String id : ids) {
+                try {
+                    merchantIdList.add(Long.parseLong(id.trim()));
+                } catch (NumberFormatException e) {
+                    log.warn("无效的商户ID: {}", id);
                 }
-                ShoppingCart cart = JsonUtil.fromJson(value.toString(), ShoppingCart.class);
-                cachedList.add(cart);
             }
-            return toCartVOList(cachedList);
         }
 
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ShoppingCart::getUserId, userId)
-                .eq(ShoppingCart::getMerchantId, merchantId)
-                .orderByDesc(ShoppingCart::getCreateTime);
+        List<ShoppingCart> cartList = new ArrayList<>();
 
-        List<ShoppingCart> cartList = this.list(wrapper);
+        if (merchantIdList.isEmpty()) {
+            // 如果没有指定商户ID，则查询所有商户的购物车
+            LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(ShoppingCart::getUserId, userId)
+                    .orderByDesc(ShoppingCart::getCreateTime);
+            cartList = this.list(wrapper);
+        } else {
+            // 查询指定商户的购物车
+            LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(ShoppingCart::getUserId, userId)
+                    .in(ShoppingCart::getMerchantId, merchantIdList)
+                    .orderByDesc(ShoppingCart::getCreateTime);
+            cartList = this.list(wrapper);
+        }
+
         if (cartList != null && !cartList.isEmpty()) {
+            // 将每个购物车项写入对应的Redis缓存
             for (ShoppingCart cart : cartList) {
-                writeCartItemToRedis(userId, merchantId, cart);
+                writeCartItemToRedis(userId, cart.getMerchantId(), cart);
             }
         }
 

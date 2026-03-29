@@ -44,11 +44,11 @@ public class ShoppingCartController {
      */
     @GetMapping("/list")
     @ApiOperation("查看购物车")
-    public Result<List<ShoppingCartVO>> listCart(@RequestParam Long merchantId, HttpServletRequest request) {
+    public Result<List<ShoppingCartVO>> listCart(@RequestParam(required = false) String merchantIds, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        log.info("查看购物车：userId={},merchantId={}", userId,merchantId);
+        log.info("查看购物车：userId={},merchantIds={}", userId, merchantIds);
 
-        List<ShoppingCartVO> cartList = shoppingCartService.listCart(merchantId,userId);
+        List<ShoppingCartVO> cartList = shoppingCartService.listCart(merchantIds, userId);
         return Result.success(cartList);
     }
 
