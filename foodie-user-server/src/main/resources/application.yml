@@ -1,24 +1,18 @@
 spring:
   # -------------------------
-  # ???????????
-  # -------------------------
-  profiles:
-    active: dev   # ??????? dev
-
-  # -------------------------
-  # ????
+  # 应用名称
   # -------------------------
   application:
-    name: foodie-platform-server
+    name: foodie-user-server
 
   config:
-    import: optional:classpath:application-common.yml
+    import: classpath:application-common-base.yml
 
   # -------------------------
-  # ?????
+  # 服务器端口
   # -------------------------
 server:
-    port: 8083
+  port: 8083
 
 foodie:
   cache:

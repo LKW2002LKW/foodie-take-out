@@ -1,0 +1,69 @@
+spring:
+  # -------------------------
+  # 数据源配置（MySQL + Druid）
+  # -------------------------
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.11:3306/foodie_alliance?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ${DB_PASSWORD:lkw2468}
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+
+  # -------------------------
+  # Redis 配置
+  # -------------------------
+  redis:
+    host: 192.168.1.11
+    port: 6379
+    password: ${REDIS_PASSWORD:lkw2468}
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+# -------------------------
+# MyBatis-Plus 配置
+# -------------------------
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml         # Mapper XML 文件路径
+  type-aliases-package: com.foodie.entity         # 实体类路径
+  configuration:
+    map-underscore-to-camel-case: true           # 开启下划线转驼峰
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 控制台打印 SQL
+    cache-enabled: false                          # 禁用二级缓存
+  global-config:
+    db-config:
+      id-type: auto                               # 主键自增策略
+      logic-delete-field: isDeleted               # 逻辑删除字段
+      logic-delete-value: 1                       # 已删除值
+      logic-not-delete-value: 0                   # 未删除值
+
+# -------------------------
+# Knife4j 接口文档配置
+# -------------------------
+knife4j:
+  enable: true
+  setting:
+    language: zh-CN
+
+# -------------------------
+# 日志配置
+# -------------------------
+logging:
+  level:
+    com.foodie: debug                     # 业务日志调试级别
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"

@@ -1,18 +1,12 @@
 spring:
   # -------------------------
-  # 激活环境（多环境配置）
-  # -------------------------
-  profiles:
-    active: dev   # 当前激活环境为 dev
-
-  # -------------------------
   # 应用名称
   # -------------------------
   application:
     name: foodie-platform-server
 
   config:
-    import: optional:classpath:application-common.yml
+    import: classpath:application-common-base.yml
 
   # -------------------------
   # 服务器端口
