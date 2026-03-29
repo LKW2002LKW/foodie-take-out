@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -40,6 +42,18 @@ public abstract class AbstractWebMvcConfiguration extends WebMvcConfigurationSup
 
     protected String[] getAllowedOrigins() {
         return metadata.getAllowedOrigins();
+    }
+
+    protected String[] getInterceptorIncludePatterns() {
+        return metadata.getInterceptorIncludePatterns();
+    }
+
+    protected String[] getInterceptorExcludePatterns() {
+        return metadata.getInterceptorExcludePatterns();
+    }
+
+    protected HandlerInterceptor getJwtInterceptor() {
+        return metadata.getJwtInterceptor();
     }
 
     @Bean
@@ -77,6 +91,15 @@ public abstract class AbstractWebMvcConfiguration extends WebMvcConfigurationSup
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(new JacksonObjectMapper());
         converters.add(0, converter);
+    }
+
+    @Override
+    protected void addInterceptors(InterceptorRegistry registry) {
+        log.info("开始注册自定义拦截器...");
+
+        registry.addInterceptor(getJwtInterceptor())
+                .addPathPatterns(getInterceptorIncludePatterns())
+                .excludePathPatterns(getInterceptorExcludePatterns());
     }
 
     @Override
