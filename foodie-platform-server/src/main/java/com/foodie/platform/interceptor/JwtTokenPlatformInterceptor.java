@@ -4,8 +4,8 @@ import com.foodie.common.constant.JwtClaimsConstant;
 import com.foodie.common.enumeration.UserType;
 import com.foodie.common.properties.JwtProperties;
 import com.foodie.common.web.AbstractJwtTokenInterceptor;
+import com.foodie.common.web.JwtInterceptorMetadata;
 import io.jsonwebtoken.Claims;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,26 +15,14 @@ import javax.servlet.http.HttpServletRequest;
  * JWT令牌校验拦截器（平台端）
  */
 @Component
-@Slf4j
 public class JwtTokenPlatformInterceptor extends AbstractJwtTokenInterceptor {
 
     public JwtTokenPlatformInterceptor(JwtProperties jwtProperties, RedisTemplate<String, Object> redisTemplate) {
-        super(jwtProperties, redisTemplate);
-    }
-
-    @Override
-    protected String getTokenName(JwtProperties jwtProperties) {
-        return jwtProperties.getPlatformTokenName();
-    }
-
-    @Override
-    protected String getSecretKey(JwtProperties jwtProperties) {
-        return jwtProperties.getPlatformSecretKey();
-    }
-
-    @Override
-    protected UserType getUserType() {
-        return UserType.PLATFORMADMIN;
+        super(jwtProperties, redisTemplate, new JwtInterceptorMetadata(
+                JwtProperties::getPlatformTokenName,
+                JwtProperties::getPlatformSecretKey,
+                UserType.PLATFORMADMIN
+        ));
     }
 
     @Override

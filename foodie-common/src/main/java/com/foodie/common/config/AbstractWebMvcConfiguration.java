@@ -2,6 +2,7 @@ package com.foodie.common.config;
 
 import com.foodie.common.json.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -57,6 +58,7 @@ public abstract class AbstractWebMvcConfiguration extends WebMvcConfigurationSup
     }
 
     @Bean
+    @ConditionalOnProperty(name = "springfox.documentation.enabled", havingValue = "true", matchIfMissing = true)
     public Docket docket() {
         log.info("准备生成接口文档...");
 

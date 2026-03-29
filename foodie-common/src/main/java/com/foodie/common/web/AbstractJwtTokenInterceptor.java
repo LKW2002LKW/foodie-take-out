@@ -3,11 +3,9 @@ package com.foodie.common.web;
 import com.foodie.common.constant.MessageConstant;
 import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.context.BaseContext;
-import com.foodie.common.enumeration.UserType;
 import com.foodie.common.properties.JwtProperties;
 import com.foodie.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.method.HandlerMethod;
@@ -18,17 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@RequiredArgsConstructor
 public abstract class AbstractJwtTokenInterceptor implements HandlerInterceptor {
 
     private final JwtProperties jwtProperties;
     private final RedisTemplate<String, ?> redisTemplate;
+    private final JwtInterceptorMetadata metadata;
 
-    protected abstract String getTokenName(JwtProperties jwtProperties);
-
-    protected abstract String getSecretKey(JwtProperties jwtProperties);
-
-    protected abstract UserType getUserType();
+    protected AbstractJwtTokenInterceptor(JwtProperties jwtProperties,
+                                          RedisTemplate<String, ?> redisTemplate,
+                                          JwtInterceptorMetadata metadata) {
+        this.jwtProperties = jwtProperties;
+        this.redisTemplate = redisTemplate;
+        this.metadata = metadata;
+    }
 
     protected abstract Long getUserId(Claims claims);
 
@@ -54,7 +54,7 @@ public abstract class AbstractJwtTokenInterceptor implements HandlerInterceptor 
     }
 
     protected String resolveToken(HttpServletRequest request) {
-        String token = request.getHeader(getTokenName(jwtProperties));
+        String token = request.getHeader(metadata.resolveTokenName(jwtProperties));
         if (token == null || token.isEmpty()) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -66,7 +66,7 @@ public abstract class AbstractJwtTokenInterceptor implements HandlerInterceptor 
 
     protected String resolveTokenKey(Claims claims) {
         Long userId = getUserId(claims);
-        return String.format(RedisKeyConstant.TOKEN, getUserType().name(), userId);
+        return String.format(RedisKeyConstant.TOKEN, metadata.getUserType().name(), userId);
     }
 
     protected void onTokenValidated(Claims claims) {
@@ -105,7 +105,7 @@ public abstract class AbstractJwtTokenInterceptor implements HandlerInterceptor 
                 return false;
             }
 
-            Claims claims = JwtUtil.parseJWT(getSecretKey(jwtProperties), token);
+            Claims claims = JwtUtil.parseJWT(metadata.resolveSecretKey(jwtProperties), token);
             String tokenKey = resolveTokenKey(claims);
             Object cachedToken = redisTemplate.opsForValue().get(tokenKey);
             if (cachedToken == null || !token.equals(cachedToken.toString())) {
