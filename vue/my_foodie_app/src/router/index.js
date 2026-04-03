@@ -51,7 +51,13 @@ const routes = [
   {
     path: '/merchant/:id',
     name: 'MerchantDetail',
-    component: () => import('../views/MerchantDetail.vue')
+    component: () => import('../views/MerchantDetail.vue'),
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('../views/Cart.vue'),
+    meta: { requiresAuth: true, showTabbar: true },
   },
   {
     path: '/address/list',

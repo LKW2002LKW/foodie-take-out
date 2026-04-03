@@ -3,7 +3,7 @@ spring:
   # Redis 配置
   # -------------------------
   redis:
-    database: 1          # 使用不同的数据库
+    database: 3         # 使用不同的数据库
 
   config:
     import: classpath:application-dev-common.yml

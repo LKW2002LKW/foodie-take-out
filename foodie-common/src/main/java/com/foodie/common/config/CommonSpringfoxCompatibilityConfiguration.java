@@ -14,7 +14,7 @@ import java.util.List;
 @Configuration
 public class CommonSpringfoxCompatibilityConfiguration {
 
-    @Bean
+    @Bean("commonSpringfoxCompatibilityConfiguration1")
     public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
         return new BeanPostProcessor() {
             @Override
