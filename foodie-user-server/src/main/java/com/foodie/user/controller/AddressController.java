@@ -69,6 +69,20 @@ public class AddressController {
     }
 
     /**
+     * 批量删除地址
+     */
+    @DeleteMapping("/batch")
+    @ApiOperation("批量删除地址")
+    public Result<String> batchDeleteAddress(@RequestBody List<Long> ids,
+                                             HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        log.info("批量删除地址：userId={}, ids={}", userId, ids);
+
+        addressService.batchDeleteAddress(userId, ids);
+        return Result.success(MessageConstant.ADDRESS_DELETE_SUCCESS);
+    }
+
+    /**
      * 根据ID查询地址
      */
     @GetMapping("/{id}")

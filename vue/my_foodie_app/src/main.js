@@ -1,5 +1,11 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+
+// 高德地图安全密钥配置 (必须在加载 AMap 之前)
+window._AMapSecurityConfig = {
+  securityJsCode: import.meta.env.VITE_AMAP_SECURITY_JS_CODE,
+}
+
 import App from './App.vue'
 import router from './router'
 import 'vant/lib/index.css'
@@ -10,7 +16,7 @@ import {
     Sticky, Tag, Badge, AddressList, RadioGroup, Radio, Popup, Area, Switch,
     Loading, Skeleton, Sidebar, SidebarItem, Empty, Stepper, SubmitBar, ActionSheet,
     PullRefresh, Rate, Uploader, NoticeBar, Picker, DatePicker,
-    DropdownMenu, DropdownItem
+    DropdownMenu, DropdownItem, IndexBar, IndexAnchor
 } from 'vant'
 
 const app = createApp(App)
@@ -61,6 +67,8 @@ app.use(Picker)
 app.use(DatePicker)
 app.use(DropdownMenu)
 app.use(DropdownItem)
+app.use(IndexBar)
+app.use(IndexAnchor)
 
 app.use(Icon)
 app.use(NavBar)

@@ -1,275 +1,244 @@
 <template>
   <div class="address-edit-page">
-    <van-nav-bar fixed :title="isEdit ? '修改地址' : '新增地址'" left-arrow @click-left="$router.back()" placeholder />
+    <van-nav-bar
+      :title="isEdit ? '修改收货地址' : '新增收货地址'"
+      left-arrow
+      fixed
+      placeholder
+      @click-left="$router.back()"
+    />
 
-    <van-form @submit="onSave">
-        <!-- Vant AddressEdit 组件功能强大，但为了完全控制字段，我们手写表单或使用 Vant AddressEdit 并自定义 -->
-        <!-- 这里为了严格匹配接口字段要求，采用 Vant 只有 UI 组件组合的方式 -->
-        
-        <van-cell-group inset class="form-group">
-            <van-field
-                v-model="form.consignee"
-                name="consignee"
-                label="收货人"
-                placeholder="收货人姓名"
-                :rules="[{ required: true, message: '请填写收货人' }]"
-            />
-            <van-field name="sex" label="性别">
-                <template #input>
-                    <van-radio-group v-model="form.sex" direction="horizontal">
-                        <van-radio :name="1">先生</van-radio>
-                        <van-radio :name="0">女士</van-radio>
-                    </van-radio-group>
-                </template>
-            </van-field>
-            <van-field
-                v-model="form.phone"
-                name="phone"
-                label="手机号"
-                placeholder="收货人手机号"
-                type="tel"
-                :rules="[{ required: true, message: '请填写手机号' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }]"
-            />
-            <van-field
-                v-model="areaText"
-                is-link
-                readonly
-                name="area"
-                label="地区"
-                placeholder="点击选择省市区"
-                @click="showArea = true"
-                :rules="[{ required: true, message: '请选择地区' }]"
-            />
-            <van-popup v-model:show="showArea" position="bottom">
-                <van-area
-                    :area-list="areaList"
-                    @confirm="onAreaConfirm"
-                    @cancel="showArea = false"
-                />
-            </van-popup>
-            
-            <van-field
-                v-model="form.detail"
-                name="detail"
-                label="详细地址"
-                placeholder="街道门牌、楼层房间号等信息"
-                rows="2"
-                autosize
-                type="textarea"
-                :rules="[{ required: true, message: '请填写详细地址' }]"
-            />
-        </van-cell-group>
-
-        <van-cell-group inset class="form-group">
-            <van-field name="label" label="标签">
-                <template #input>
-                    <div class="tags-row">
-                        <van-tag 
-                            round size="medium" 
-                            :type="form.label === '家' ? 'primary' : 'default'"
-                            @click="form.label = '家'"
-                        >家</van-tag>
-                        <van-tag 
-                            round size="medium" 
-                            :type="form.label === '公司' ? 'primary' : 'default'"
-                            @click="form.label = '公司'"
-                        >公司</van-tag>
-                        <van-tag 
-                            round size="medium" 
-                            :type="form.label === '学校' ? 'primary' : 'default'"
-                            @click="form.label = '学校'"
-                        >学校</van-tag>
-                         <!-- 允许自定义输入标签 -->
-                         <input v-if="!['家','公司','学校'].includes(form.label) && form.label" v-model="form.label" class="custom-tag-input" />
-                    </div>
-                </template>
-            </van-field>
-        </van-cell-group>
-
-        <van-cell-group inset class="form-group">
-            <van-cell center title="设为默认收货地址">
-                <template #right-icon>
-                    <van-switch v-model="isDefaultBool" size="24" :disabled="isFirstAddress" />
-                </template>
-            </van-cell>
-            <div v-if="isFirstAddress" class="tip-text">首个地址将自动设为默认地址</div>
-        </van-cell-group>
-
-        <div style="margin: 16px;">
-            <van-button round block type="primary" native-type="submit">
-                保存
-            </van-button>
-            <van-button 
-                v-if="isEdit" 
-                round block type="danger" 
-                class="delete-btn" 
-                @click="onDelete"
-                native-type="button"
-            >
-                删除
-            </van-button>
+    <div class="content-box">
+      <!-- 顶部搜索组合 -->
+      <div class="mt-search-wrap">
+        <div class="city-box" @click="showCityPopup = true">
+          <span class="city-txt van-ellipsis">{{ currentCity }}</span>
+          <van-icon name="arrow-down" class="arrow" />
         </div>
-    </van-form>
+        <div class="search-input-box">
+          <van-search
+            v-model="searchKey"
+            placeholder="搜索收货地址"
+            background="transparent"
+            class="custom-search"
+            @update:model-value="onSearchInput"
+            @focus="isSearching = true"
+          />
+        </div>
+      </div>
+
+      <!-- 搜索候选列表 -->
+      <div v-if="isSearching && tips.length > 0" class="search-overlay">
+        <div v-for="tip in tips" :key="tip.id" class="tip-item" @click="onSelectTip(tip)">
+          <div class="tip-main">{{ tip.name }}</div>
+          <div class="tip-sub">{{ tip.district }}{{ tip.address }}</div>
+        </div>
+      </div>
+
+      <!-- 地图预览区 -->
+      <div class="map-preview">
+        <van-image v-if="form.longitude" :src="mapUrl" width="100%" height="160" fit="cover" />
+        <div v-else class="map-placeholder">
+          <van-icon name="map-marked" size="40" color="#ddd" />
+          <p>请选择准确的收货地址</p>
+        </div>
+      </div>
+
+      <!-- 信息表单 -->
+      <van-cell-group inset class="form-group">
+        <van-field v-model="form.consignee" label="收货人" placeholder="请填写收货人姓名" required />
+        <van-cell title="性别">
+          <template #value>
+            <van-radio-group v-model="form.sex" direction="horizontal">
+              <van-radio :name="1" checked-color="#FFD100">先生</van-radio>
+              <van-radio :name="2" checked-color="#FFD100">女士</van-radio>
+            </van-radio-group>
+          </template>
+        </van-cell>
+        <van-field v-model="form.phone" label="手机号" type="tel" placeholder="请填写收货人手机号" required />
+        
+        <!-- 核心优化：点击定位地址触发重新搜索 -->
+        <van-field 
+          v-model="displayAddress" 
+          label="定位地址" 
+          readonly 
+          placeholder="点击选择地址" 
+          required 
+          is-link
+          @click="triggerReSearch"
+        />
+        
+        <van-field v-model="form.detail" rows="2" autosize label="门牌号" type="textarea" placeholder="例: 16号楼501室" required />
+        
+        <van-cell title="标签">
+          <template #value>
+            <van-radio-group v-model="form.label" direction="horizontal">
+              <van-radio name="家" checked-color="#FFD100">家</van-radio>
+              <van-radio name="公司" checked-color="#FFD100">公司</van-radio>
+              <van-radio name="学校" checked-color="#FFD100">学校</van-radio>
+            </van-radio-group>
+          </template>
+        </van-cell>
+        <van-cell title="设为默认地址">
+          <template #right-icon>
+            <van-switch v-model="isDefaultBool" size="20" active-color="#FFD100" />
+          </template>
+        </van-cell>
+      </van-cell-group>
+
+      <div class="action-bar">
+        <van-button round block type="primary" color="#FFD100" text-color="#222" :loading="saving" @click="onSave">保存地址</van-button>
+        <van-button v-if="isEdit" round block plain class="mt-10" @click="onDelete">删除地址</van-button>
+      </div>
+    </div>
+
+    <!-- 城市选择弹窗 -->
+    <van-popup v-model:show="showCityPopup" position="right" style="width: 100%; height: 100%">
+      <div class="city-picker-layout">
+        <van-nav-bar title="选择收货城市" left-arrow @click-left="showCityPicker = false" />
+        <div class="city-search-box">
+          <van-search v-model="citySearchQuery" placeholder="输入城市名筛选" shape="round" />
+        </div>
+        <div class="city-list-container">
+          <van-index-bar :index-list="filteredIndexList" highlight-color="#FFD100">
+            <div v-for="group in filteredCityData" :key="group.initial">
+              <van-index-anchor :index="group.initial" />
+              <van-cell v-for="city in group.list" :key="city" :title="city" @click="onCitySelect(city)" />
+            </div>
+          </van-index-bar>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { showToast, showSuccessToast, showFailToast, showConfirmDialog } from 'vant';
-import { areaList } from '@vant/area-data'; // 需要安装 @vant/area-data
-import { addAddress, updateAddress, getAddressDetail, deleteAddress, setDefaultAddress } from '../api/address';
+import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { showToast, showConfirmDialog } from 'vant'
+import { inputTips, getStaticMapUrl, reverseGeocode } from '../services/amap'
+import { addAddress, updateAddress, getAddressDetail, deleteAddress } from '../services/address'
+import { useLocationStore } from '../store/modules/location'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute(); const router = useRouter(); const locationStore = useLocationStore()
+const isEdit = !!route.query.id; const saving = ref(false); const isSearching = ref(false)
+const isDefaultBool = ref(false); const locationConfirmed = ref(false)
+const searchKey = ref(''); const tips = ref([]); const displayAddress = ref('')
+const showCityPopup = ref(false); const citySearchQuery = ref('')
+const currentCity = ref(locationStore.city || '北京市')
 
-const isEdit = computed(() => route.query.type === 'edit');
-const addressId = route.query.id;
-const showArea = ref(false);
-const areaText = ref('');
-const isFirstAddress = ref(false); // 需要判断是否是第一个地址，如果是，默认打开switch且不可关
+const cityData = [{ initial: 'A', list: ['阿坝', '安康', '安庆', '鞍山'] }, { initial: 'B', list: ['北京', '保定', '宝鸡', '包头', '蚌埠'] }, { initial: 'C', list: ['成都', '重庆', '长沙', '常州', '沧州'] }, { initial: 'D', list: ['大连', '东莞', '大理', '德州', '大庆'] }, { initial: 'F', list: ['佛山', '福州', '抚顺', '阜阳'] }, { initial: 'G', list: ['广州', '深圳', '贵阳', '桂林', '赣州'] }, { initial: 'H', list: ['杭州', '合肥', '哈尔滨', '海口', '邯郸', '惠州'] }, { initial: 'J', list: ['济南', '嘉兴', '金华', '九江', '吉林'] }, { initial: 'K', list: ['昆明', '开封'] }, { initial: 'L', list: ['兰州', '洛阳', '临沂', '拉萨', '廊坊'] }, { initial: 'M', list: ['马鞍山', '茂名', '绵阳'] }, { initial: 'N', list: ['南京', '南昌', '南宁', '宁波', '南通'] }, { initial: 'Q', list: ['青岛', '泉州', '秦皇岛', '齐齐哈尔'] }, { initial: 'S', list: ['上海', '苏州', '沈阳', '石家庄', '三亚', '汕头'] }, { initial: 'T', list: ['天津', '太原', '唐山', '泰州', '台州'] }, { initial: 'W', list: ['武汉', '无锡', '温州', '潍坊', '威海'] }, { initial: 'X', list: ['西安', '厦门', '西宁', '徐州', '邢台', '咸阳'] }, { initial: 'Y', list: ['扬州', '烟台', '银川', '宜昌', '延安'] }, { initial: 'Z', list: ['郑州', '珠海', '中山', '淄博', '湛江', '枣庄'] }]
+const filteredCityData = computed(() => {
+  if (!citySearchQuery.value) return cityData
+  return cityData.map(g => ({ ...g, list: g.list.filter(c => c.includes(citySearchQuery.value.trim())) })).filter(g => g.list.length > 0)
+})
+const filteredIndexList = computed(() => filteredCityData.value.map(g => g.initial))
 
 const form = reactive({
-    id: undefined,
-    consignee: '',
-    sex: 1,
-    phone: '',
-    provinceCode: '',
-    provinceName: '',
-    cityCode: '',
-    cityName: '',
-    districtCode: '',
-    districtName: '',
-    detail: '',
-    label: '家',
-    isDefault: 0,
-    // 经纬度通常通过地图选点获取，这里暂且模拟或留空
-    longitude: 116.480881,
-    latitude: 39.908098
-});
+  id: route.query.id || null, consignee: '', sex: 1, phone: '', detail: '', label: '家',
+  longitude: null, latitude: null, isDefault: 0,
+  provinceName: '', cityName: '', districtName: '',
+  provinceCode: '', cityCode: '', districtCode: ''
+})
 
-const isDefaultBool = computed({
-    get: () => form.isDefault === 1,
-    set: (val) => { form.isDefault = val ? 1 : 0; }
-});
+const mapUrl = computed(() => getStaticMapUrl(form.longitude, form.latitude))
+watch(isDefaultBool, (val) => { form.isDefault = val ? 1 : 0 })
 
-const onAreaConfirm = ({ selectedOptions }) => {
-    showArea.value = false;
-    areaText.value = selectedOptions.map(item => item.text).join('/');
-    form.provinceCode = selectedOptions[0]?.value;
-    form.provinceName = selectedOptions[0]?.text;
-    form.cityCode = selectedOptions[1]?.value;
-    form.cityName = selectedOptions[1]?.text;
-    form.districtCode = selectedOptions[2]?.value;
-    form.districtName = selectedOptions[2]?.text;
-};
+const onSearchInput = (val) => {
+  if (!val) { tips.value = []; return }
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(async () => {
+    const results = await inputTips(val, currentCity.value)
+    tips.value = results.filter(t => t.location && typeof t.location === 'string')
+  }, 300)
+}
+let searchTimer = null
 
-const initData = async () => {
-    if (isEdit.value && addressId) {
-        try {
-            const res = await getAddressDetail(addressId);
-            if (res.code === 1) {
-                Object.assign(form, res.data);
-                areaText.value = `${form.provinceName}/${form.cityName}/${form.districtName}`;
-            }
-        } catch (e) {
-            showFailToast('加载失败');
-        }
-    } else {
-        // 新增模式，如果是第一个地址，这里其实需要在前端或者后端判断。
-        // 根据需求："新增地址：当用户新增地址时，第一个地址自动被设为默认地址。"
-        // 既然后端也会处理，前端这里只是为了UI展示。我们假设后端处理了，前端如果不确定是否第一个，默认关。
-    }
-};
+// 点击“定位地址”触发逻辑
+const triggerReSearch = () => {
+  isSearching.value = true
+  searchKey.value = displayAddress.value
+  onSearchInput(searchKey.value)
+}
+
+const onSelectTip = async (tip) => {
+  const [lng, lat] = tip.location.split(',')
+  form.longitude = parseFloat(lng); form.latitude = parseFloat(lat); 
+  displayAddress.value = tip.name // 空格前面的部分
+  
+  const regeo = await reverseGeocode(lng, lat)
+  if (regeo && regeo.addressComponent) {
+    const comp = regeo.addressComponent
+    form.provinceName = comp.province || ''; form.cityName = (comp.city && comp.city.length > 0) ? comp.city : comp.province
+    form.districtName = comp.district || ''; form.districtCode = String(comp.adcode)
+    form.provinceCode = form.districtCode.substring(0, 2) + '0000'; form.cityCode = form.districtCode.substring(0, 4) + '00'
+    locationConfirmed.value = true
+  }
+  isSearching.value = false; searchKey.value = tip.name; tips.value = []
+}
 
 const onSave = async () => {
-    const data = { ...form };
-    
-    try {
-        let res;
-        if (isEdit.value) {
-            res = await updateAddress(data);
-            // 这里还有一个逻辑：修改地址时，如果用户勾选了默认地址，需要调用 set default 接口吗？
-            // 需求说："修改地址...若需要设置为默认地址，需通过PUT ...接口来修改"
-            // 但是修改接口传参里有 isDefault。
-            // 按照需求描述："修改地址...保持默认地址状态不变...除非显式设置isDefault=1"
-            // 我们可以在 updateAddress 完成后，如果 isDefault 变了且为1，再调一次 setDefaultAddress，
-            // 或者假设后端在 update 接口如果接收到 isDefault=1 会自动处理。
-            // 为了保险，如果用户显式把非默认改为默认，我们额外调用 setDefault
-            
-            if (res.code === 1 && form.isDefault === 1) {
-                 await setDefaultAddress(form.id);
-            }
-        } else {
-            res = await addAddress(data);
-             // 如果是新增，且用户选了默认 (通常新增时也可以选默认)，或者它是第一个(后端处理)
-             // 如果接口返回的 id，且用户选了默认，也可以补充调用一次 setDefault
-             if (res.code === 1 && form.isDefault === 1 && res.data && res.data.id) {
-                 await setDefaultAddress(res.data.id);
-             }
-        }
-        
-        if (res.code === 1) {
-            showSuccessToast('保存成功');
-            router.back();
-        } else {
-            showFailToast(res.msg || '保存失败');
-        }
-    } catch (e) {
-        showFailToast('保存失败');
-    }
-};
+  if (!form.consignee || !form.phone || !locationConfirmed.value || !form.detail) return showToast('信息不完整')
+  // 合并保存：定位地址 + 空格 + 门牌号
+  const finalDetail = `${displayAddress.value} ${form.detail.trim()}`
+  const payload = { ...form, detail: finalDetail }
+  saving.value = true
+  try {
+    const res = isEdit ? await updateAddress(payload) : await addAddress(payload)
+    if (res.code === 1) { showToast('保存成功'); router.back() } else showToast(res.msg || '保存失败')
+  } catch (e) { showToast('提交失败') } finally { saving.value = false }
+}
 
 const onDelete = () => {
-    showConfirmDialog({
-        title: '确认删除',
-        message: '确认删除该地址吗？'
-    }).then(async () => {
-        try {
-            const res = await deleteAddress(form.id);
-            if (res.code === 1) {
-                showSuccessToast('删除成功');
-                router.back();
-            } else {
-                showFailToast(res.msg || '删除失败');
-            }
-        } catch (e) {
-            showFailToast('删除失败');
-        }
-    }).catch(() => {});
-};
+  showConfirmDialog({ title: '提醒', message: '确认删除该地址？' }).then(async () => {
+    await deleteAddress(form.id); router.back()
+  })
+}
 
-onMounted(() => {
-    initData();
-});
+const onCitySelect = (city) => { currentCity.value = city; showCityPopup.value = false; searchKey.value = ''; tips.value = [] }
+
+onMounted(async () => {
+  if (isEdit) {
+    const res = await getAddressDetail(form.id)
+    if (res.code === 1) {
+      const data = res.data
+      Object.assign(form, data)
+      
+      // 【核心逻辑】拆分 detail 为：定位地址 + 门牌号
+      const rawDetail = data.detail || ''
+      const spaceIndex = rawDetail.indexOf(' ')
+      if (spaceIndex > -1) {
+        displayAddress.value = rawDetail.substring(0, spaceIndex)
+        form.detail = rawDetail.substring(spaceIndex + 1)
+      } else {
+        displayAddress.value = data.address || '' // 兼容无空格老数据
+        form.detail = rawDetail
+      }
+      
+      searchKey.value = displayAddress.value
+      locationConfirmed.value = true
+      isDefaultBool.value = form.isDefault === 1
+    }
+  }
+})
 </script>
 
 <style scoped>
-.address-edit-page {
-    background: #f7f8fa;
-    min-height: 100vh;
-    padding-top: 10px;
-}
-.form-group {
-    margin-bottom: 12px;
-}
-.tags-row {
-    display: flex;
-    gap: 10px;
-}
-.delete-btn {
-    margin-top: 12px;
-}
-.tip-text {
-    font-size: 12px;
-    color: #999;
-    padding: 0 16px 10px;
-}
-.custom-tag-input {
-    width: 60px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 0 4px;
-    font-size: 12px;
-}
+.address-edit-page { min-height: 100vh; background: #f7f7f7; padding-bottom: 100px; }
+.mt-search-wrap { display: flex; align-items: center; background: #fff; padding: 8px 12px; position: sticky; top: 46px; z-index: 110; }
+.city-box { display: flex; align-items: center; gap: 4px; padding-right: 12px; border-right: 1px solid #eee; max-width: 80px; flex-shrink: 0; }
+.city-txt { font-size: 14px; font-weight: bold; color: #222; }
+.arrow { font-size: 8px; color: #999; }
+.search-input-box { flex: 1; }
+.custom-search { padding: 0 0 0 12px; }
+.search-overlay { position: fixed; top: 96px; left: 0; right: 0; bottom: 0; background: #fff; z-index: 120; overflow-y: auto; padding: 0 16px; }
+.tip-item { padding: 16px 0; border-bottom: 1px solid #f5f5f5; }
+.tip-main { font-size: 15px; font-weight: bold; }
+.tip-sub { font-size: 12px; color: #999; margin-top: 4px; }
+.map-preview { height: 160px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
+.form-group { margin-top: 12px; }
+.action-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px; background: #fff; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+.city-picker-layout { display: flex; flex-direction: column; height: 100vh; background: #fff; }
+.city-list-container { flex: 1; overflow-y: auto; position: relative; }
+:deep(.van-index-bar__sidebar) { right: 4px; z-index: 200; }
 </style>

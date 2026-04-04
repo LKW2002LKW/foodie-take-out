@@ -78,6 +78,7 @@ public class MessageConstant {
     public static final String ADDRESS_DELETE_SUCCESS = "地址删除成功";
     public static final String ADDRESS_NOT_FOUND = "地址不存在";
     public static final String ADDRESS_SET_DEFAULT_SUCCESS = "默认地址设置成功";
+    public static final String ADDRESS_LOCATION_REQUIRED = "请先选择地图候选地址";
     //购物车管理
     public static final String CART_ADD_SUCCESS = "加入购物车成功";
     public static final String CART_UPDATE_SUCCESS = "购物车更新成功";
