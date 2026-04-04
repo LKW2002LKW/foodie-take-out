@@ -3,6 +3,7 @@ package com.foodie.user.interceptor;
 import com.foodie.common.constant.JwtClaimsConstant;
 import com.foodie.common.enumeration.UserType;
 import com.foodie.common.properties.JwtProperties;
+
 import com.foodie.common.web.AbstractJwtTokenInterceptor;
 import com.foodie.common.web.JwtInterceptorMetadata;
 import io.jsonwebtoken.Claims;

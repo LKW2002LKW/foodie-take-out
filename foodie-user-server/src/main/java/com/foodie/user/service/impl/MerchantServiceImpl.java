@@ -42,6 +42,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> i
     public Page<MerchantVO> pageQuery(MerchantQueryDTO merchantQueryDTO) {
         log.info("查询商户列表：{}", merchantQueryDTO);
 
+        Integer sortType = merchantQueryDTO.getSortType();
+        if (sortType == null || sortType < 0 || sortType > 5) {
+            merchantQueryDTO.setSortType(0);
+        }
+
         Page<MerchantVO> page = new Page<>(
                 merchantQueryDTO.getPage(),
                 merchantQueryDTO.getPageSize()

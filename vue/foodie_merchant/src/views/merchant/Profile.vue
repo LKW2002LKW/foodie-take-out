@@ -144,6 +144,15 @@
                 resize="none"
               />
             </el-form-item>
+
+            <el-form-item label="商户分类" prop="bizCategoryId">
+              <el-select v-model="form.bizCategoryId" placeholder="请选择商户分类" style="width: 100%">
+                <el-option label="美食" :value="1" />
+                <el-option label="甜点饮品" :value="2" />
+                <el-option label="超市便利" :value="3" />
+                <el-option label="蔬菜水果" :value="4" />
+              </el-select>
+            </el-form-item>
             
             <div class="form-section-header">配送设置</div>
             
@@ -276,6 +285,7 @@ const handleUpdateInfo = async () => {
     merchantName: form.merchantName,
     contactName: form.contactName,
     address: form.address,
+    bizCategoryId: form.bizCategoryId,
     businessHours: `${startTime.value}-${endTime.value}`,
     minDeliveryAmount: form.minDeliveryAmount,
     deliveryFee: form.deliveryFee,

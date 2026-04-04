@@ -33,6 +33,11 @@
       <!-- Table -->
       <el-table :data="tableData" border v-loading="loading">
         <el-table-column prop="merchantName" label="商户名称" min-width="150" />
+        <el-table-column label="商户分类" width="120">
+          <template #default="scope">
+            {{ getCategoryName(scope.row.bizCategoryId) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="cityName" label="城市" width="100" />
         <el-table-column prop="legalPerson" label="法人" width="100" />
         <el-table-column prop="contactPhone" label="联系电话" width="120" />
@@ -98,6 +103,9 @@
     <el-dialog v-model="detailVisible" title="商户详情" width="600px">
       <el-descriptions :column="2" border v-if="currentMerchant">
         <el-descriptions-item label="商户名称">{{ currentMerchant.merchantName }}</el-descriptions-item>
+        <el-descriptions-item label="商户分类">
+          <el-tag size="small" type="info">{{ getCategoryName(currentMerchant.bizCategoryId) }}</el-tag>
+        </el-descriptions-item>
         <el-descriptions-item label="商户代码">{{ currentMerchant.merchantCode }}</el-descriptions-item>
         <el-descriptions-item label="城市">{{ currentMerchant.cityName }}</el-descriptions-item>
         <el-descriptions-item label="联系人">{{ currentMerchant.contactName }}</el-descriptions-item>
@@ -156,6 +164,17 @@ const auditForm = reactive({
   auditStatus: 1,
   auditReason: ''
 })
+
+// 分类映射函数
+const getCategoryName = (id) => {
+  const map = {
+    1: '美食',
+    2: '甜点饮品',
+    3: '超市便利',
+    4: '蔬菜水果'
+  }
+  return map[id] || '未分类'
+}
 
 const queryParams = reactive({
   page: 1,

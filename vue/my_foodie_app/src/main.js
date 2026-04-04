@@ -9,7 +9,8 @@ import {
     Tabbar, TabbarItem, List, Search, Swipe, SwipeItem, Image as VanImage, 
     Sticky, Tag, Badge, AddressList, RadioGroup, Radio, Popup, Area, Switch,
     Loading, Skeleton, Sidebar, SidebarItem, Empty, Stepper, SubmitBar, ActionSheet,
-    PullRefresh, Rate, Uploader, NoticeBar, Picker, DatePicker
+    PullRefresh, Rate, Uploader, NoticeBar, Picker, DatePicker,
+    DropdownMenu, DropdownItem
 } from 'vant'
 
 const app = createApp(App)
@@ -58,6 +59,8 @@ app.use(Uploader)
 app.use(NoticeBar)
 app.use(Picker)
 app.use(DatePicker)
+app.use(DropdownMenu)
+app.use(DropdownItem)
 
 app.use(Icon)
 app.use(NavBar)

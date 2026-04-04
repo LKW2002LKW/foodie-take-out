@@ -28,6 +28,8 @@ public class MerchantController {
 
     /**
      * 分页查询商户列表
+     * sortType：0-综合排序 1-距离优先 2-销量优先 3-评分优先 4-起送价最低 5-配送费最低
+     * 距离优先在经纬度缺失时自动降级为综合排序
      */
     @GetMapping("/page")
     @ApiOperation("分页查询商户列表")

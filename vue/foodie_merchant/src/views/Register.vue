@@ -38,7 +38,16 @@
         </el-form-item>
 
         <el-form-item label="商户描述" prop="description">
-           <el-input v-model="form.description" type="textarea" placeholder="简单介绍一下店铺..." />
+          <el-input v-model="form.description" type="textarea" placeholder="请输入商户描述" />
+        </el-form-item>
+
+        <el-form-item label="商户分类" prop="bizCategoryId">
+          <el-select v-model="form.bizCategoryId" placeholder="请选择商户分类" style="width: 100%">
+            <el-option label="美食" :value="1" />
+            <el-option label="甜点饮品" :value="2" />
+            <el-option label="超市便利" :value="3" />
+            <el-option label="蔬菜水果" :value="4" />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="营业时间" prop="businessHours">
@@ -155,16 +164,17 @@ const submitForm = async () => {
 
         const response = await axios.post('http://localhost:8082/merchant/admin/register', submitData);
         
-        if (response.data && response.status === 200) {
+        if (response.data && response.data.code === 1) {
            ElMessage.success('注册成功，请登录');
            router.push('/login');
         } else {
-           // Assume API might return error message in data
-           ElMessage.warning('注册提交完成'); // Adapt based on real backend response structure
+           // 后端业务异常提示
+           ElMessage.error(response.data?.msg || '注册失败');
         }
       } catch (error) {
         console.error(error);
-        ElMessage.error('注册失败: ' + (error.response?.data?.message || error.message));
+        const errorMsg = error.response?.data?.msg || error.response?.data?.message || error.message;
+        ElMessage.error('系统错误: ' + errorMsg);
       } finally {
         loading.value = false;
       }

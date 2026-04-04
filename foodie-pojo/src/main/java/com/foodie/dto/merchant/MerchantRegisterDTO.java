@@ -23,6 +23,7 @@ public class MerchantRegisterDTO implements Serializable {
     private BigDecimal longitude;
     private BigDecimal latitude;
     private String description;
+    private Long bizCategoryId;
     private String businessHours;
     private BigDecimal minDeliveryAmount;
     private BigDecimal deliveryFee;
