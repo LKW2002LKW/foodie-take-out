@@ -96,7 +96,7 @@ public class MerchantInfoController {
 
     @PostMapping("/upload/logo")
     @ApiOperation("上传商户Logo")
-    public Result uploadLogo(@RequestParam("file") MultipartFile file) throws IOException {
+    public Result uploadLogo(@RequestParam("file") MultipartFile file,@RequestParam Long merchantId) throws IOException {
         log.info("上传商户Logo，文件名：{}", file.getOriginalFilename());
 
         // 1️⃣ 上传图片，获取 URL
@@ -105,7 +105,6 @@ public class MerchantInfoController {
 
 
         // 2️⃣ 更新数据库
-        Long merchantId = BaseContext.getCurrentId(); // 获取当前商户ID
         merchantService.updateLogo(merchantId, logoUrl);
 
         // 3️⃣ 返回最终结果

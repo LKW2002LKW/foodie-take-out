@@ -146,9 +146,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> i
 
     @Override
     @Transactional
-    public void updateLogo( Long id,String logoUrl) {
+    public void updateLogo( Long merchantId,String logoUrl) {
 
-        Long merchantId = BaseContext.getCurrentId(); // 获取当前商户ID
+
         // 方法2：也可以用 UpdateWrapper（可选）
 
         UpdateWrapper<Merchant> wrapper = new UpdateWrapper<>();

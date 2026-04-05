@@ -21,6 +21,7 @@
 
     <van-cell-group inset class="menu-group">
       <van-cell title="我的订单" is-link to="/order/list" icon="orders-o" />
+      <van-cell title="我的评价" is-link to="/review/my" icon="chat-o" />
       <van-cell title="收货地址" is-link to="/address/list" icon="location-o" />
     </van-cell-group>
 

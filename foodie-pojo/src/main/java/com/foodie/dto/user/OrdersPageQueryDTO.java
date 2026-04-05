@@ -16,4 +16,9 @@ public class OrdersPageQueryDTO implements Serializable {
      * 订单状态（0表示全部）
      */
     private Integer status;
+
+    /**
+     * 是否仅查询待评价订单（已完成且未评价）
+     */
+    private Boolean pendingReviewOnly;
 }

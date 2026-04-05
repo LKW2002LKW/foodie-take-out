@@ -27,6 +27,7 @@
               class="avatar-uploader"
               action="http://localhost:8082/merchant/info/upload/logo"
               :show-file-list="false"
+              :data="uploadData"
               :headers="requestHeaders"
               :on-success="handleLogoSuccess"
               :before-upload="beforeLogoUpload"
@@ -232,6 +233,11 @@ const requestHeaders = computed(() => {
   return { 'Authorization': `Bearer ${token || ''}` };
 });
 
+const uploadData = computed(() => {
+  const merchantId = merchantInfo.value.merchantId || merchantInfo.value.id || localStorage.getItem('merchantId') || '';
+  return { merchantId };
+});
+
 const auditStatusText = computed(() => {
   const map = { 0: '审核中', 1: '已认证', 2: '审核未过' };
   return map[merchantInfo.value.auditStatus] || '待审核';
@@ -254,6 +260,9 @@ const fetchMerchantInfo = async () => {
       const data = response.data.data || response.data;
       
       merchantInfo.value = { ...data };
+      if (data.merchantId || data.id) {
+        localStorage.setItem('merchantId', data.merchantId || data.id);
+      }
       
       // Populate form
       form.merchantName = data.merchantName;

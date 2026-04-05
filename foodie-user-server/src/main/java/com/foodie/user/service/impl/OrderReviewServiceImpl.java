@@ -4,13 +4,8 @@ package com.foodie.user.service.impl;
 
 
 import com.foodie.common.exception.BusinessException;
-import com.foodie.common.result.Result;
-import com.foodie.dto.user.OrderReviewDTO;
 import com.foodie.dto.user.ReviewQueryDTO;
-import com.foodie.entity.Merchant;
-import com.foodie.entity.Orders;
 import com.foodie.user.mapper.OrderReviewMapper;
-import com.foodie.user.mapper.OrdersMapper;
 import com.foodie.user.service.OrderReviewService;
 import com.foodie.vo.user.OrderReviewVO;
 import com.foodie.entity.OrderReview;
@@ -18,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -33,8 +29,6 @@ import java.util.*;
 public class OrderReviewServiceImpl implements OrderReviewService {
 
     private final OrderReviewMapper orderReviewMapper;
-
-    private final OrdersMapper ordersMapper;
 
     @Override
     public Map<String, Object> getReviewPage(ReviewQueryDTO query) {
@@ -163,34 +157,71 @@ public class OrderReviewServiceImpl implements OrderReviewService {
         return vo;
     }
 
-    public void submit(OrderReviewDTO dto, Long userId)  {
-        // 1️⃣ 校验订单归属
-        Orders orders = ordersMapper.selectById(dto.getOrderId());
-        if (orders == null || !orders.getUserId().equals(userId)) {
-            throw new RuntimeException("非法操作");
+    @Override
+    public Map<String, Object> getMyReviewPage(Long userId, Integer page, Integer pageSize) {
+        if (userId == null) {
+            throw new BusinessException("用户未登录");
+        }
+        int safePage = (page == null || page < 1) ? 1 : page;
+        int safePageSize = (pageSize == null || pageSize < 1) ? 10 : pageSize;
+        int offset = (safePage - 1) * safePageSize;
+
+        List<OrderReviewVO> reviews = orderReviewMapper.selectMyReviewPage(userId, offset, safePageSize);
+        if (reviews == null) {
+            reviews = new ArrayList<>();
         }
 
-        // 2️⃣ 保存评价
-        OrderReview review = new OrderReview();
-        review.setOrderId(dto.getOrderId());
-        review.setUserId(userId);
-        review.setMerchantId(orders.getMerchantId());
-        review.setRating(dto.getRating());
-        review.setContent(dto.getContent());
-
-        // dto.getImages() 是逗号分隔的 String（前端可能传多个图片的逗号字符串），取第一个作为存库值
-        String image = null;
-        String dtoImages = dto.getImages();
-        if (StringUtils.hasText(dtoImages)) {
-            String[] parts = dtoImages.split(",");
-            if (parts.length > 0 && StringUtils.hasText(parts[0])) {
-                image = parts[0];
+        reviews.forEach(review -> {
+            if (!StringUtils.hasText(review.getImageList())) {
+                review.setImageList(null);
             }
-        }
-        review.setImages(image);
+            review.setHasReply(StringUtils.hasText(review.getMerchantReply()));
+            if (StringUtils.hasText(review.getUserNickname())) {
+                String nickname = review.getUserNickname();
+                if (nickname.length() > 2) {
+                    String masked = nickname.charAt(0) +
+                            "*".repeat(nickname.length() - 2) +
+                            nickname.charAt(nickname.length() - 1);
+                    review.setUserNickname(masked);
+                }
+            }
+        });
 
-        orderReviewMapper.insert(review);
+        Long total = orderReviewMapper.countMyReviews(userId);
+        if (total == null) {
+            total = 0L;
+        }
+        int totalPages = (int) Math.ceil((double) total / safePageSize);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", reviews);
+        result.put("total", total);
+        result.put("page", safePage);
+        result.put("pageSize", safePageSize);
+        result.put("totalPages", totalPages);
+        result.put("hasNext", safePage < totalPages);
+        return result;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMyReview(Long userId, Long reviewId) {
+        if (userId == null) {
+            throw new BusinessException("用户未登录");
+        }
+        if (reviewId == null) {
+            throw new BusinessException("评价ID不能为空");
+        }
+
+        OrderReview review = orderReviewMapper.selectById(reviewId);
+        if (review == null || !userId.equals(review.getUserId())) {
+            throw new BusinessException("评价不存在");
+        }
+
+        int affected = orderReviewMapper.deleteById(reviewId);
+        if (affected <= 0) {
+            throw new BusinessException("评价不存在");
+        }
+    }
 
 }

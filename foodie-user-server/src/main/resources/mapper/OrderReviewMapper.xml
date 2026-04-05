@@ -47,10 +47,10 @@
 
             <!-- 评分筛选 -->
             <if test="query.ratingFilter != null and query.ratingFilter == 5">
-                AND r.rating = 5
+                AND r.rating BETWEEN 4 AND 5
             </if>
             <if test="query.ratingFilter != null and query.ratingFilter == 3">
-                AND r.rating BETWEEN 3 AND 4
+                AND r.rating = 3
             </if>
             <if test="query.ratingFilter != null and query.ratingFilter == 1">
                 AND r.rating BETWEEN 1 AND 2
@@ -75,10 +75,10 @@
 
             <!-- 评分筛选 -->
             <if test="query.ratingFilter != null and query.ratingFilter == 5">
-                AND r.rating = 5
+                AND r.rating BETWEEN 4 AND 5
             </if>
             <if test="query.ratingFilter != null and query.ratingFilter == 3">
-                AND r.rating BETWEEN 3 AND 4
+                AND r.rating = 3
             </if>
             <if test="query.ratingFilter != null and query.ratingFilter == 1">
                 AND r.rating BETWEEN 1 AND 2
@@ -89,6 +89,40 @@
                 AND r.images IS NOT NULL AND r.images != ''
             </if>
         </where>
+    </select>
+
+    <!-- 查询用户自己的评价列表 -->
+    <select id="selectMyReviewPage" resultMap="ReviewVOMap">
+        SELECT
+        r.id,
+        r.order_id,
+        r.user_id,
+        u.nickname as user_nickname,
+        u.avatar as user_avatar,
+        r.merchant_id,
+        m.merchant_name,
+        r.rating,
+        r.content,
+        r.images,
+        r.merchant_reply,
+        r.reply_time,
+        r.create_time,
+        GROUP_CONCAT(CONCAT(od.name, ' x', od.number) SEPARATOR '、') as order_detail
+        FROM order_review r
+        LEFT JOIN user u ON r.user_id = u.id
+        LEFT JOIN merchant m ON r.merchant_id = m.id
+        LEFT JOIN order_detail od ON r.order_id = od.order_id
+        WHERE r.user_id = #{userId}
+        GROUP BY r.id
+        ORDER BY r.create_time DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 查询用户自己的评价总数 -->
+    <select id="countMyReviews" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM order_review
+        WHERE user_id = #{userId}
     </select>
 
 </mapper>

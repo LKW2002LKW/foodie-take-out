@@ -14,8 +14,8 @@
             <van-button round plain size="small" class="cancel-btn" @click="onCancel">取消订单</van-button>
         </div>
         <!-- 8.6 Review available for 5 -->
-        <div class="action-btn" v-if="order.status === 5 && order.canReview !== false">
-            <van-button round plain size="small" class="cancel-btn" @click="onReview">评价</van-button>
+        <div class="action-btn" v-if="order.canReview === true">
+            <van-button round plain size="small" class="cancel-btn" @click="onReview">去评价</van-button>
         </div>
         <!-- 8.4 Track info display if available -->
         <div class="track-card" v-if="trackInfo && [3,4,5].includes(order.status)" @click="showTrackPopup=true">
@@ -88,7 +88,7 @@
     </div>
 
     <!-- 支付弹窗 (模拟) -->
-    <van-action-sheet v-model:show="showPayPanel" title="确认支付">
+    <van-action-sheet :show="showPayPanel" @update:show="showPayPanel = $event" title="确认支付">
         <div class="pay-content">
             <div class="pay-amount">￥{{ order.totalAmount }}</div>
             <van-radio-group v-model="payTypeModel">
@@ -112,7 +112,7 @@
     </van-action-sheet>
 
     <!-- 评价弹窗 -->
-    <van-action-sheet v-model:show="showReviewPanel" title="评价订单">
+    <van-action-sheet :show="showReviewPanel" @update:show="showReviewPanel = $event" title="评价订单">
         <div style="padding: 16px;">
             <div style="text-align:center; margin-bottom:16px;">
                 <van-rate v-model="reviewRating" :size="25" color="#ffd21e" void-icon="star" void-color="#eee" />
@@ -296,10 +296,11 @@ const onCancel = () => {
 };
 
 const onReview = () => {
-    showReviewPanel.value = true;
-    reviewContent.value = '';
-    reviewRating.value = 5;
-    reviewFileList.value = [];
+    if (!order.value.id) {
+        showToast('订单不存在');
+        return;
+    }
+    router.push({ path: '/review/create', query: { orderId: order.value.id } });
 };
 
 const afterRead = async (file) => {

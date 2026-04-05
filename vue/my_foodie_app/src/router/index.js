@@ -1,5 +1,6 @@
 ﻿import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '../store/modules/user'
+import MyReview from '../views/MyReview.vue'
 
 const routes = [
   {
@@ -88,6 +89,18 @@ const routes = [
     name: 'CreateOrder',
     component: () => import('../views/CreateOrder.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/review/create',
+    name: 'ReviewCreate',
+    component: () => import('../views/ReviewCreate.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/review/my',
+    name: 'MyReview',
+    component: MyReview,
+    meta: { requiresAuth: true, showTabbar: false }
   },
   {
     path: '/order/list',

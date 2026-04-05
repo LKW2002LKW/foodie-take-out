@@ -1,8 +1,10 @@
 package com.foodie.vo.user;
 
 import com.foodie.entity.OrderDetail;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,6 +12,8 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderVO implements Serializable {
 
     private Long id;
@@ -37,6 +41,8 @@ public class OrderVO implements Serializable {
 
 
     private String statusText;
+
+    private Boolean canReview;
 
     private Integer orderDetailCount;
     private List<OrderDetail> orderDetails;  // 订单明细

@@ -44,7 +44,6 @@ public class MerchantAdminController {
     public Result<MerchantLoginVO> login(@RequestBody MerchantLoginDTO merchantLoginDTO) {
         log.info("商户登录：{}", merchantLoginDTO);
         MerchantLoginVO merchantLoginVO = merchantAdminService.login(merchantLoginDTO);
-        System.out.println(merchantLoginVO);
         return Result.success(merchantLoginVO);
     }
 

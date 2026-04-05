@@ -20,17 +20,16 @@
     </div>
 
     <div class="scroll-content">
-      <!-- Banner -->
-      <div class="banner-wrapper">
-        <van-swipe class="mt-banner" :autoplay="3000" indicator-color="#FFD000">
-          <van-swipe-item v-for="(img, idx) in banners" :key="idx"><van-image :src="img" fit="cover" radius="8" /></van-swipe-item>
-        </van-swipe>
-      </div>
+     
 
       <!-- Categories -->
       <div class="mt-categories">
         <div v-for="cat in categoryIcons" :key="cat.id" class="mt-cat-item" @click="onCategoryClick(cat.id)">
-          <div class="mt-cat-icon-bg" :class="{ 'active': activeCategoryId === cat.id }"><van-icon :name="getCatIcon(cat.id)" size="32" /></div>
+          <div class="mt-cat-icon-bg" :class="{ 'active': activeCategoryId === cat.id }">
+            <svg class="mt-cat-svg" aria-hidden="true">
+              <use :xlink:href="`#${getCatIcon(cat.id)}`"></use>
+            </svg>
+          </div>
           <span class="mt-cat-text">{{ cat.name }}</span>
         </div>
       </div>
@@ -46,7 +45,7 @@
       </van-sticky>
 
       <!-- Merchant List -->
-      <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" class="mt-merchant-list" @load="onLoad">
+      <van-list :loading="loading" :finished="finished" finished-text="没有更多了" class="mt-merchant-list" @load="onLoad">
         <div v-if="loading && list.length === 0" class="mt-skeleton-list">
           <div v-for="i in 4" :key="i" class="mt-skeleton-item"><van-skeleton avatar avatar-size="88px" :row="3" /></div>
         </div>
@@ -73,7 +72,12 @@ const loading = ref(false); const finished = ref(false); const list = ref([]); c
 
 const banners = ['https://img.meituan.net/waimaipicture/82df066ed50df1101971cf5c4a783097315648.jpg', 'https://img.meituan.net/waimaipicture/066ed50df1101971cf5c4a78309731564882df.jpg']
 const categoryIcons = [{ id: 1, name: '美食' }, { id: 2, name: '甜点饮品' }, { id: 3, name: '超市便利' }, { id: 4, name: '蔬菜水果' }]
-const getCatIcon = (id) => ({ 1: 'shop-o', 2: 'cake-o', 3: 'bag-o', 4: 'flower-o' }[id])
+const getCatIcon = (id) => ({
+  1: 'icon-meishi2',
+  2: 'icon-tianpinyinpin-03',
+  3: 'icon-hongsezhutigouwuchekong',
+  4: 'icon-tiantianxianguodian_mihoutao',
+}[id])
 const sortOptions = [{ text: '综合排序', value: 0 }, { text: '距离优先', value: 1 }, { text: '销量优先', value: 2 }, { text: '评分优先', value: 3 }, { text: '起送价最低', value: 4 }, { text: '配送费最低', value: 5 }]
 
 const onRefresh = () => { page.value = 1; finished.value = false; list.value = []; onLoad() }
@@ -124,6 +128,7 @@ onMounted(async () => {
 .mt-cat-item { display: flex; flex-direction: column; align-items: center; }
 .mt-cat-icon-bg { width: 48px; height: 48px; background: #f9f9f9; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
 .mt-cat-icon-bg.active { background: #FFD100; }
+.mt-cat-svg { width: 30px; height: 30px; display: block; }
 .mt-cat-text { font-size: 12px; color: #444; margin-top: 6px; }
 .mt-filter-bar { display: flex; align-items: center; background: #fff; border-bottom: 1px solid #f2f2f2; padding-right: 16px; position: relative; z-index: 110; }
 :deep(.van-dropdown-menu__bar) { box-shadow: none; height: 44px; flex: 1; }

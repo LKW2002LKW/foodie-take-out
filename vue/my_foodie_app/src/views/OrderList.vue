@@ -2,7 +2,7 @@
   <div class="order-list-page">
     <van-nav-bar title="我的订单" left-arrow fixed placeholder @click-left="$router.back()" />
     
-    <van-tabs v-model:active="activeTab" sticky @change="onTabChange">
+    <van-tabs :active="activeTab" sticky @change="onTabChange">
       <van-tab title="全部" :name="0"></van-tab>
       <van-tab title="待付款" :name="1"></van-tab>
       <van-tab title="待接单" :name="2"></van-tab>
@@ -13,7 +13,7 @@
 
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list
-            v-model:loading="loading"
+            :loading="loading"
             :finished="finished"
             finished-text="没有更多了"
             @load="onLoad"
@@ -48,7 +48,14 @@
                         size="small" type="primary" plain round 
                         @click.stop="toPay(item)"
                     >去支付</van-button>
-                    <!-- More actions like Cancel/Review can be added here if needed in list view -->
+                    <van-button
+                        v-if="item.canReview === true"
+                        size="small"
+                        type="primary"
+                        plain
+                        round
+                        @click.stop="toReview(item)"
+                    >去评价</van-button>
                 </div>
             </div>
             <van-empty v-if="finished && list.length === 0" description="暂无订单" />
@@ -72,7 +79,8 @@ const refreshing = ref(false);
 const page = ref(1);
 const pageSize = 10;
 
-const onTabChange = () => {
+const onTabChange = (name) => {
+    activeTab.value = name;
     list.value = [];
     page.value = 1;
     finished.value = false;
@@ -129,6 +137,10 @@ const toDetail = (item) => {
 
 const toPay = (item) => {
     router.push(`/order/${item.id}`);
+};
+
+const toReview = (item) => {
+    router.push({ path: '/review/create', query: { orderId: item.id } });
 };
 
 const getStatusClass = (s) => {

@@ -8,7 +8,8 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [vue()],
     server: {
-      port: 5275,
+      host: true,
+      port: 5341,
       strictPort: true,
       proxy: {
         // 高德地图安全代理：在服务器端自动注入 Key，浏览器 Network 面板不可见
@@ -26,7 +27,7 @@ export default defineConfig(({ mode }) => {
           }
         },
         '/user': {
-          target: 'http://localhost:8083',
+          target: 'http://0.0.0.0:8083',
           changeOrigin: true
         }
       }

@@ -1,10 +1,8 @@
 package com.foodie.user.service;
 
 
-import com.foodie.dto.user.OrderReviewDTO;
 import com.foodie.dto.user.ReviewQueryDTO;
 import com.foodie.vo.user.OrderReviewVO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -28,6 +26,14 @@ public interface OrderReviewService {
      */
     OrderReviewVO getReviewById(Long reviewId);
 
+    /**
+     * 查询用户自己的评价列表
+     */
+    Map<String, Object> getMyReviewPage(Long userId, Integer page, Integer pageSize);
 
+    /**
+     * 删除用户自己的评价
+     */
+    void deleteMyReview(Long userId, Long reviewId);
 
 }

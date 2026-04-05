@@ -9,6 +9,8 @@ window._AMapSecurityConfig = {
 import App from './App.vue'
 import router from './router'
 import 'vant/lib/index.css'
+import './assets/inconfont/iconfont.js'
+import './assets/inconfont/iconfont.css'
 import './style.css'
 import { 
     Button, Form, Field, CellGroup, Tab, Tabs, Icon, NavBar, Divider, Cell, 

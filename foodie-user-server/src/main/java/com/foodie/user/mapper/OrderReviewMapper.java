@@ -40,4 +40,16 @@ public interface OrderReviewMapper extends BaseMapper<OrderReview> {
             "SUM(CASE WHEN images IS NOT NULL AND images != '' THEN 1 ELSE 0 END) as hasImageCount " +
             "FROM order_review WHERE merchant_id = #{merchantId}")
     Map<String, Object> selectReviewStats(@Param("merchantId") Long merchantId);
+
+    /**
+     * 查询用户自己的评价列表
+     */
+    List<OrderReviewVO> selectMyReviewPage(@Param("userId") Long userId,
+                                           @Param("offset") Integer offset,
+                                           @Param("pageSize") Integer pageSize);
+
+    /**
+     * 查询用户自己的评价总数
+     */
+    Long countMyReviews(@Param("userId") Long userId);
 }

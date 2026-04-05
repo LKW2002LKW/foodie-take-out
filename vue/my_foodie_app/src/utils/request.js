@@ -4,7 +4,7 @@ import { showFailToast } from 'vant'
 import router from '../router'
 
 const service = axios.create({
-  baseURL: 'http://localhost:8083', // Removed for Proxy
+  //baseURL: 'http://0.0.0.0:8083', // Removed for Proxy
   //baseURL: '', // Use relative path to trigger Vite proxy
   timeout: 5000
 })

@@ -4,6 +4,7 @@ import request from '../utils/request'
  * 提交订单
  * @param {Object} data 
  * @param {number} data.addressBookId - 地址ID
+ * @param {number|string} data.merchantId - 商户ID
  * @param {number} data.payMethod - 支付方式 1微信 2支付宝
  * @param {string} [data.remark] - 备注
  * @param {number} [data.packAmount] - 打包费

@@ -113,6 +113,10 @@ const submitting = ref(false);
 
 const packAmount = ref(0); // 暂定打包费0，如果有逻辑需后端确认或每个菜品累加
 
+const resolvedMerchantId = computed(() => {
+    return route.query.merchantId || cartStore.list[0]?.merchantId || merchantInfo.value.merchantId || merchantInfo.value.id || '';
+});
+
 // 计算逻辑
 const estimatedTotal = computed(() => {
     // 商品总价
@@ -144,7 +148,7 @@ const initData = async () => {
     }
 
     // 2. 获取商户信息 (校验单一商户在 Store 中已处理，这里取第一个)
-    const mid = cartStore.list[0].merchantId;
+    const mid = resolvedMerchantId.value;
     if (mid) {
         const mRes = await getMerchantDetail(mid);
         if (mRes.code === 1) {
@@ -177,7 +181,7 @@ const onSubmit = async () => {
         showToast('请选择收货地址');
         return;
     }
-    if (!merchantInfo.value.id) {
+    if (!resolvedMerchantId.value) {
         showToast('商户信息加载中...');
         return;
     }
@@ -197,7 +201,7 @@ const onSubmit = async () => {
 
     try {
         const orderData = {
-            merchantId: merchantInfo.value.id,
+            merchantId: resolvedMerchantId.value,
             addressBookId: address.value.id,
             payMethod: payMethod.value,
             remark: remark.value,
