@@ -1,8 +1,8 @@
 <template>
-  <div class="notice-list-page">
+    <div class="notice-list-page mobile-page">
     <van-nav-bar title="消息通知" left-arrow fixed placeholder @click-left="onClickLeft" />
     
-    <van-tabs v-model:active="activeTab" sticky @change="onTabChange" color="#FF9800" title-active-color="#FF9800">
+    <van-tabs :active="activeTab" @update:active="activeTab = $event" sticky @change="onTabChange" color="#FF9800" title-active-color="#FF9800">
       <van-tab title="全部" :name="0"></van-tab>
       <van-tab title="系统公告" :name="1"></van-tab>
       <van-tab title="活动公告" :name="2"></van-tab>
@@ -10,7 +10,8 @@
 
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <van-list
-        v-model:loading="loading"
+        :loading="loading"
+        @update:loading="loading = $event"
         :finished="finished"
         finished-text="没有更多了"
         @load="onLoad"
@@ -167,30 +168,30 @@ const toDetail = (id) => {
 }
 .notice-item {
     background: #fff;
-    margin: 12px 12px 0;
-    padding: 16px;
-    border-radius: 8px;
+    margin: 1.2rem 1.2rem 0;
+    padding: 1.6rem;
+    border-radius: 0.8rem;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,0.02);
 }
 .notice-item:last-child {
-    margin-bottom: 12px;
+    margin-bottom: calc(1.2rem + env(safe-area-inset-bottom));
 }
 .notice-header {
-    margin-bottom: 8px;
+    margin-bottom: 0.8rem;
 }
 .notice-title-row {
     display: flex;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 0.4rem;
 }
 .notice-tag {
-    margin-right: 8px;
+    margin-right: 0.8rem;
     flex-shrink: 0;
 }
 .notice-title {
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #333;
     overflow: hidden;
@@ -199,16 +200,16 @@ const toDetail = (id) => {
     flex: 1;
 }
 .notice-time {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #999;
-    margin-top: 4px;
+    margin-top: 0.4rem;
 }
 
 .notice-brief {
-    font-size: 13px;
+    font-size: 1.3rem;
     color: #666;
     line-height: 1.5;
-    margin-top: 4px;
+    margin-top: 0.4rem;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;

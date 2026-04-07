@@ -1,5 +1,5 @@
 <template>
-  <div class="notice-detail-page">
+    <div class="notice-detail-page mobile-page">
     <van-nav-bar title="公告详情" left-arrow fixed placeholder @click-left="onClickLeft" />
 
     <div v-if="loading" class="loading-box">
@@ -92,31 +92,31 @@ onMounted(() => {
     background: #fff;
 }
 .loading-box {
-    padding-top: 100px;
+    padding-top: 10rem;
     text-align: center;
 }
 .detail-container {
-    padding: 20px;
+    padding: 2rem;
 }
 .n-title {
-    font-size: 20px;
+    font-size: 2rem;
     font-weight: bold;
     color: #333;
     line-height: 1.4;
-    margin-bottom: 12px;
+    margin-bottom: 1.2rem;
 }
 .n-meta {
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 1.6rem;
     color: #999;
-    font-size: 12px;
+    font-size: 1.2rem;
 }
 .n-tag {
-    margin-right: 10px;
+    margin-right: 1rem;
 }
 .n-content {
-    font-size: 15px;
+    font-size: 1.5rem;
     color: #444;
     line-height: 1.8;
     text-align: justify;

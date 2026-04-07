@@ -1,5 +1,5 @@
 <template>
-  <div class="merchant-detail">
+  <div class="merchant-detail mobile-page">
     <van-nav-bar left-arrow title="店铺详情" fixed placeholder @click-left="$router.back()" />
     <merchant-header :merchant-info="merchantInfo" />
 
@@ -371,7 +371,7 @@ onMounted(() => {
 
 <style scoped>
 .merchant-detail {
-  padding-bottom: 50px;
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -400,7 +400,7 @@ onMounted(() => {
 }
 
 .review-tab {
-  padding: 12px;
+  padding: 1.2rem;
   background: #f8fafc;
   min-height: 100%;
 }
@@ -408,57 +408,57 @@ onMounted(() => {
 .review-stats-card,
 .review-filter-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.6rem 1.4rem rgba(15, 23, 42, 0.05);
 }
 
 .review-section-title {
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 8px;
+  margin-bottom: 0.8rem;
 }
 
 .review-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .stat-item {
-  padding: 8px 10px;
+  padding: 0.8rem 1rem;
   border-radius: 999px;
   background: #f2f3f5;
   border: none;
 }
 
 .stat-value {
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #111827;
 }
 
 .stat-label {
-  margin-top: 2px;
-  font-size: 11px;
+  margin-top: 0.2rem;
+  font-size: 1.2rem;
   color: #4b5563;
 }
 
 .review-filter-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .filter-pill {
-  height: 30px;
-  padding: 0 14px;
+  min-height: 4.4rem;
+  padding: 0 1.4rem;
   border-radius: 999px;
   background: #f2f3f5;
   color: #111827;
-  font-size: 13px;
+  font-size: 1.3rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -476,40 +476,41 @@ onMounted(() => {
 .review-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.2rem;
 }
 
 .cart-popup {
-  padding-bottom: 20px;
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom));
 }
 
 .cart-header {
   display: flex;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 1.2rem 1.6rem;
   background: #fcfcfc;
   border-bottom: 1px solid #eee;
   align-items: center;
 }
 
 .cart-title {
-  font-size: 16px;
+  font-size: 1.6rem;
   font-weight: bold;
 }
 
 .cart-clear {
   color: #666;
-  font-size: 12px;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.4rem;
+  min-height: 4.4rem;
 }
 
 .cart-item-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 1.6rem;
   border-bottom: 1px solid #f9f9f9;
 }
 
@@ -518,17 +519,17 @@ onMounted(() => {
 }
 
 .ci-name {
-  font-size: 15px;
+  font-size: 1.5rem;
   font-weight: 500;
 }
 
 .ci-spec {
-  font-size: 11px;
+  font-size: 1.2rem;
   color: #999;
 }
 
 .ci-price {
-  width: 70px;
+  width: 7rem;
   text-align: right;
   color: #fb4e44;
   font-weight: 800;
@@ -537,19 +538,19 @@ onMounted(() => {
 .ci-control {
   display: flex;
   align-items: center;
-  margin-left: 16px;
+  margin-left: 1.6rem;
 }
 
 .ci-control .num {
-  margin: 0 10px;
-  min-width: 16px;
+  margin: 0 1rem;
+  min-width: 1.6rem;
   text-align: center;
 }
 
 .btn-sub,
 .btn-add {
-  width: 22px;
-  height: 22px;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 50%;
   display: flex;
   align-items: center;

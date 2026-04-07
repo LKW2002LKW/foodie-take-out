@@ -1,9 +1,9 @@
 <template>
-  <div class="address-selector-page" :class="{ 'is-managing': isEditMode }">
+  <div class="address-selector-page mobile-page" :class="{ 'is-managing': isEditMode }">
     <!-- 1. 顶部复合搜索头 -->
     <div class="sticky-top">
       <div class="nav-bar">
-        <van-icon name="arrow-left" size="20" color="#333" @click="onBack" />
+        <van-icon name="arrow-left" size="2rem" color="#333" @click="onBack" />
         <div class="city-entry" @click="showCityPicker = true">
           <span class="curr-city van-ellipsis">{{ locationStore.city }}</span>
           <van-icon name="arrow-down" class="arrow" />
@@ -31,7 +31,7 @@
         <div class="row-title">{{ locationStore.isManual ? '当前选择城市' : '当前定位' }}</div>
         <div class="loc-card" @click="useCurrentLoc">
           <div class="loc-info">
-            <van-icon :name="locationStore.isManual ? 'map-marked' : 'location'" color="#FFD100" size="20" />
+            <van-icon :name="locationStore.isManual ? 'map-marked' : 'location'" color="#FFD100" size="2rem" />
             <transition name="fade-slide">
               <span :key="locationStore.address" class="loc-name van-ellipsis">{{ locationStore.address }}</span>
             </transition>
@@ -61,7 +61,7 @@
             </div>
             <div class="card-content">
               <div class="card-main"><span class="card-addr van-ellipsis">{{ addr.address }}</span></div>
-              <div class="card-sub">{{ addr.consignee }} {{ addr.phone }}<van-tag v-if="addr.isDefault" color="#FFF9E6" text-color="#FFD100" style="margin-left: 8px">默认</van-tag></div>
+              <div class="card-sub">{{ addr.consignee }} {{ addr.phone }}<van-tag v-if="addr.isDefault" color="#FFF9E6" text-color="#FFD100" class="default-tag">默认</van-tag></div>
             </div>
             <van-icon v-if="!isEditMode" name="edit" class="edit-btn" @click.stop="onEdit(addr)" />
           </div>
@@ -75,7 +75,7 @@
       <div class="select-all" @click="toggleSelectAll"><div class="mt-checkbox" :class="{ 'checked': isAllSelected }"><van-icon name="success" class="check-icon" /></div><span>全选</span></div>
       <van-button round class="batch-del-btn" :disabled="selectedCount === 0" @click="onBatchDelete">删除({{ selectedCount }})</van-button>
     </div>
-    <van-popup v-model:show="showCityPicker" position="right" style="width: 100%; height: 100%">
+    <van-popup :show="showCityPicker" @update:show="showCityPicker = $event" position="right" style="width: 100%; height: 100%">
       <div class="city-picker-layout">
         <van-nav-bar title="选择收货城市" left-arrow @click-left="showCityPicker = false" />
         <div class="city-scroll-box">
@@ -180,45 +180,46 @@ onMounted(() => { loadAddresses(); initSmartLocation() })
 </script>
 
 <style scoped>
-.address-selector-page { min-height: 100vh; background: #f7f7f7; position: relative; padding-bottom: 60px; }
-.address-selector-page.is-managing { padding-bottom: 80px; }
-.sticky-top { position: sticky; top: 0; z-index: 100; background: #fff; padding: 8px 12px; border-bottom: 1px solid #f5f5f5; }
-.nav-bar { display: flex; align-items: center; gap: 8px; }
-.city-entry { display: flex; align-items: center; gap: 2px; padding: 0 8px; border-right: 1px solid #eee; max-width: 85px; flex-shrink: 0; cursor: pointer; }
-.curr-city { font-size: 14px; font-weight: bold; color: #333; }
-.arrow { font-size: 8px; color: #999; }
+.address-selector-page { min-height: 100vh; background: #f7f7f7; position: relative; padding-bottom: 6rem; }
+.address-selector-page.is-managing { padding-bottom: 8rem; }
+.sticky-top { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.8rem 1.2rem; border-bottom: 1px solid #f5f5f5; }
+.nav-bar { display: flex; align-items: center; gap: 0.8rem; }
+.city-entry { display: flex; align-items: center; gap: 0.2rem; padding: 0 0.8rem; border-right: 1px solid #eee; max-width: 8.5rem; flex-shrink: 0; cursor: pointer; min-height: 4.4rem; }
+.curr-city { font-size: 1.4rem; font-weight: bold; color: #333; }
+.arrow { font-size: 0.8rem; color: #999; }
 .search-box { flex: 1; }
-:deep(.van-search__content) { background: #f2f2f2; height: 32px; }
-.search-tips-overlay { position: absolute; top: 54px; left: 0; right: 0; bottom: 0; background: #fff; z-index: 120; overflow-y: auto; padding: 0 16px; }
-.suggestion-item { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid #f5f5f5; }
-.item-icon { font-size: 18px; color: #999; }
+:deep(.van-search__content) { background: #f2f2f2; min-height: 4.4rem; }
+.search-tips-overlay { position: absolute; top: 5.4rem; left: 0; right: 0; bottom: 0; background: #fff; z-index: 120; overflow-y: auto; padding: 0 1.6rem; }
+.suggestion-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.6rem 0; border-bottom: 1px solid #f5f5f5; }
+.item-icon { font-size: 1.8rem; color: #999; }
 .item-info { flex: 1; overflow: hidden; }
-.item-name { font-size: 15px; font-weight: bold; color: #333; }
-.item-addr { font-size: 12px; color: #999; margin-top: 4px; }
-.scroll-container { padding-top: 10px; min-height: calc(100vh - 54px); }
-.row-title { font-size: 12px; color: #999; padding: 10px 16px; }
-.loc-card { display: flex; justify-content: space-between; align-items: center; background: #fff; margin: 0 16px 16px; padding: 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-.loc-name { font-size: 14px; font-weight: 800; flex: 1; color: #333; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 8px; }
-.relocate-btn { display: flex; align-items: center; gap: 4px; color: #FFD100; font-size: 12px; font-weight: bold; }
-.address-list-wrap { padding: 0 16px 20px; }
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 10px 0; }
-.mini-actions { display: flex; gap: 8px; }
-:deep(.van-button--mini) { height: 22px; padding: 0 10px; border-color: #eee; color: #666; font-size: 11px; }
-.card-item { display: flex; align-items: center; background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-.card-item.selectable { padding-left: 8px; }
-.checkbox-box { padding-right: 12px; }
+.item-name { font-size: 1.5rem; font-weight: bold; color: #333; }
+.item-addr { font-size: 1.2rem; color: #999; margin-top: 0.4rem; }
+.scroll-container { padding-top: 1rem; min-height: calc(100vh - 5.4rem); }
+.row-title { font-size: 1.2rem; color: #999; padding: 1rem 1.6rem; }
+.loc-card { display: flex; justify-content: space-between; align-items: center; background: #fff; margin: 0 1.6rem 1.6rem; padding: 1.4rem; border-radius: 1.2rem; box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.02); min-height: 4.4rem; }
+.loc-name { font-size: 1.4rem; font-weight: 700; flex: 1; color: #333; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 0.8rem; }
+.relocate-btn { display: flex; align-items: center; gap: 0.4rem; color: #FFD100; font-size: 1.2rem; font-weight: bold; min-height: 4.4rem; }
+.address-list-wrap { padding: 0 1.6rem 2rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding: 1rem 0; }
+.mini-actions { display: flex; gap: 0.8rem; }
+:deep(.van-button--mini) { min-height: 2.8rem; padding: 0 1rem; border-color: #eee; color: #666; font-size: 1.1rem; }
+.card-item { display: flex; align-items: center; background: #fff; border-radius: 1.2rem; padding: 1.6rem; margin-bottom: 1.2rem; box-shadow: 0 0.4rem 1.2rem rgba(0,0,0,0.03); min-height: 4.4rem; }
+.card-item.selectable { padding-left: 0.8rem; }
+.checkbox-box { padding-right: 1.2rem; }
 .card-content { flex: 1; overflow: hidden; }
-.card-main { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.card-addr { font-size: 15px; font-weight: 800; color: #222; }
-.card-sub { font-size: 12px; color: #666; }
-.edit-btn { font-size: 18px; color: #ccc; padding-left: 10px; }
-.mt-checkbox { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
+.card-main { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
+.card-addr { font-size: 1.5rem; font-weight: 700; color: #222; }
+.card-sub { font-size: 1.2rem; color: #666; }
+.default-tag { margin-left: 0.8rem; }
+.edit-btn { font-size: 1.8rem; color: #ccc; padding-left: 1rem; }
+.mt-checkbox { width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
 .mt-checkbox.checked { background: #FFD100; border-color: #FFD100; }
-.check-icon { font-size: 14px; color: #222; opacity: 0; }
+.check-icon { font-size: 1.4rem; color: #222; opacity: 0; }
 .mt-checkbox.checked .check-icon { opacity: 1; }
-.batch-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 200; }
-.select-all { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #333; }
-.batch-del-btn { background: #ff3f3f; color: #fff; width: 120px; height: 40px; font-weight: 800; border: none; }
+.batch-footer { position: fixed; bottom: 0; left: 0; right: 0; min-height: 6.4rem; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 1.6rem; box-shadow: 0 -0.2rem 1rem rgba(0,0,0,0.05); z-index: 200; }
+.select-all { display: flex; align-items: center; gap: 0.8rem; font-size: 1.4rem; color: #333; min-height: 4.4rem; }
+.batch-del-btn { background: #ff3f3f; color: #fff; width: 12rem; min-height: 4.4rem; font-weight: 800; border: none; }
 .batch-del-btn:disabled { background: #ff9999; }
 .city-picker-layout { display: flex; flex-direction: column; height: 100vh; background: #fff; }
 .city-scroll-box { flex: 1; overflow-y: auto; }

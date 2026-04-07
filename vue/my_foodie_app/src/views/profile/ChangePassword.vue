@@ -1,5 +1,5 @@
 <template>
-  <div class="change-password">
+  <div class="change-password mobile-page">
     <van-nav-bar
       title="修改密码"
       left-text="返回"
@@ -8,7 +8,7 @@
     />
 
     <van-form @submit="onSubmit">
-      <van-cell-group inset style="margin-top: 10px;">
+      <van-cell-group inset class="form-group">
         <van-field
           v-model="form.oldPassword"
           type="password"
@@ -35,8 +35,8 @@
         />
       </van-cell-group>
 
-      <div style="margin: 16px;">
-        <van-button round block type="primary" native-type="submit">
+      <div class="submit-wrap">
+        <van-button round block type="primary" native-type="submit" class="submit-btn">
           修改密码
         </van-button>
       </div>
@@ -87,5 +87,29 @@ const onSubmit = async () => {
 .change-password {
   background-color: #f7f8fa;
   min-height: 100vh;
+}
+
+.form-group {
+  margin-top: 1rem;
+}
+
+.submit-wrap {
+  margin: 1.6rem;
+}
+
+.submit-btn {
+  min-height: 4.4rem;
+  font-size: 1.4rem;
+}
+
+:deep(.van-cell),
+:deep(.van-field) {
+  min-height: 4.4rem;
+}
+
+:deep(.van-cell__title),
+:deep(.van-field__label),
+:deep(.van-field__control) {
+  font-size: 1.4rem;
 }
 </style>

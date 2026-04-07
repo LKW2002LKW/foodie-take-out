@@ -1,11 +1,11 @@
 ﻿<template>
-  <div class="profile-page">
+  <div class="profile-page mobile-page">
     <div class="user-header" @click="router.push('/profile/info')">
       <div class="user-info">
         <van-image
           round
-          width="64px"
-          height="64px"
+          width="6.4rem"
+          height="6.4rem"
           :src="userInfo.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'"
           fit="cover"
         />
@@ -15,7 +15,7 @@
           </h3>
           <p class="phone">{{ userInfo.phone || '点击编辑资料' }}</p>
         </div>
-        <van-icon name="arrow" style="margin-left: auto; color: white;" />
+        <van-icon name="arrow" style="margin-left: auto; color: white; font-size: 1.6rem;" />
       </div>
     </div>
 
@@ -154,34 +154,46 @@ const handleLogout = () => {
 }
 .user-header {
   background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-  padding: 40px 20px 60px;
+  padding: 4rem 2rem 6rem;
   color: white;
 }
 .user-info {
   display: flex;
   align-items: center;
+  min-height: 6.4rem;
 }
 .info {
-  margin-left: 15px;
+  margin-left: 1.5rem;
 }
 .nickname {
   margin: 0;
-  font-size: 20px;
+  font-size: 2rem;
   font-weight: 500;
 }
 .phone {
-  margin: 5px 0 0;
+  margin: 0.5rem 0 0;
   opacity: 0.8;
-  font-size: 14px;
+  font-size: 1.4rem;
 }
 .menu-group {
-  margin-top: 12px;
-  transform: translateY(-20px);
+  margin-top: 1.2rem;
+  transform: translateY(-2rem);
 }
 .logout-btn {
-  margin: 30px 16px;
+  margin: 3rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom));
 }
 .logout {
   color: #ee0a24;
+  min-height: 4.4rem;
+  font-size: 1.4rem;
+}
+
+:deep(.van-cell) {
+  min-height: 4.4rem;
+}
+
+:deep(.van-cell__title),
+:deep(.van-cell__value) {
+  font-size: 1.4rem;
 }
 </style>

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 数据统计控制器
  */
 @RestController
-@RequestMapping("/platform/dashboard")
+@RequestMapping("/platform/admin/dashboard")
 @Api(tags = "平台端-数据统计接口")
 @Slf4j
 @RequiredArgsConstructor

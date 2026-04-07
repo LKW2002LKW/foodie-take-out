@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-edit">
+  <div class="profile-edit mobile-page">
     <van-nav-bar
       title="个人资料"
       left-text="返回"
@@ -8,14 +8,14 @@
     />
 
     <van-form @submit="onSubmit">
-      <van-cell-group inset style="margin-top: 10px;">
+      <van-cell-group inset class="form-group">
         <van-cell title="头像" center>
           <template #right-icon>
             <van-uploader :after-read="afterRead" :max-count="1">
                 <van-image
                     round
-                    width="50px"
-                    height="50px"
+                    width="5rem"
+                    height="5rem"
                     :src="userInfo.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'"
                     fit="cover"
                 />
@@ -55,15 +55,15 @@
 
       </van-cell-group>
 
-      <div style="margin: 16px;">
-        <van-button round block type="primary" native-type="submit">
+      <div class="submit-wrap">
+        <van-button round block type="primary" native-type="submit" class="submit-btn">
           保存
         </van-button>
       </div>
     </van-form>
 
     <!-- Popups moved outside form -->
-    <van-popup v-model:show="showSexPicker" position="bottom">
+    <van-popup :show="showSexPicker" @update:show="showSexPicker = $event" position="bottom">
         <van-picker
         :columns="sexColumns"
         @confirm="onConfirmSex"
@@ -71,7 +71,7 @@
         />
     </van-popup>
 
-    <van-popup v-model:show="showBirthdayPicker" position="bottom">
+    <van-popup :show="showBirthdayPicker" @update:show="showBirthdayPicker = $event" position="bottom">
         <van-date-picker
         v-model="currentDate"
         title="选择日期"
@@ -201,5 +201,29 @@ const onSubmit = async () => {
 .profile-edit {
   background-color: #f7f8fa;
   min-height: 100vh;
+}
+
+.form-group {
+  margin-top: 1rem;
+}
+
+.submit-wrap {
+  margin: 1.6rem;
+}
+
+.submit-btn {
+  min-height: 4.4rem;
+  font-size: 1.4rem;
+}
+
+:deep(.van-cell),
+:deep(.van-field) {
+  min-height: 4.4rem;
+}
+
+:deep(.van-cell__title),
+:deep(.van-field__label),
+:deep(.van-field__control) {
+  font-size: 1.4rem;
 }
 </style>

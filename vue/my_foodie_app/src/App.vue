@@ -47,12 +47,40 @@ const route = useRoute()
   </div>
 </template>
 
-<style>
-.app-container { min-height: 100vh; display: flex; flex-direction: column; }
-.has-tabbar { padding-bottom: 50px; }
-.mt-tabbar { box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-:deep(.van-tabbar-item--active) { font-weight: 800; }
+<style scoped>
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
 
-.mt-fade-enter-active, .mt-fade-leave-active { transition: opacity 0.2s ease; }
-.mt-fade-enter-from, .mt-fade-leave-to { opacity: 0; }
+.has-tabbar {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+.mt-tabbar {
+  box-shadow: 0 -0.2rem 1rem rgba(0, 0, 0, 0.05);
+}
+
+:deep(.van-tabbar-item) {
+  min-height: 4.4rem;
+  font-size: 1.2rem;
+}
+
+:deep(.van-tabbar-item--active) {
+  font-weight: 700;
+}
+
+.mt-fade-enter-active,
+.mt-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.mt-fade-enter-from,
+.mt-fade-leave-to {
+  opacity: 0;
+}
 </style>

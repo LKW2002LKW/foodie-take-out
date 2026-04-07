@@ -1,5 +1,5 @@
 <template>
-  <div class="create-order">
+    <div class="create-order mobile-page">
     <van-nav-bar title="确认订单" left-arrow fixed placeholder @click-left="$router.back()" />
 
     <!-- 地址栏 -->
@@ -26,7 +26,7 @@
             <div class="m-header">{{ merchantInfo.name || '商家' }}</div>
             <div class="order-items">
                 <div v-for="item in cartStore.list" :key="item.id" class="o-item">
-                    <van-image :src="item.image" width="50" height="50" radius="4" />
+                    <van-image :src="item.image" width="5rem" height="5rem" radius="0.4rem" />
                     <div class="o-info">
                         <div class="o-name">{{ item.name }}</div>
                         <div class="o-spec" v-if="item.dishFlavor">{{ getFlavorText(item.dishFlavor) }}</div>
@@ -248,16 +248,17 @@ onMounted(() => {
 .create-order {
     background: #f3f3f3;
     min-height: 100vh;
-    padding-bottom: 60px;
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
 }
 .address-card {
     background: #fff;
-    margin: 12px;
-    padding: 16px;
-    border-radius: 8px;
+    margin: 1.2rem;
+    padding: 1.6rem;
+    border-radius: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 4.4rem;
 }
 .addr-content {
     flex: 1;
@@ -265,8 +266,8 @@ onMounted(() => {
 .addr-info {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
-    font-size: 16px;
+    margin-bottom: 0.8rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #333;
 }
@@ -274,102 +275,102 @@ onMounted(() => {
     line-height: 1.4;
 }
 .addr-user {
-    font-size: 14px;
+    font-size: 1.4rem;
     color: #666;
 }
 .phone {
-    margin-left: 10px;
+    margin-left: 1rem;
 }
 .addr-tag {
     background: #FF9800;
     color: #fff;
-    font-size: 10px;
-    padding: 1px 4px;
-    border-radius: 2px;
-    margin-right: 6px;
+    font-size: 1rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.2rem;
+    margin-right: 0.6rem;
     font-weight: normal;
 }
 .addr-empty {
     color: #FF9800;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 1.6rem;
 }
 
 .order-content {
-    margin: 12px;
+    margin: 1.2rem;
 }
 .merchant-card {
     background: #fff;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
+    border-radius: 0.8rem;
+    padding: 1.6rem;
+    margin-bottom: 1.2rem;
 }
 .m-header {
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: bold;
     border-bottom: 1px solid #f9f9f9;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 .o-item {
     display: flex;
-    margin-bottom: 16px;
+    margin-bottom: 1.6rem;
 }
 .o-info {
     flex: 1;
-    margin-left: 10px;
+    margin-left: 1rem;
 }
 .o-name {
-    font-size: 14px;
+    font-size: 1.4rem;
     font-weight: bold;
     color: #333;
 }
 .o-spec {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #999;
-    margin-top: 4px;
+    margin-top: 0.4rem;
 }
 .o-price-row {
     text-align: right;
 }
 .o-price {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 1.4rem;
 }
 .o-num {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #999;
-    margin-top: 4px;
+    margin-top: 0.4rem;
 }
 .fee-row {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 1.4rem;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
 }
 .total-row {
     display: flex;
     justify-content: flex-end;
     align-items: baseline;
     border-top: 1px solid #f5f5f5;
-    padding-top: 12px;
-    margin-top: 10px;
+    padding-top: 1.2rem;
+    margin-top: 1rem;
 }
 .total-label {
-    font-size: 14px;
-    margin-right: 10px;
+    font-size: 1.4rem;
+    margin-right: 1rem;
 }
 .total-val {
     color: #333;
     font-weight: bold;
 }
 .total-val .big {
-    font-size: 20px;
+    font-size: 2rem;
 }
 
 .meta-card {
-    border-radius: 8px;
+    border-radius: 0.8rem;
     overflow: hidden;
 }
 </style>

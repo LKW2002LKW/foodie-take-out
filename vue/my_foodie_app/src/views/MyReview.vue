@@ -1,5 +1,5 @@
 <template>
-  <div class="my-review-page">
+  <div class="my-review-page mobile-page">
     <van-nav-bar title="我的评价" left-arrow fixed placeholder @click-left="goBack" />
 
     <van-tabs :active="activeTab" @change="onTabChange" class="review-tabs">
@@ -312,13 +312,13 @@ onActivated(() => {
 }
 
 .list-wrap {
-  padding: 12px;
+  padding: 1.2rem;
 }
 
 .review-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.2rem;
 }
 
 .review-item-wrap {
@@ -329,55 +329,60 @@ onActivated(() => {
 .pending-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.2rem;
 }
 
 .pending-card {
   background: #fff;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  border-radius: 1.4rem;
+  padding: 1.4rem;
+  box-shadow: 0 0.6rem 1.8rem rgba(15, 23, 42, 0.06);
 }
 
 .pending-header {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 1rem;
   align-items: center;
 }
 
 .merchant-name {
-  font-size: 15px;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #111827;
 }
 
 .order-time {
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #6b7280;
 }
 
 .pending-body {
-  margin-top: 10px;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.6rem;
 }
 
 .order-summary {
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #374151;
 }
 
 .order-amount {
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #111827;
   font-weight: 700;
 }
 
 .pending-actions {
-  margin-top: 12px;
+  margin-top: 1.2rem;
   display: flex;
   justify-content: flex-end;
+}
+
+:deep(.van-button--small) {
+  min-height: 4.4rem;
+  font-size: 1.2rem;
 }
 </style>

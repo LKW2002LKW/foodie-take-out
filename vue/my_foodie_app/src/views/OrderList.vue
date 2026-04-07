@@ -1,5 +1,5 @@
 <template>
-  <div class="order-list-page">
+    <div class="order-list-page mobile-page">
     <van-nav-bar title="我的订单" left-arrow fixed placeholder @click-left="$router.back()" />
     
     <van-tabs :active="activeTab" sticky @change="onTabChange">
@@ -27,7 +27,7 @@
                 <!-- Dish Preview (Show first 2 items) -->
                 <div class="card-body">
                     <div class="dish-row" v-for="dish in (item.orderDetailList || []).slice(0, 2)" :key="dish.id">
-                         <van-image :src="dish.image" width="40" height="40" radius="4" fit="cover" />
+                         <van-image :src="dish.image" width="4rem" height="4rem" radius="0.4rem" fit="cover" />
                          <div class="dish-name">{{ dish.name }}</div>
                          <div class="dish-count">x{{ dish.number }}</div>
                     </div>
@@ -156,28 +156,28 @@ const getStatusClass = (s) => {
     min-height: 100vh;
 }
 .list-content {
-    padding: 12px;
+    padding: 1.2rem;
 }
 .order-card {
     background: #fff;
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 12px;
+    border-radius: 0.8rem;
+    padding: 1.2rem 1.6rem;
+    margin-bottom: 1.2rem;
 }
 .card-header {
     display: flex;
     justify-content: space-between;
-    padding-bottom: 12px;
+    padding-bottom: 1.2rem;
     border-bottom: 1px solid #f9f9f9;
-    margin-bottom: 12px;
-    font-size: 14px;
+    margin-bottom: 1.2rem;
+    font-size: 1.4rem;
 }
 .m-name {
     font-weight: bold;
     color: #333;
 }
 .status-tag {
-    font-size: 13px;
+    font-size: 1.3rem;
 }
 .s-orange { color: #FF9800; }
 .s-gray { color: #999; }
@@ -186,44 +186,50 @@ const getStatusClass = (s) => {
 .dish-row {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 0.8rem;
 }
 .dish-name {
     flex: 1;
-    margin-left: 8px;
-    font-size: 14px;
+    margin-left: 0.8rem;
+    font-size: 1.4rem;
     color: #333;
 }
 .dish-count {
     color: #999;
+    font-size: 1.2rem;
 }
 .more-tip {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #999;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin-top: 0.4rem;
+    margin-bottom: 0.8rem;
 }
 
 .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 8px;
-    font-size: 12px;
+    margin-top: 0.8rem;
+    font-size: 1.2rem;
     color: #999;
 }
 .total {
     color: #333;
 }
 .price {
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #333;
 }
 .card-actions {
-    margin-top: 12px;
+    margin-top: 1.2rem;
     border-top: 1px solid #f9f9f9;
-    padding-top: 12px;
+    padding-top: 1.2rem;
     text-align: right;
+}
+
+:deep(.van-button--small) {
+    min-height: 4.4rem;
+    font-size: 1.2rem;
 }
 </style>

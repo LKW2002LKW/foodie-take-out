@@ -51,7 +51,7 @@ defineEmits(['toggle-collapse']);
 
 const handleCommand = (command) => {
   if (command === 'logout') {
-    merchantStore.logout();
+    merchantStore.clearAuth();
     router.push('/login');
   } else if (command === 'profile') {
     router.push('/merchant/profile');

@@ -1,5 +1,5 @@
 <template>
-  <div class="bind-phone">
+  <div class="bind-phone mobile-page">
     <van-nav-bar
       title="绑定手机"
       left-text="返回"
@@ -8,7 +8,7 @@
     />
 
     <van-form @submit="onSubmit">
-      <van-cell-group inset style="margin-top: 10px;">
+      <van-cell-group inset class="form-group">
         <van-field
           v-model="form.phone"
           name="phone"
@@ -25,7 +25,7 @@
           :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #button>
-            <van-button size="small" type="primary" :disabled="isSending" @click="sendCode">
+            <van-button size="small" type="default" class="code-btn" :disabled="isSending" @click="sendCode">
                 {{ isSending ? `${countdown}s后重新获取` : '发送验证码' }}
             </van-button>
           </template>
@@ -41,8 +41,8 @@
         />
       </van-cell-group>
 
-      <div style="margin: 16px;">
-        <van-button round block type="primary" native-type="submit">
+      <div class="submit-wrap">
+        <van-button round block type="primary" native-type="submit" class="submit-btn">
           立即绑定
         </van-button>
       </div>
@@ -125,5 +125,38 @@ const onSubmit = async () => {
 .bind-phone {
   background-color: #f7f8fa;
   min-height: 100vh;
+}
+
+.form-group {
+  margin-top: 1rem;
+}
+
+.code-btn {
+  min-height: 4.4rem;
+  min-width: 9.8rem;
+  color: #4b5563 !important;
+  background: #f3f4f6 !important;
+  border: 1px solid #d1d5db !important;
+  font-size: 1.2rem;
+}
+
+.submit-wrap {
+  margin: 1.6rem;
+}
+
+.submit-btn {
+  min-height: 4.4rem;
+  font-size: 1.4rem;
+}
+
+:deep(.van-cell),
+:deep(.van-field) {
+  min-height: 4.4rem;
+}
+
+:deep(.van-cell__title),
+:deep(.van-field__label),
+:deep(.van-field__control) {
+  font-size: 1.4rem;
 }
 </style>

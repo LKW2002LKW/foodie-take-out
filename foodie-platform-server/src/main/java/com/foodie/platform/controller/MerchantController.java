@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * 商户管理控制器
  */
 @RestController
-@RequestMapping("/platform/merchant")
+@RequestMapping("/platform/admin/merchant")
 @Api(tags = "平台端-商户管理接口")
 @Slf4j
 @RequiredArgsConstructor

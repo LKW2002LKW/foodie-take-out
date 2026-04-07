@@ -1,391 +1,417 @@
 <template>
-  <div class="dashboard-container">
-    <div class="welcome-section">
-      <h2 class="title">工作台</h2>
-      <p class="subtitle">欢迎回来，开始您的一天！</p>
-    </div>
+  <div class="dashboard">
+    <!-- 头部欢迎区域 -->
+    <header class="dashboard__header">
+      <div class="dashboard__welcome">
+        <h1 class="dashboard__title">工作台</h1>
+        <p class="dashboard__subtitle">欢迎回来，商家端管理中心</p>
+      </div>
+      <div class="dashboard__timer">
+        <el-icon class="dashboard__timer-icon"><Clock /></el-icon>
+        <span class="dashboard__timer-text">{{ currentTime }}</span>
+      </div>
+    </header>
 
-    <!-- 今日数据 -->
-    <div class="section-header">
-      <span class="section-title">今日经营概况</span>
-      <span class="update-time">数据更新至 {{ currentTime }}</span>
-    </div>
-    <el-row :gutter="20">
-      <el-col :span="6">
-        <el-card shadow="hover" class="data-card gradient-1">
-          <div class="card-content">
-            <div class="card-title">今日营业额</div>
-            <div class="card-value">￥{{ Number(todayStats.todayRevenue).toFixed(2) }}</div>
-            <div class="card-sub">实收: ￥{{ Number(todayStats.todayIncome).toFixed(2) }}</div>
+    <!-- 今日经营概况 -->
+    <section class="dashboard__section">
+      <div class="dashboard__section-header">
+        <h2 class="dashboard__section-title">今日经营概况</h2>
+        <el-button 
+          link 
+          type="primary" 
+          :loading="store.loading.today"
+          @click="store.fetchTodayStats"
+        >
+          刷新数据
+        </el-button>
+      </div>
+      
+      <el-row :gutter="24">
+        <el-col v-for="card in statCards" :key="card.title" :xs="24" :sm="12" :lg="6">
+          <div :class="['dashboard__card', `dashboard__card--${card.type}`]">
+            <div class="dashboard__card-content">
+              <span class="dashboard__card-label">{{ card.title }}</span>
+              <div class="dashboard__card-value">
+                <span v-if="card.unit" class="dashboard__card-unit">{{ card.unit }}</span>
+                {{ card.value }}
+              </div>
+              <div class="dashboard__card-footer">
+                {{ card.subTitle }}: {{ card.subUnit }}{{ card.subValue }}
+              </div>
+            </div>
+            <el-icon class="dashboard__card-icon">
+              <component :is="card.icon" />
+            </el-icon>
           </div>
-          <el-icon class="card-icon"><Money /></el-icon>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover" class="data-card gradient-2">
-           <div class="card-content">
-            <div class="card-title">今日订单数</div>
-            <div class="card-value">{{ todayStats.totalOrderCount }}</div>
-            <div class="card-sub">已取消: {{ todayStats.cancelledOrderCount }}</div>
-          </div>
-          <el-icon class="card-icon"><List /></el-icon>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover" class="data-card gradient-3">
-           <div class="card-content">
-            <div class="card-title">待处理订单</div>
-            <div class="card-value">{{ todayStats.pendingOrderCount }}</div>
-             <div class="card-sub">急需处理</div>
-          </div>
-          <el-icon class="card-icon"><Bell /></el-icon>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card shadow="hover" class="data-card gradient-4">
-           <div class="card-content">
-            <div class="card-title">今日完成率</div>
-            <div class="card-value">{{ todayStats.completionRate }}%</div>
-             <div class="card-sub">
-                <el-progress :percentage="Number(todayStats.completionRate)" :show-text="false" :stroke-width="6" color="#fff" />
-             </div>
-          </div>
-          <el-icon class="card-icon"><TrendCharts /></el-icon>
-        </el-card>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
+    </section>
 
-    <!-- 历史总览 -->
-    <div class="section-header mt-4">
-      <span class="section-title">累计经营数据</span>
-    </div>
-    <el-row :gutter="20">
-        <el-col :span="6">
-            <div class="stat-item">
-                <div class="stat-label">累计营业额</div>
-                <div class="stat-num">￥{{ Number(overviewStats.totalRevenue).toFixed(2) }}</div>
-            </div>
-        </el-col>
-        <el-col :span="6">
-            <div class="stat-item">
-                <div class="stat-label">累计订单</div>
-                <div class="stat-num">{{ overviewStats.totalOrders }}</div>
-            </div>
-        </el-col>
-        <el-col :span="6">
-            <div class="stat-item">
-                <div class="stat-label">平均客单价</div>
-                 <div class="stat-num">￥{{ Number(overviewStats.avgOrderAmount).toFixed(2) }}</div>
-            </div>
-        </el-col>
-        <el-col :span="6">
-             <div class="stat-item">
-                <div class="stat-label">店铺评分 ({{ overviewStats.totalReviews }}评价)</div>
-                <div class="stat-num">
-                    <el-rate
-                        v-model="overviewStats.merchantRating"
-                        disabled
-                        show-score
-                        text-color="#ff9900"
-                    />
-                </div>
-            </div>
-        </el-col>
-    </el-row>
+    <!-- 累计经营数据 -->
+    <section class="dashboard__section">
+      <div class="dashboard__section-header">
+        <h2 class="dashboard__section-title">数据概览</h2>
+      </div>
+      <div class="dashboard__overview">
+        <div v-for="item in overviewItems" :key="item.label" class="dashboard__overview-item">
+          <span class="dashboard__overview-label">{{ item.label }}</span>
+          <div class="dashboard__overview-value">
+            <template v-if="item.type === 'rate'">
+              <el-rate v-model="item.value" disabled show-score text-color="#F97316" />
+            </template>
+            <template v-else>
+              <span v-if="item.unit" class="dashboard__overview-unit">{{ item.unit }}</span>
+              {{ item.value }}
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
 
-
-    <!-- 趋势图表 -->
-    <el-card class="chart-container mt-4" v-loading="loadingChart">
+    <!-- 经营趋势图表 -->
+    <section class="dashboard__section">
+      <el-card shadow="never" class="dashboard__chart-card">
         <template #header>
-            <div class="chart-header">
-                <span class="chart-title">经营趋势分析</span>
-                <el-radio-group v-model="trendDays" size="small" @change="fetchTrend">
-                    <el-radio-button :label="7">近7天</el-radio-button>
-                    <el-radio-button :label="30">近30天</el-radio-button>
-                </el-radio-group>
-            </div>
+          <div class="dashboard__chart-header">
+            <span class="dashboard__chart-title">经营趋势分析</span>
+            <el-radio-group v-model="trendDays" size="small" @change="handleTrendChange">
+              <el-radio-button :label="7">近7天</el-radio-button>
+              <el-radio-button :label="30">近30天</el-radio-button>
+            </el-radio-group>
+          </div>
         </template>
         
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <div ref="revenueChartRef" class="chart-box"></div>
-            </el-col>
-            <el-col :span="12">
-                 <div ref="orderChartRef" class="chart-box"></div>
-            </el-col>
+        <el-row :gutter="24" v-loading="store.loading.trend">
+          <el-col :span="12">
+            <div ref="revenueChartRef" class="dashboard__chart-box"></div>
+          </el-col>
+          <el-col :span="12">
+            <div ref="orderChartRef" class="dashboard__chart-box"></div>
+          </el-col>
         </el-row>
-    </el-card>
-
+      </el-card>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, nextTick, onUnmounted } from 'vue';
-import { Money, List, Bell, TrendCharts } from '@element-plus/icons-vue';
-import statisticsApi from '@/api/statistics';
-import * as echarts from 'echarts';
+import { ref, computed, onMounted, watch } from 'vue'
+import { Money, List, Bell, TrendCharts, Clock } from '@element-plus/icons-vue'
+import { useDashboardStore } from '@/stores/dashboard'
+import { useTimer } from '@/composables/useTimer'
+import { useDashboardCharts } from '@/composables/useDashboardCharts'
 
-// State
-const currentTime = ref('');
-const todayStats = reactive({
-    todayRevenue: 0,
-    todayIncome: 0,
-    totalOrderCount: 0,
-    pendingOrderCount: 0,
-    cancelledOrderCount: 0,
-    completionRate: 0
-});
+/**
+ * 仪表盘核心逻辑
+ */
 
-const overviewStats = reactive({
-    totalRevenue: 0,
-    totalOrders: 0,
-    avgOrderAmount: 0,
-    merchantRating: 0,
-    totalReviews: 0
-});
+// 1. 初始化 Store 和 Composables
+const store = useDashboardStore()
+const { currentTime } = useTimer()
 
-const trendDays = ref(7);
-const loadingChart = ref(false);
-const revenueChartRef = ref(null);
-const orderChartRef = ref(null);
-let revenueChart = null;
-let orderChart = null;
+const revenueChartRef = ref(null)
+const orderChartRef = ref(null)
+const { renderCharts } = useDashboardCharts(revenueChartRef, orderChartRef)
 
-// Lifecycle
-onMounted(() => {
-    updateTime();
-    fetchToday();
-    fetchOverview();
-    fetchTrend();
-    
-    window.addEventListener('resize', handleResize);
-});
+// 2. 局部状态
+const trendDays = ref(7)
 
-onUnmounted(() => {
-    window.removeEventListener('resize', handleResize);
-    if(revenueChart) revenueChart.dispose();
-    if(orderChart) orderChart.dispose();
-});
+// 3. 计算属性 - 映射卡片数据
+const statCards = computed(() => [
+  {
+    title: '今日营业额',
+    value: store.todayStats.todayRevenue.toFixed(2),
+    unit: '￥',
+    subTitle: '实收金额',
+    subValue: store.todayStats.todayIncome.toFixed(2),
+    subUnit: '￥',
+    icon: Money,
+    type: 'primary'
+  },
+  {
+    title: '今日订单数',
+    value: store.todayStats.totalOrderCount,
+    subTitle: '已取消订单',
+    subValue: store.todayStats.cancelledOrderCount,
+    icon: List,
+    type: 'success'
+  },
+  {
+    title: '待处理订单',
+    value: store.todayStats.pendingOrderCount,
+    subTitle: '需尽快响应',
+    subValue: '急',
+    icon: Bell,
+    type: 'warning'
+  },
+  {
+    title: '今日完成率',
+    value: `${store.todayStats.completionRate}%`,
+    subTitle: '服务质量',
+    subValue: store.todayStats.completionRate >= 90 ? '优' : '良',
+    icon: TrendCharts,
+    type: 'danger'
+  }
+])
 
-// Methods
-const updateTime = () => {
-    const now = new Date();
-    currentTime.value = now.toLocaleTimeString();
-    setInterval(() => {
-        currentTime.value = new Date().toLocaleTimeString();
-    }, 60000); // update every minute
-};
+const overviewItems = computed(() => [
+  { label: '累计营业额', value: store.overviewStats.totalRevenue.toFixed(2), unit: '￥' },
+  { label: '累计订单', value: store.overviewStats.totalOrders },
+  { label: '客单价', value: store.overviewStats.avgOrderAmount.toFixed(2), unit: '￥' },
+  { label: '店铺评分', value: store.overviewStats.merchantRating, type: 'rate' }
+])
 
-const fetchToday = async () => {
-    try {
-        const res = await statisticsApi.getTodayStatistics();
-        if (res.data) {
-            Object.assign(todayStats, res.data);
-        }
-    } catch (e) { console.error(e); }
-};
+// 4. 方法
+const handleTrendChange = (val) => {
+  store.fetchTrendStats(val)
+}
 
-const fetchOverview = async () => {
-    try {
-        const res = await statisticsApi.getOverviewStatistics();
-        if (res.data) {
-            Object.assign(overviewStats, res.data);
-            // Convert to number for rate component if it's string
-            overviewStats.merchantRating = Number(overviewStats.merchantRating); 
-        }
-    } catch (e) { console.error(e); }
-};
+// 5. 监听数据变化更新图表
+watch(() => store.trendData, (newData) => {
+  if (newData.dateList.length) {
+    renderCharts(newData)
+  }
+}, { deep: true })
 
-const fetchTrend = async () => {
-    loadingChart.value = true;
-    try {
-        const res = await statisticsApi.getTrendStatistics({ days: trendDays.value });
-        if (res.data) {
-            await nextTick();
-            initCharts(res.data);
-        }
-    } catch (e) { console.error(e); }
-    finally {
-        loadingChart.value = false;
-    }
-};
-
-const initCharts = (data) => {
-    // 1. Revenue Chart
-    if (!revenueChart) {
-        revenueChart = echarts.init(revenueChartRef.value);
-    }
-    
-    const revenueOption = {
-        title: { text: '营业额趋势', left: 'center' },
-        tooltip: { trigger: 'axis' },
-        legend: { data: ['营业额', '实收金额'], bottom: 0 },
-        grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
-        xAxis: { type: 'category', boundaryGap: false, data: data.dateList },
-        yAxis: { type: 'value' },
-        series: [
-            {
-                name: '营业额',
-                type: 'line',
-                smooth: true,
-                data: data.revenueList,
-                itemStyle: { color: '#409EFF' },
-                areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: '#409EFF88'}, {offset: 1, color: '#409EFF00'}]) }
-            },
-            {
-                name: '实收金额',
-                type: 'line',
-                smooth: true,
-                data: data.incomeList,
-                itemStyle: { color: '#67C23A' }
-            }
-        ]
-    };
-    revenueChart.setOption(revenueOption);
-
-    // 2. Order Chart
-    if (!orderChart) {
-        orderChart = echarts.init(orderChartRef.value);
-    }
-
-    const orderOption = {
-        title: { text: '订单量趋势', left: 'center' },
-        tooltip: { trigger: 'axis' },
-        grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
-        xAxis: { type: 'category', data: data.dateList },
-        yAxis: { type: 'value' },
-        series: [
-            {
-                name: '订单数',
-                type: 'bar',
-                data: data.orderCountList,
-                itemStyle: { color: '#E6A23C', borderRadius: [5, 5, 0, 0] },
-                barWidth: '40%'
-            }
-        ]
-    };
-    orderChart.setOption(orderOption);
-};
-
-const handleResize = () => {
-    if (revenueChart) revenueChart.resize();
-    if (orderChart) orderChart.resize();
-};
-
+// 6. 生命周期
+onMounted(async () => {
+  await Promise.all([
+    store.fetchTodayStats(),
+    store.fetchOverviewStats(),
+    store.fetchTrendStats(trendDays.value)
+  ])
+})
 </script>
 
 <style scoped>
-.dashboard-container {
-    padding: 0;
-}
-.welcome-section {
-    margin-bottom: 25px;
-}
-.title {
-    font-size: 26px;
-    font-weight: 700;
-    margin: 0 0 5px;
-    color: #303133;
-}
-.subtitle {
-    color: #909399;
-    margin: 0;
+/* 
+ * BEM 命名规范: 
+ * Block: dashboard
+ * Element: dashboard__xxx
+ * Modifier: dashboard__xxx--yyy
+ */
+
+.dashboard {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100%;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    border-left: 5px solid #409EFF;
-    padding-left: 10px;
-}
-.section-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #303133;
-}
-.update-time {
-    font-size: 13px;
-    color: #909399;
-}
-.mt-4 { margin-top: 30px; }
-
-/* Data Cards */
-.data-card {
-    border: none;
-    color: #fff;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-}
-.card-content {
-    position: relative;
-    z-index: 1;
-}
-.card-title {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-bottom: 10px;
-}
-.card-value {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-.card-sub {
-    font-size: 12px;
-    opacity: 0.8;
-}
-.card-icon {
-    position: absolute;
-    right: -10px;
-    top: -10px;
-    font-size: 100px;
-    opacity: 0.15;
-    transform: rotate(15deg);
-    z-index: 0;
+/* Header */
+.dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
 }
 
-/* Gradients */
-.gradient-1 { background: linear-gradient(135deg, #409EFF 0%, #0d6efd 100%); }
-.gradient-2 { background: linear-gradient(135deg, #67C23A 0%, #198754 100%); }
-.gradient-3 { background: linear-gradient(135deg, #E6A23C 0%, #fd7e14 100%); }
-.gradient-4 { background: linear-gradient(135deg, #F56C6C 0%, #dc3545 100%); }
-
-/* Stat Items (Overview) */
-.stat-item {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05);
-    text-align: center;
-    border: 1px solid #EBEEF5;
-    transition: all 0.3s;
-}
-.stat-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px 0 rgba(0,0,0,0.1);
-}
-.stat-label {
-    color: #909399;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-.stat-num {
-    font-size: 24px;
-    font-weight: bold;
-    color: #303133;
+.dashboard__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
 }
 
-/* Chart */
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.dashboard__subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
 }
-.chart-box {
-    height: 350px;
-    width: 100%;
+
+.dashboard__timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  padding: 8px 16px;
+  border-radius: 99px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  color: #2563eb;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+/* Sections */
+.dashboard__section {
+  margin-bottom: 32px;
+}
+
+.dashboard__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dashboard__section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+  position: relative;
+  padding-left: 12px;
+}
+
+.dashboard__section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 18px;
+  background-color: #2563eb;
+  border-radius: 2px;
+}
+
+/* Cards */
+.dashboard__card {
+  position: relative;
+  padding: 24px;
+  border-radius: 16px;
+  color: #fff;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: default;
+  margin-bottom: 16px;
+}
+
+.dashboard__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -8px rgba(0,0,0,0.15);
+}
+
+.dashboard__card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard__card-label {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.dashboard__card-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.dashboard__card-unit {
+  font-size: 18px;
+  margin-right: 2px;
+}
+
+.dashboard__card-footer {
+  font-size: 12px;
+  opacity: 0.8;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.dashboard__card-icon {
+  position: absolute;
+  right: -12px;
+  bottom: -12px;
+  font-size: 84px;
+  opacity: 0.15;
+  transform: rotate(15deg);
+}
+
+/* Card Modifiers */
+.dashboard__card--primary { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+.dashboard__card--success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+.dashboard__card--warning { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); }
+.dashboard__card--danger { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+
+/* Overview Stats */
+.dashboard__overview {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  background: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.dashboard__overview-item {
+  text-align: center;
+  border-right: 1px solid #f1f5f9;
+}
+
+.dashboard__overview-item:last-child {
+  border-right: none;
+}
+
+.dashboard__overview-label {
+  display: block;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.dashboard__overview-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.dashboard__overview-unit {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-right: 2px;
+}
+
+/* Charts */
+.dashboard__chart-card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.dashboard__chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard__chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dashboard__chart-box {
+  height: 400px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+@media (max-width: 1024px) {
+  .dashboard__overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dashboard__overview-item:nth-child(2) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard__overview {
+    grid-template-columns: 1fr;
+  }
+  .dashboard__overview-item {
+    border-right: none;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+  }
+  .dashboard__overview-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 }
 </style>

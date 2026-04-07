@@ -1,16 +1,16 @@
 <template>
-  <div class="merchant-container">
-    <el-card>
-      <!-- Search -->
-      <el-form :inline="true" :model="queryParams" class="search-form">
+  <div class="merchant-manage">
+    <!-- 搜索区域 -->
+    <el-card shadow="never" class="merchant-manage__filter-card">
+      <el-form :inline="true" :model="queryParams" class="merchant-manage__filter-form">
         <el-form-item label="商户名称">
-          <el-input v-model="queryParams.merchantName" placeholder="请输入商户名称" clearable />
+          <el-input v-model="queryParams.merchantName" placeholder="搜索商户名" clearable @keyup.enter="handleQuery" />
         </el-form-item>
-        <el-form-item label="城市">
-          <el-input v-model="queryParams.cityName" placeholder="请输入城市" clearable />
+        <el-form-item label="所属城市">
+          <el-input v-model="queryParams.cityName" placeholder="搜索城市" clearable @keyup.enter="handleQuery" />
         </el-form-item>
-        <el-form-item label="商户状态">
-          <el-select v-model="queryParams.status" placeholder="全部" clearable style="width: 120px;">
+        <el-form-item label="营业状态">
+          <el-select v-model="queryParams.status" placeholder="全部" clearable style="width: 140px;" @change="handleQuery">
             <el-option label="待审核" :value="0" />
             <el-option label="营业中" :value="1" />
             <el-option label="休息中" :value="2" />
@@ -18,257 +18,203 @@
           </el-select>
         </el-form-item>
         <el-form-item label="审核状态">
-          <el-select v-model="queryParams.auditStatus" placeholder="全部" clearable style="width: 120px;">
+          <el-select v-model="queryParams.auditStatus" placeholder="全部" clearable style="width: 140px;" @change="handleQuery">
             <el-option label="已通过" :value="1" />
             <el-option label="审核中" :value="2" />
             <el-option label="已拒绝" :value="3" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="resetQuery">重置</el-button>
+          <el-button type="primary" icon="Search" @click="handleQuery">查询</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
+    </el-card>
 
-      <!-- Table -->
-      <el-table :data="tableData" border v-loading="loading">
-        <el-table-column prop="merchantName" label="商户名称" min-width="150" />
-        <el-table-column label="商户分类" width="120">
-          <template #default="scope">
-            {{ getCategoryName(scope.row.bizCategoryId) }}
+    <!-- 列表区域 -->
+    <el-card shadow="never" class="merchant-manage__list-card">
+      <el-table 
+        v-loading="loading" 
+        :data="tableData" 
+        class="merchant-manage__table"
+        stripe
+      >
+        <el-table-column prop="merchantName" label="商户基本信息" min-width="200">
+          <template #default="{ row }">
+            <div class="merchant-manage__info">
+              <span class="merchant-manage__name">{{ row.merchantName }}</span>
+              <span class="merchant-manage__code">#{{ row.merchantCode || row.id }}</span>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="cityName" label="城市" width="100" />
-        <el-table-column prop="legalPerson" label="法人" width="100" />
-        <el-table-column prop="contactPhone" label="联系电话" width="120" />
-        <el-table-column prop="createTime" label="申请时间" width="180" />
-        <el-table-column label="营业状态" width="100">
-          <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)">{{ getStatusText(scope.row.status) }}</el-tag>
+        
+        <el-table-column label="所属分类" width="120" align="center">
+          <template #default="{ row }">
+            <el-tag effect="plain" round size="small">{{ getCategoryName(row.bizCategoryId) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="审核状态" width="100">
-          <template #default="scope">
-            <el-tag :type="getAuditStatusType(scope.row.auditStatus)">
-              {{ getAuditStatusText(scope.row.auditStatus) }}
+
+        <el-table-column prop="cityName" label="城市" width="100" align="center" />
+        
+        <el-table-column label="联系方式" width="160">
+          <template #default="{ row }">
+            <div class="merchant-manage__contact">
+              <span>{{ row.legalPerson }}</span>
+              <span class="merchant-manage__phone">{{ row.contactPhone }}</span>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="营业状态" width="120" align="center">
+          <template #default="{ row }">
+            <el-tag :type="getStatusType(row.status)" effect="dark" size="small">
+              {{ getStatusText(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
-          <template #default="scope">
-            <el-button link type="primary" @click="handleDetail(scope.row)">详情</el-button>
-            <el-button 
-              v-if="scope.row.auditStatus === 2" 
-              link 
-              type="success" 
-              @click="handleAudit(scope.row)"
-            >
-              审核
-            </el-button>
-            <el-button 
-              v-if="scope.row.auditStatus === 1 && scope.row.status === 3" 
-              link 
-              type="success" 
-              @click="handleEnable(scope.row)"
-            >
-              启用
-            </el-button>
-             <el-button 
-              v-if="scope.row.auditStatus === 1 && scope.row.status !== 3" 
-              link 
-              type="danger" 
-              @click="handleDisable(scope.row)"
-            >
-              禁用
-            </el-button>
+
+        <el-table-column label="审核状态" width="120" align="center">
+          <template #default="{ row }">
+            <div :class="['merchant-manage__audit', `merchant-manage__audit--${getAuditStatusClass(row.auditStatus)}`]">
+              {{ getAuditStatusText(row.auditStatus) }}
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" width="220" align="center" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="handleDetail(row)">详情</el-button>
+            <el-divider direction="vertical" />
+            
+            <template v-if="row.auditStatus === 2">
+              <el-button link type="warning" icon="CircleCheck" @click="handleAudit(row)">去审核</el-button>
+            </template>
+            
+            <template v-else-if="row.auditStatus === 1">
+              <el-button 
+                v-if="row.status === 3" 
+                link 
+                type="success" 
+                icon="VideoPlay"
+                @click="toggleMerchantStatus(row, true)"
+              >启用</el-button>
+              <el-button 
+                v-else 
+                link 
+                type="danger" 
+                icon="VideoPause"
+                @click="toggleMerchantStatus(row, false)"
+              >禁用</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- Pagination -->
-      <div class="pagination-container">
+      <!-- 分页器 -->
+      <div class="merchant-manage__pagination">
         <el-pagination
           v-model:current-page="queryParams.page"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
+          background
           @size-change="getList"
           @current-change="getList"
         />
       </div>
     </el-card>
 
-    <!-- Detail Dialog -->
-    <el-dialog v-model="detailVisible" title="商户详情" width="600px">
-      <el-descriptions :column="2" border v-if="currentMerchant">
-        <el-descriptions-item label="商户名称">{{ currentMerchant.merchantName }}</el-descriptions-item>
-        <el-descriptions-item label="商户分类">
-          <el-tag size="small" type="info">{{ getCategoryName(currentMerchant.bizCategoryId) }}</el-tag>
+    <!-- 商户详情对话框 -->
+    <el-dialog v-model="detailVisible" title="商户完整档案" width="700px" class="merchant-manage__dialog">
+      <el-descriptions :column="2" border v-if="currentMerchant" class="merchant-manage__detail">
+        <el-descriptions-item label="商户全称" :span="2">
+          <span class="merchant-manage__detail-important">{{ currentMerchant.merchantName }}</span>
         </el-descriptions-item>
-        <el-descriptions-item label="商户代码">{{ currentMerchant.merchantCode }}</el-descriptions-item>
-        <el-descriptions-item label="城市">{{ currentMerchant.cityName }}</el-descriptions-item>
-        <el-descriptions-item label="联系人">{{ currentMerchant.contactName }}</el-descriptions-item>
+        <el-descriptions-item label="主营分类">
+          <el-tag size="small">{{ getCategoryName(currentMerchant.bizCategoryId) }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="唯一识别码">{{ currentMerchant.merchantCode || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="法人代表">{{ currentMerchant.legalPerson }}</el-descriptions-item>
+        <el-descriptions-item label="所在城市">{{ currentMerchant.cityName }}</el-descriptions-item>
         <el-descriptions-item label="联系电话">{{ currentMerchant.contactPhone }}</el-descriptions-item>
-        <el-descriptions-item label="地址" :span="2">{{ currentMerchant.address }}</el-descriptions-item>
-        <el-descriptions-item label="营业执照" :span="2">{{ currentMerchant.businessLicense }}</el-descriptions-item>
-        <el-descriptions-item label="状态">{{ currentMerchant.statusText }}</el-descriptions-item>
-        <el-descriptions-item label="审核状态">{{ currentMerchant.auditStatusText }}</el-descriptions-item>
+        <el-descriptions-item label="申请时间">{{ currentMerchant.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="注册地址" :span="2">{{ currentMerchant.address }}</el-descriptions-item>
+        <el-descriptions-item label="营业执照号" :span="2">{{ currentMerchant.businessLicense }}</el-descriptions-item>
+        <el-descriptions-item label="当前状态">
+          <el-tag :type="getStatusType(currentMerchant.status)">{{ getStatusText(currentMerchant.status) }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="审核结果">
+          <el-tag :type="getAuditStatusType(currentMerchant.auditStatus)">{{ getAuditStatusText(currentMerchant.auditStatus) }}</el-tag>
+        </el-descriptions-item>
       </el-descriptions>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="detailVisible = false">关闭</el-button>
-        </span>
+        <el-button @click="detailVisible = false">关闭窗口</el-button>
       </template>
     </el-dialog>
 
-    <!-- Audit Dialog -->
-    <el-dialog v-model="auditVisible" title="商户审核" width="500px">
-      <el-form :model="auditForm">
-        <el-form-item label="审核结果">
-          <el-radio-group v-model="auditForm.auditStatus">
-            <el-radio :label="1">通过</el-radio>
-            <el-radio :label="3">拒绝</el-radio>
+    <!-- 审核处理对话框 -->
+    <el-dialog v-model="auditVisible" title="入驻资质审核" width="500px">
+      <el-form :model="auditForm" label-position="top">
+        <el-form-item label="审核决策">
+          <el-radio-group v-model="auditForm.auditStatus" class="merchant-manage__audit-radio">
+            <el-radio :label="1" border>准予入驻</el-radio>
+            <el-radio :label="3" border>驳回申请</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="审核原因" v-if="auditForm.auditStatus === 3">
-           <el-input type="textarea" v-model="auditForm.auditReason" placeholder="请输入拒绝原因" />
-        </el-form-item>
-        <el-form-item label="备注" v-if="auditForm.auditStatus === 1">
-           <el-input type="textarea" v-model="auditForm.auditReason" placeholder="请输入备注（可选）" />
+        <el-form-item :label="auditForm.auditStatus === 3 ? '驳回原因' : '备注信息'">
+          <el-input 
+            type="textarea" 
+            v-model="auditForm.auditReason" 
+            :rows="4" 
+            :placeholder="auditForm.auditStatus === 3 ? '请详细说明驳回原因，以便商户修改...' : '请输入审核备注（选填）'" 
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="auditVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitAudit">确定</el-button>
-        </span>
+        <el-button @click="auditVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitAudit">确认提交</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import request from '../../utils/request'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { onMounted } from 'vue'
+import { Search, Refresh, CircleCheck, VideoPlay, VideoPause } from '@element-plus/icons-vue'
+import { useMerchant } from '@/composables/useMerchant'
 
-const loading = ref(false)
-const tableData = ref([])
-const total = ref(0)
-const detailVisible = ref(false)
-const currentMerchant = ref(null)
-const auditVisible = ref(false)
-const auditForm = reactive({
-  id: null,
-  auditStatus: 1,
-  auditReason: ''
-})
+/**
+ * 平台端商户管理
+ */
 
-// 分类映射函数
-const getCategoryName = (id) => {
-  const map = {
-    1: '美食',
-    2: '甜点饮品',
-    3: '超市便利',
-    4: '蔬菜水果'
-  }
-  return map[id] || '未分类'
-}
+const {
+  loading,
+  tableData,
+  total,
+  queryParams,
+  detailVisible,
+  currentMerchant,
+  auditVisible,
+  auditForm,
+  getList,
+  handleQuery,
+  resetQuery,
+  handleDetail,
+  handleAudit,
+  submitAudit,
+  toggleMerchantStatus
+} = useMerchant()
 
-const queryParams = reactive({
-  page: 1,
-  pageSize: 10,
-  merchantName: '',
-  cityName: '',
-  status: null,
-  auditStatus: null
-})
+// 数据字典映射逻辑
+const getCategoryName = (id) => ({ 1: '美食', 2: '甜点饮品', 3: '超市便利', 4: '蔬菜水果' }[id] || '未分类')
 
-const getList = async () => {
-  loading.value = true
-  try {
-    const res = await request.get('/merchant/page', { params: queryParams })
-    tableData.value = res.data.records
-    total.value = res.data.total
-  } finally {
-    loading.value = false
-  }
-}
+const getStatusText = (s) => ({ 0: '待审核', 1: '营业中', 2: '休息中', 3: '已禁用' }[s] || '未知')
+const getStatusType = (s) => ({ 1: 'success', 2: 'warning', 3: 'danger', 0: 'info' }[s] || '')
 
-const handleSearch = () => {
-  queryParams.page = 1
-  getList()
-}
-
-const resetQuery = () => {
-  queryParams.merchantName = ''
-  queryParams.cityName = ''
-  queryParams.status = null
-  queryParams.auditStatus = null
-  handleSearch()
-}
-
-// Helpers
-const getStatusText = (status) => {
-  const map = { 0: '待审核', 1: '营业中', 2: '休息中', 3: '已关闭' }
-  return map[status] || '未知'
-}
-const getStatusType = (status) => {
-  if (status === 1) return 'success'
-  if (status === 2) return 'warning'
-  if (status === 3) return 'info'
-  return ''
-}
-const getAuditStatusText = (status) => {
-  const map = { 1: '已通过', 2: '审核中', 3: '已拒绝' }
-  return map[status] || '未知'
-}
-const getAuditStatusType = (status) => {
-  if (status === 1) return 'success'
-  if (status === 2) return 'warning'
-  if (status === 3) return 'danger'
-  return ''
-}
-
-// Actions
-const handleDetail = async (row) => {
-  const res = await request.get(`/merchant/${row.id}`)
-  currentMerchant.value = res.data
-  detailVisible.value = true
-}
-
-const handleAudit = (row) => {
-  auditForm.id = row.id
-  auditForm.auditStatus = 1
-  auditForm.auditReason = ''
-  auditVisible.value = true
-}
-
-const submitAudit = async () => {
-  if (auditForm.auditStatus === 3 && !auditForm.auditReason) {
-    ElMessage.warning('请输入拒绝原因')
-    return
-  }
-  await request.put('/merchant/audit', auditForm)
-  ElMessage.success('操作成功')
-  auditVisible.value = false
-  getList()
-}
-
-const handleEnable = async (row) => {
-  await ElMessageBox.confirm('确认启用该商户吗？', '提示', { type: 'warning' })
-  await request.put(`/merchant/enable/${row.id}`)
-  ElMessage.success('启用成功')
-  getList()
-}
-
-const handleDisable = async (row) => {
-  await ElMessageBox.confirm('确认禁用该商户吗？', '提示', { type: 'warning' })
-  await request.put(`/merchant/disable/${row.id}`)
-  ElMessage.success('禁用成功')
-  getList()
-}
+const getAuditStatusText = (s) => ({ 1: '已通过', 2: '待审核', 3: '已驳回' }[s] || '未知')
+const getAuditStatusType = (s) => ({ 1: 'success', 2: 'warning', 3: 'danger' }[s] || '')
+const getAuditStatusClass = (s) => ({ 1: 'pass', 2: 'waiting', 3: 'fail' }[s] || '')
 
 onMounted(() => {
   getList()
@@ -276,8 +222,85 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.pagination-container {
-  margin-top: 20px;
-  text-align: right;
+.merchant-manage {
+  padding: 0;
+}
+
+/* Filter */
+.merchant-manage__filter-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  border: none;
+}
+
+.merchant-manage__filter-form :deep(.el-form-item__label) {
+  font-weight: 600;
+  color: #475569;
+}
+
+/* List */
+.merchant-manage__list-card {
+  border-radius: 12px;
+  border: none;
+}
+
+.merchant-manage__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.merchant-manage__name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.merchant-manage__code {
+  font-size: 12px;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+.merchant-manage__contact {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.merchant-manage__phone {
+  color: #64748b;
+}
+
+/* Audit States */
+.merchant-manage__audit {
+  font-weight: 600;
+  font-size: 13px;
+}
+.merchant-manage__audit--pass { color: #10b981; }
+.merchant-manage__audit--waiting { color: #f59e0b; }
+.merchant-manage__audit--fail { color: #ef4444; }
+
+.merchant-manage__pagination {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Dialog */
+.merchant-manage__detail-important {
+  font-weight: 700;
+  color: #2563eb;
+  font-size: 16px;
+}
+
+.merchant-manage__audit-radio {
+  display: flex;
+  gap: 16px;
+}
+
+:deep(.el-table__header th) {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
 }
 </style>

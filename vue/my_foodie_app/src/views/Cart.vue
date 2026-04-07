@@ -1,5 +1,5 @@
 <template>
-  <div class="cart-page">
+  <div class="cart-page mobile-page">
     <van-nav-bar :title="isDetail ? currentMerchant.name : '购物车'" :left-arrow="isDetail" @click-left="onBack">
       <template #right><span v-if="isDetail" class="manage-btn" @click="toggleEdit">{{ isEditing ? '完成' : '管理' }}</span></template>
     </van-nav-bar>
@@ -11,13 +11,13 @@
         <div v-for="(group, mId) in groupedCart" :key="mId" class="merchant-card" @click="enterDetail(group)">
           <div class="m-header">
             <div class="m-header-left">
-              <van-image :src="group.logo" width="24" height="24" radius="4" />
+              <van-image :src="group.logo" width="2.4rem" height="2.4rem" radius="0.4rem" />
               <span class="m-name">{{ group.name }}</span>
             </div>
-            <van-icon name="arrow" size="12" color="#999" />
+            <van-icon name="arrow" size="1.2rem" color="#999" />
           </div>
           <div class="m-items-preview">
-            <div v-for="item in group.items.slice(0, 4)" :key="item.id" class="preview-item"><van-image :src="item.image" width="60" height="60" radius="8" /></div>
+            <div v-for="item in group.items.slice(0, 4)" :key="item.id" class="preview-item"><van-image :src="item.image" width="6rem" height="6rem" radius="0.8rem" /></div>
           </div>
           <div class="m-footer">共 {{ group.totalNum }} 件，合计 <span class="total-price">￥{{ group.totalPrice }}</span></div>
         </div>
@@ -30,7 +30,7 @@
             <div v-if="isEditing" class="mt-checkbox" :class="{ 'checked': item.selected }" @click="item.selected = !item.selected">
               <van-icon name="success" class="check-icon" />
             </div>
-            <van-image :src="item.image" width="80" height="80" radius="8" />
+            <van-image :src="item.image" width="8rem" height="8rem" radius="0.8rem" />
             <div class="item-info">
               <div class="item-name">{{ item.name }}</div>
               <div class="item-bottom">
@@ -102,31 +102,31 @@ onMounted(() => cartStore.fetchCartList())
 
 <style scoped>
 .cart-page { min-height: 100vh; background-color: #f5f5f5; display: flex; flex-direction: column; }
-.cart-content { flex: 1; padding: 12px; overflow-y: auto; }
-.merchant-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-.m-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.m-header-left { display: flex; align-items: center; gap: 8px; }
-.m-items-preview { display: flex; gap: 8px; margin-bottom: 12px; }
+.cart-content { flex: 1; padding: 1.2rem; overflow-y: auto; }
+.merchant-card { background: #fff; border-radius: 1.2rem; padding: 1.6rem; margin-bottom: 1.2rem; }
+.m-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+.m-header-left { display: flex; align-items: center; gap: 0.8rem; }
+.m-items-preview { display: flex; gap: 0.8rem; margin-bottom: 1.2rem; }
 .total-price { color: #fb4e44; font-weight: 800; }
-.shop-detail { padding-bottom: 80px; }
-.detail-item { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
-.item-info { flex: 1; min-height: 80px; display: flex; flex-direction: column; justify-content: space-between; }
-.item-price { color: #fb4e44; font-weight: 800; font-size: 18px; }
-.mt-checkbox { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
+.shop-detail { padding-bottom: 8rem; }
+.detail-item { background: #fff; border-radius: 1.2rem; padding: 1.6rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1.2rem; }
+.item-info { flex: 1; min-height: 8rem; display: flex; flex-direction: column; justify-content: space-between; }
+.item-price { color: #fb4e44; font-weight: 800; font-size: 1.8rem; }
+.mt-checkbox { width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
 .mt-checkbox.checked { background: #FFD000; border-color: #FFD000; }
-.check-icon { font-size: 14px; color: #222; opacity: 0; }
+.check-icon { font-size: 1.4rem; color: #222; opacity: 0; }
 .mt-checkbox.checked .check-icon { opacity: 1; }
 .cart-ctrl { display: flex; align-items: center; }
-.btn-sub, .btn-add { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.btn-sub, .btn-add { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; min-height: 2.2rem; }
 .btn-sub { border: 1px solid #ccc; }
 .btn-add { background: #ffd000; font-weight: 800; }
-.num { width: 28px; text-align: center; }
+.num { width: 2.8rem; text-align: center; font-size: 1.3rem; }
 .detail-footer-wrapper { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; }
-.detail-footer, .manage-footer { height: 56px; background: #fff; display: flex; align-items: center; padding: 0 16px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-.total-amount { font-size: 22px; font-weight: 800; color: #fb4e44; }
-.checkout-btn { background: #ffd000; font-weight: 800; padding: 10px 24px; border-radius: 22px; margin-left: auto; }
+.detail-footer, .manage-footer { min-height: 5.6rem; background: #fff; display: flex; align-items: center; padding: 0 1.6rem; box-shadow: 0 -0.2rem 1rem rgba(0,0,0,0.05); }
+.total-amount { font-size: 2.2rem; font-weight: 800; color: #fb4e44; }
+.checkout-btn { background: #ffd000; font-weight: 800; padding: 1rem 2.4rem; border-radius: 2.2rem; margin-left: auto; min-height: 4.4rem; display: flex; align-items: center; }
 .manage-footer { justify-content: space-between; }
-.select-all-wrap { display: flex; align-items: center; gap: 8px; }
-.delete-btn { background: #ff3f3f; color: #fff; padding: 10px 24px; border-radius: 22px; }
+.select-all-wrap { display: flex; align-items: center; gap: 0.8rem; min-height: 4.4rem; }
+.delete-btn { background: #ff3f3f; color: #fff; padding: 1rem 2.4rem; border-radius: 2.2rem; min-height: 4.4rem; display: flex; align-items: center; }
 .delete-btn.disabled { opacity: 0.5; }
 </style>

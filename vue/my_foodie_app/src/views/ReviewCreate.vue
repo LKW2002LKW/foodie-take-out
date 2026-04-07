@@ -1,5 +1,5 @@
 <template>
-  <div class="review-create-page">
+  <div class="review-create-page mobile-page">
     <van-nav-bar title="提交评价" left-arrow fixed placeholder @click-left="goBack" />
 
     <div class="page-body" v-if="orderInfo.id">
@@ -40,7 +40,7 @@
           :max-count="6"
           :after-read="afterRead"
           :before-delete="beforeDelete"
-          preview-size="88px"
+          preview-size="8.8rem"
         />
 
         <van-button
@@ -203,44 +203,44 @@ onMounted(() => {
 }
 
 .page-body {
-  padding: 12px;
-  padding-bottom: 24px;
+  padding: 1.2rem;
+  padding-bottom: calc(2.4rem + env(safe-area-inset-bottom));
 }
 
 .summary-card,
 .review-card {
   background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  margin-bottom: 12px;
+  border-radius: 1.6rem;
+  padding: 1.6rem;
+  box-shadow: 0 1rem 2.4rem rgba(15, 23, 42, 0.06);
+  margin-bottom: 1.2rem;
 }
 
 .summary-title {
-  font-size: 18px;
+  font-size: 1.8rem;
   font-weight: 800;
   color: #111827;
-  margin-bottom: 8px;
+  margin-bottom: 0.8rem;
 }
 
 .summary-line {
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #6b7280;
-  margin-top: 4px;
+  margin-top: 0.4rem;
 }
 
 .summary-dishes {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
   border-top: 1px solid #f1f5f9;
 }
 
 .summary-dish {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0;
-  font-size: 13px;
+  gap: 1.2rem;
+  padding: 0.4rem 0;
+  font-size: 1.3rem;
   color: #374151;
 }
 
@@ -253,8 +253,8 @@ onMounted(() => {
 }
 
 .section-title {
-  margin: 14px 0 10px;
-  font-size: 15px;
+  margin: 1.4rem 0 1rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #111827;
 }
@@ -262,20 +262,27 @@ onMounted(() => {
 .rate-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1.2rem;
 }
 
 .rate-text {
-  font-size: 14px;
+  font-size: 1.4rem;
   color: #f59e0b;
   font-weight: 700;
 }
 
 .submit-btn {
-  margin-top: 18px;
+  margin-top: 1.8rem;
+  min-height: 4.4rem;
+  font-size: 1.4rem;
 }
 
 :deep(.van-uploader__preview) {
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
+}
+
+:deep(.van-field__control),
+:deep(.van-field__word-limit) {
+  font-size: 1.3rem;
 }
 </style>

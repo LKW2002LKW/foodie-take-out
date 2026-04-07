@@ -1,5 +1,5 @@
 <template>
-  <div class="order-detail-page">
+    <div class="order-detail-page mobile-page">
     <van-nav-bar title="订单详情" left-arrow fixed placeholder @click-left="goBack" />
 
     <div class="status-header">
@@ -20,10 +20,10 @@
         <!-- 8.4 Track info display if available -->
         <div class="track-card" v-if="trackInfo && [3,4,5].includes(order.status)" @click="showTrackPopup=true">
             <div class="flex-row">
-                 <van-icon name="logistics" size="20" />
-                 <span style="margin-left:8px; font-weight:bold">订单跟踪</span>
+                 <van-icon name="logistics" size="2rem" />
+                 <span style="margin-left:0.8rem; font-weight:bold">订单跟踪</span>
             </div>
-            <div style="margin-top:8px; font-size:12px; color:#666">
+            <div style="margin-top:0.8rem; font-size:1.2rem; color:#666">
                 {{ trackInfo.trackNodes?.[trackInfo.trackNodes.length-1]?.title || '查看进度' }}
             </div>
         </div>
@@ -45,7 +45,7 @@
     <div class="card goods-card">
         <div class="shop-name">{{ order.merchantName || '商户' }}</div>
         <div v-for="item in order.orderDetailList" :key="item.id" class="goods-item">
-            <van-image :src="item.image" width="50" height="50" radius="4" />
+            <van-image :src="item.image" width="5rem" height="5rem" radius="0.4rem" />
             <div class="g-info">
                 <div class="g-name">{{ item.name }}</div>
                 <div class="g-spec">{{ item.dishFlavor ? getFlavorText(item.dishFlavor) : '' }}</div>
@@ -113,8 +113,8 @@
 
     <!-- 评价弹窗 -->
     <van-action-sheet :show="showReviewPanel" @update:show="showReviewPanel = $event" title="评价订单">
-        <div style="padding: 16px;">
-            <div style="text-align:center; margin-bottom:16px;">
+        <div style="padding: 1.6rem;">
+            <div style="text-align:center; margin-bottom:1.6rem;">
                 <van-rate v-model="reviewRating" :size="25" color="#ffd21e" void-icon="star" void-color="#eee" />
             </div>
             <van-field
@@ -125,12 +125,12 @@
                 placeholder="请输入您的评价..."
                 maxlength="100"
                 show-word-limit
-                style="background:#f5f5f5; border-radius:8px;"
+                style="background:#f5f5f5; border-radius:0.8rem;"
             />
-            <div style="margin-top: 16px;">
-                <van-uploader v-model="reviewFileList" :after-read="afterRead" multiple :max-count="3" preview-size="80px" />
+            <div style="margin-top: 1.6rem;">
+                <van-uploader v-model="reviewFileList" :after-read="afterRead" multiple :max-count="3" preview-size="8rem" />
             </div>
-            <div style="margin-top:20px;">
+            <div style="margin-top:2rem;">
                 <van-button type="primary" block round @click="submitReview">提交评价</van-button>
             </div>
         </div>
@@ -372,27 +372,27 @@ onMounted(() => {
 .order-detail-page {
     background: #f7f8fa;
     min-height: 100vh;
-    padding-bottom: 20px;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
 }
 .status-header {
     background: #FF9800;
-    padding: 24px 20px;
+    padding: 2.4rem 2rem;
     color: #fff;
 }
 .status-text {
-    font-size: 20px;
+    font-size: 2rem;
     font-weight: bold;
 }
 .status-desc {
-    margin-top: 8px;
-    font-size: 14px;
+    margin-top: 0.8rem;
+    font-size: 1.4rem;
     opacity: 0.9;
 }
 .action-btn {
-    margin-top: 15px;
+    margin-top: 1.5rem;
 }
 .cancel-btn {
-    margin-left: 10px;
+    margin-left: 1rem;
     color: #fff !important;
     border-color: #fff !important;
     background: transparent; 
@@ -400,12 +400,12 @@ onMounted(() => {
 
 .card {
     background: #fff;
-    margin: 12px;
-    padding: 16px;
-    border-radius: 8px;
+    margin: 1.2rem;
+    padding: 1.6rem;
+    border-radius: 0.8rem;
 }
 .addr-row {
-    margin-bottom: 8px;
+    margin-bottom: 0.8rem;
     line-height: 1.4;
 }
 .addr-row:last-child {
@@ -413,70 +413,72 @@ onMounted(() => {
 }
 .addr-tag {
     color: #999;
-    margin-right: 12px;
+    margin-right: 1.2rem;
+    font-size: 1.2rem;
 }
 
 .shop-name {
     font-weight: bold;
-    font-size: 16px;
-    padding-bottom: 12px;
+    font-size: 1.6rem;
+    padding-bottom: 1.2rem;
     border-bottom: 1px solid #f9f9f9;
-    margin-bottom: 12px;
+    margin-bottom: 1.2rem;
 }
 .goods-item {
     display: flex;
-    margin-bottom: 16px;
+    margin-bottom: 1.6rem;
 }
 .g-info {
     flex: 1;
-    margin-left: 10px;
+    margin-left: 1rem;
 }
 .g-name {
-    font-size: 14px;
+    font-size: 1.4rem;
     color: #333;
 }
 .g-spec {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #999;
 }
 .g-count {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #999;
-    margin-top: 4px;
+    margin-top: 0.4rem;
 }
 .g-price {
     font-weight: bold;
+    font-size: 1.4rem;
 }
 .fee-row, .total-row, .info-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
 }
 .total-row {
     border-top: 1px solid #f9f9f9;
-    padding-top: 12px;
-    margin-top: 10px;
+    padding-top: 1.2rem;
+    margin-top: 1rem;
     font-weight: bold;
     align-items: center;
 }
 .total-row .price {
-    font-size: 18px;
+    font-size: 1.8rem;
     color: #e4393c;
 }
 
 .pay-content {
-    padding: 24px 0;
+    padding: 2.4rem 0;
     text-align: center;
 }
 .pay-amount {
-    font-size: 32px;
+    font-size: 3.2rem;
     font-weight: bold;
-    margin-bottom: 24px;
+    margin-bottom: 2.4rem;
 }
 .pay-btn-wrapper {
-    padding: 16px;
-    margin-top: 10px;
+    padding: 1.6rem;
+    margin-top: 1rem;
 }
 </style>
 

@@ -1,26 +1,52 @@
 <template>
-  <div class="product-list-page">
-    <div class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">菜品管理</h1>
-        <p class="page-subtitle">管理所有菜品，包括新增、修改、下架及口味配置</p>
+  <div class="product">
+    <!-- 头部欢迎区域 -->
+    <header class="product__header">
+      <div class="product__header-info">
+        <h1 class="product__title">菜品管理</h1>
+        <p class="product__subtitle">配置菜品信息、售卖状态及口味定制</p>
       </div>
-      <div>
-        <el-button type="danger" plain icon="Delete" :disabled="selection.length === 0" @click="handleBatchDelete">
-          批量删除
+      <div class="product__header-actions">
+        <el-button 
+          v-if="selection.length"
+          type="danger" 
+          plain 
+          icon="Delete" 
+          @click="handleBatchDelete"
+        >
+          批量删除 ({{ selection.length }})
         </el-button>
-        <el-button type="primary" icon="Plus" size="large" @click="handleCreate">新增菜品</el-button>
+        <el-button 
+          type="primary" 
+          icon="Plus" 
+          size="large" 
+          class="product__add-btn"
+          @click="handleCreate"
+        >
+          新增菜品
+        </el-button>
       </div>
-    </div>
+    </header>
 
-    <!-- 筛选区域 -->
-    <el-card shadow="never" class="filter-card">
-      <el-form :inline="true" :model="queryParams" class="demo-form-inline">
+    <!-- 筛选过滤区域 -->
+    <el-card shadow="never" class="product__filter-card">
+      <el-form :inline="true" :model="queryParams" class="product__filter-form">
         <el-form-item label="菜品名称">
-          <el-input v-model="queryParams.name" placeholder="请输入菜品名称" clearable @keyup.enter="handleQuery" />
+          <el-input 
+            v-model="queryParams.name" 
+            placeholder="搜索菜品名称" 
+            clearable 
+            @keyup.enter="handleQuery"
+          />
         </el-form-item>
-        <el-form-item label="菜品分类">
-          <el-select v-model="queryParams.categoryId" placeholder="全部分类" clearable style="width: 150px" @change="handleQuery">
+        <el-form-item label="分类">
+          <el-select 
+            v-model="queryParams.categoryId" 
+            placeholder="全部分类" 
+            clearable 
+            style="width: 160px"
+            @change="handleQuery"
+          >
             <el-option
               v-for="item in categoryList"
               :key="item.id"
@@ -29,10 +55,16 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="售卖状态">
-          <el-select v-model="queryParams.status" placeholder="全部状态" clearable style="width: 120px" @change="handleQuery">
-            <el-option label="起售" :value="1" />
-            <el-option label="停售" :value="0" />
+        <el-form-item label="状态">
+          <el-select 
+            v-model="queryParams.status" 
+            placeholder="全部状态" 
+            clearable 
+            style="width: 120px"
+            @change="handleQuery"
+          >
+            <el-option label="起售中" :value="1" />
+            <el-option label="已停售" :value="0" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -42,55 +74,61 @@
       </el-form>
     </el-card>
 
-    <!-- 列表区域 -->
-    <el-card shadow="hover" class="list-card" v-loading="loading">
+    <!-- 列表数据展示 -->
+    <el-card shadow="never" class="product__list-card">
       <el-table 
+        v-loading="loading" 
         :data="dishList" 
-        style="width: 100%" 
-        @selection-change="handleSelectionChange"
-        stripe
+        class="product__table"
+        @selection-change="selection = $event"
       >
         <el-table-column type="selection" width="55" align="center" />
         
-        <el-table-column label="图片" width="100" align="center">
+        <el-table-column label="菜品图片" width="120" align="center">
           <template #default="{ row }">
             <el-image 
-              style="width: 60px; height: 60px; border-radius: 4px;" 
+              class="product__img"
               :src="row.image" 
               :preview-src-list="[row.image]" 
               fit="cover"
               preview-teleported
             >
               <template #error>
-                <div class="image-slot">
-                  <el-icon><icon-picture /></el-icon>
+                <div class="product__img-placeholder">
+                  <el-icon><Picture /></el-icon>
                 </div>
               </template>
             </el-image>
           </template>
         </el-table-column>
 
-        <el-table-column prop="name" label="菜品名称" min-width="150" />
-        
-        <el-table-column prop="categoryName" label="菜品分类" width="120" align="center">
-             <template #default="{ row }">
-                 <el-tag effect="plain">{{ row.categoryName || '未分类' }}</el-tag>
-             </template>
-        </el-table-column>
-
-        <el-table-column prop="price" label="售价" width="120" align="center">
-            <template #default="{ row }">
-                <span style="font-weight: bold; color: #f56c6c;">￥{{ Number(row.price).toFixed(2) }}</span>
-            </template>
-        </el-table-column>
-
-        <el-table-column prop="status" label="售卖状态" width="100" align="center">
+        <el-table-column label="菜品信息" min-width="200">
           <template #default="{ row }">
-             <div class="status-indicator">
-                 <span v-if="row.status === 1" class="status-dot success"></span>
-                 <span v-else class="status-dot danger"></span>
-                 {{ row.status === 1 ? '起售' : '停售' }}
-             </div>
+            <div class="product__info">
+              <span class="product__name">{{ row.name }}</span>
+              <span class="product__desc" v-if="row.description">{{ row.description }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        
+        <el-table-column label="所属分类" width="150" align="center">
+          <template #default="{ row }">
+            <el-tag effect="plain" class="product__tag">{{ row.categoryName || '默认分类' }}</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="销售价格" width="150" align="right">
+          <template #default="{ row }">
+            <span class="product__price">￥{{ Number(row.price).toFixed(2) }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="售卖状态" width="120" align="center">
+          <template #default="{ row }">
+            <div :class="['product__status', row.status === 1 ? 'product__status--active' : 'product__status--inactive']">
+              <span class="product__status-dot"></span>
+              {{ row.status === 1 ? '正在售卖' : '已下架' }}
+            </div>
           </template>
         </el-table-column>
         
@@ -98,260 +136,217 @@
           <template #default="{ row }">
             <el-button link type="primary" icon="Edit" @click="handleUpdate(row)">修改</el-button>
             <el-button 
-                link 
-                :type="row.status === 1 ? 'warning' : 'success'" 
-                @click="handleStatusChange(row)"
+              link 
+              :type="row.status === 1 ? 'warning' : 'success'" 
+              :icon="row.status === 1 ? 'Bottom' : 'Top'"
+              @click="toggleStatus(row)"
             >
-                {{ row.status === 1 ? '停售' : '起售' }}
+              {{ row.status === 1 ? '停售' : '起售' }}
             </el-button>
+            <el-divider direction="vertical" />
             <el-button link type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty description="未找到符合条件的菜品" />
+        </template>
       </el-table>
 
-      <!-- 分页区域 -->
-      <div class="pagination-container">
+      <!-- 分页控制 -->
+      <div class="product__pagination">
         <el-pagination
           v-model:current-page="queryParams.page"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           background
+          @size-change="fetchDishList"
+          @current-change="fetchDishList"
         />
       </div>
     </el-card>
 
-    <!-- 弹窗表单 -->
+    <!-- 编辑/新增弹窗组件 -->
     <DishForm 
       v-model:visible="formVisible"
       :is-edit="isEdit"
       :dish-id="currentDishId"
-      @success="handleFormSuccess"
+      @success="fetchDishList"
     />
-
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { Search, Refresh, Plus, Delete, Edit, Picture as IconPicture } from '@element-plus/icons-vue';
-import DishForm from '@/components/DishForm.vue';
-import dishApi from '@/api/dish';
-import categoryApi from '@/api/category';
+import { onMounted } from 'vue'
+import { Search, Refresh, Plus, Delete, Edit, Picture, Top, Bottom } from '@element-plus/icons-vue'
+import DishForm from '@/components/DishForm.vue'
+import { useProduct } from '@/composables/useProduct'
 
-// --- State ---
-const loading = ref(false);
-const dishList = ref([]);
-const total = ref(0);
-const categoryList = ref([]);
-const selection = ref([]); // Selected rows
+/**
+ * 菜品列表管理
+ */
 
-const formVisible = ref(false);
-const isEdit = ref(false);
-const currentDishId = ref(undefined);
+const {
+  loading,
+  dishList,
+  total,
+  categoryList,
+  selection,
+  queryParams,
+  formVisible,
+  isEdit,
+  currentDishId,
+  fetchDishList,
+  fetchCategoryList,
+  handleQuery,
+  resetQuery,
+  handleCreate,
+  handleUpdate,
+  handleDelete,
+  handleBatchDelete,
+  toggleStatus
+} = useProduct()
 
-const queryParams = reactive({
-  page: 1,
-  pageSize: 10,
-  name: '',
-  categoryId: undefined,
-  status: undefined
-});
-
-// --- Lifecycle ---
 onMounted(() => {
-  getCategoryList();
-  getList();
-});
-
-// --- Methods ---
-
-const getCategoryList = async () => {
-    try {
-        const res = await categoryApi.getCategoryList(1);
-        categoryList.value = res.data || [];
-    } catch (e) { console.error(e); }
-};
-
-const getList = async () => {
-  loading.value = true;
-  try {
-    const res = await dishApi.getDishPage(queryParams);
-    if (res.data) {
-        dishList.value = res.data.records || [];
-        total.value = res.data.total || 0;
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const handleQuery = () => {
-  queryParams.page = 1;
-  getList();
-};
-
-const resetQuery = () => {
-  queryParams.name = '';
-  queryParams.categoryId = undefined;
-  queryParams.status = undefined;
-  handleQuery();
-};
-
-const handleSizeChange = (val) => {
-  queryParams.pageSize = val;
-  getList();
-};
-
-const handleCurrentChange = (val) => {
-  queryParams.page = val;
-  getList();
-};
-
-const handleSelectionChange = (val) => {
-    selection.value = val;
-};
-
-// Actions
-const handleCreate = () => {
-    isEdit.value = false;
-    currentDishId.value = undefined;
-    formVisible.value = true;
-};
-
-const handleUpdate = (row) => {
-    isEdit.value = true;
-    currentDishId.value = row.id;
-    formVisible.value = true;
-};
-
-const handleFormSuccess = () => {
-    getList();
-};
-
-const handleDelete = (row) => {
-    ElMessageBox.confirm(`确认删除菜品 "${row.name}" 吗?`, '警告', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-    }).then(async () => {
-        try {
-            await dishApi.deleteDish(row.id);
-            ElMessage.success('删除成功');
-            getList();
-        } catch (e) {
-            console.error(e);
-        }
-    }).catch(() => {});
-};
-
-const handleBatchDelete = () => {
-    if (selection.value.length === 0) return;
-    const ids = selection.value.map(item => item.id).join(',');
-    
-    ElMessageBox.confirm(`确认批量删除选中的 ${selection.value.length} 个菜品吗?`, '警告', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-    }).then(async () => {
-        try {
-            await dishApi.deleteDishBatch(ids);
-            ElMessage.success('批量删除成功');
-            getList();
-        } catch (e) {
-            console.error(e);
-        }
-    }).catch(() => {});
-};
-
-const handleStatusChange = (row) => {
-    const targetStatus = row.status === 1 ? 0 : 1;
-    const actionText = targetStatus === 1 ? '起售' : '停售';
-    
-    ElMessageBox.confirm(`确认${actionText}菜品 "${row.name}" 吗?`, '提示', {
-        type: targetStatus === 1 ? 'success' : 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-    }).then(async () => {
-        try {
-            await dishApi.updateDishStatus(row.id, targetStatus);
-            ElMessage.success(`${actionText}成功`);
-            getList(); // Refresh to ensure data consistency
-        } catch (e) {
-            console.error(e);
-        }
-    }).catch(() => {});
-};
-
+  fetchCategoryList()
+  fetchDishList()
+})
 </script>
 
 <style scoped>
-.product-list-page {
+.product {
   padding: 0;
 }
-.page-header {
+
+/* Header */
+.product__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
-.page-title {
+
+.product__title {
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
+  color: #1e293b;
+  margin: 0 0 8px;
 }
-.page-subtitle {
-  color: #909399;
+
+.product__subtitle {
   font-size: 14px;
+  color: #64748b;
   margin: 0;
 }
-.filter-card {
-  margin-bottom: 20px;
+
+.product__header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.product__add-btn {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* Filter */
+.product__filter-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  border: none;
+}
+
+.product__filter-form :deep(.el-form-item__label) {
+  font-weight: 600;
+  color: #475569;
+}
+
+/* List */
+.product__list-card {
+  border-radius: 12px;
+  border: none;
+}
+
+.product__img {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.product__img-placeholder {
+  width: 64px;
+  height: 64px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
   border-radius: 8px;
 }
-.list-card {
-  border-radius: 8px;
+
+.product__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.pagination-container {
-  margin-top: 20px;
+
+.product__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.product__desc {
+  font-size: 12px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 250px;
+}
+
+.product__price {
+  font-family: 'Inter', monospace;
+  font-weight: 700;
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.product__tag {
+  border-radius: 6px;
+}
+
+/* Status Indicator */
+.product__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.product__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.product__status--active { color: #10b981; }
+.product__status--active .product__status-dot { background: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+
+.product__status--inactive { color: #94a3b8; }
+.product__status--inactive .product__status-dot { background: #94a3b8; }
+
+.product__pagination {
+  margin-top: 24px;
   display: flex;
   justify-content: flex-end;
 }
-.image-slot {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: #f5f7fa;
-    color: #909399;
-}
-.status-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-right: 6px;
-}
-.status-dot.success {
-    background-color: #67c23a;
-}
-.status-dot.danger {
-    background-color: #f56c6c;
-}
-/* Table tweak */
-:deep(.el-table .el-table__cell) {
-  padding: 12px 0;
+
+:deep(.el-table__row) {
+  height: 80px;
 }
 </style>

@@ -21,6 +21,15 @@ import {
     DropdownMenu, DropdownItem, IndexBar, IndexAnchor
 } from 'vant'
 
+const setRootFontSize = () => {
+  const viewportWidth = Math.max(320, Math.min(window.innerWidth, 540))
+  document.documentElement.style.fontSize = `${viewportWidth / 37.5}px`
+}
+
+setRootFontSize()
+window.addEventListener('resize', setRootFontSize)
+window.addEventListener('pageshow', setRootFontSize)
+
 const app = createApp(App)
 
 app.use(createPinia())

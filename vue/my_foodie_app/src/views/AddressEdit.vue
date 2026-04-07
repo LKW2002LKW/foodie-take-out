@@ -1,5 +1,5 @@
 <template>
-  <div class="address-edit-page">
+  <div class="address-edit-page mobile-page">
     <van-nav-bar
       :title="isEdit ? '修改收货地址' : '新增收货地址'"
       left-arrow
@@ -37,9 +37,9 @@
 
       <!-- 地图预览区 -->
       <div class="map-preview">
-        <van-image v-if="form.longitude" :src="mapUrl" width="100%" height="160" fit="cover" />
+        <van-image v-if="form.longitude" :src="mapUrl" width="100%" height="16rem" fit="cover" />
         <div v-else class="map-placeholder">
-          <van-icon name="map-marked" size="40" color="#ddd" />
+          <van-icon name="map-marked" size="4rem" color="#ddd" />
           <p>请选择准确的收货地址</p>
         </div>
       </div>
@@ -81,7 +81,7 @@
         </van-cell>
         <van-cell title="设为默认地址">
           <template #right-icon>
-            <van-switch v-model="isDefaultBool" size="20" active-color="#FFD100" />
+            <van-switch v-model="isDefaultBool" size="2rem" active-color="#FFD100" />
           </template>
         </van-cell>
       </van-cell-group>
@@ -93,7 +93,7 @@
     </div>
 
     <!-- 城市选择弹窗 -->
-    <van-popup v-model:show="showCityPopup" position="right" style="width: 100%; height: 100%">
+    <van-popup :show="showCityPopup" @update:show="showCityPopup = $event" position="right" style="width: 100%; height: 100%">
       <div class="city-picker-layout">
         <van-nav-bar title="选择收货城市" left-arrow @click-left="showCityPicker = false" />
         <div class="city-search-box">
@@ -224,21 +224,114 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.address-edit-page { min-height: 100vh; background: #f7f7f7; padding-bottom: 100px; }
-.mt-search-wrap { display: flex; align-items: center; background: #fff; padding: 8px 12px; position: sticky; top: 46px; z-index: 110; }
-.city-box { display: flex; align-items: center; gap: 4px; padding-right: 12px; border-right: 1px solid #eee; max-width: 80px; flex-shrink: 0; }
-.city-txt { font-size: 14px; font-weight: bold; color: #222; }
-.arrow { font-size: 8px; color: #999; }
+.address-edit-page {
+  min-height: 100vh;
+  background: #f7f7f7;
+  padding-bottom: calc(10rem + env(safe-area-inset-bottom));
+}
+
+.mt-search-wrap {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 0.8rem 1.2rem;
+  position: sticky;
+  top: 4.6rem;
+  z-index: 110;
+}
+
+.city-box {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-right: 1.2rem;
+  border-right: 1px solid #eee;
+  max-width: 8rem;
+  flex-shrink: 0;
+  min-height: 4.4rem;
+}
+
+.city-txt {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.arrow { font-size: 0.8rem; color: #999; }
 .search-input-box { flex: 1; }
-.custom-search { padding: 0 0 0 12px; }
-.search-overlay { position: fixed; top: 96px; left: 0; right: 0; bottom: 0; background: #fff; z-index: 120; overflow-y: auto; padding: 0 16px; }
-.tip-item { padding: 16px 0; border-bottom: 1px solid #f5f5f5; }
-.tip-main { font-size: 15px; font-weight: bold; }
-.tip-sub { font-size: 12px; color: #999; margin-top: 4px; }
-.map-preview { height: 160px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
-.form-group { margin-top: 12px; }
-.action-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px; background: #fff; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
-.city-picker-layout { display: flex; flex-direction: column; height: 100vh; background: #fff; }
+.custom-search { padding: 0 0 0 1.2rem; }
+
+.search-overlay {
+  position: fixed;
+  top: 9.6rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 120;
+  overflow-y: auto;
+  padding: 0 1.6rem;
+}
+
+.tip-item {
+  padding: 1.6rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.tip-main { font-size: 1.5rem; font-weight: 700; }
+.tip-sub { font-size: 1.2rem; color: #999; margin-top: 0.4rem; }
+
+.map-preview {
+  height: 16rem;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-placeholder {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #9ca3af;
+}
+
+.form-group { margin-top: 1.2rem; }
+
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.6rem;
+  background: #fff;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.city-picker-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #fff;
+}
+
+.city-search-box { padding: 0 1.2rem; }
+
 .city-list-container { flex: 1; overflow-y: auto; position: relative; }
-:deep(.van-index-bar__sidebar) { right: 4px; z-index: 200; }
+
+:deep(.van-index-bar__sidebar) { right: 0.4rem; z-index: 200; }
+
+:deep(.van-field),
+:deep(.van-cell) {
+  min-height: 4.4rem;
+}
+
+:deep(.van-field__label),
+:deep(.van-field__control),
+:deep(.van-cell__title),
+:deep(.van-cell__value) {
+  font-size: 1.4rem;
+}
 </style>

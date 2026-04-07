@@ -2,14 +2,15 @@
   <el-dialog
     v-model="visible"
     :title="isEdit ? '编辑地址' : '新增地址'"
-    width="600px"
+    width="92vw"
+    class="mt-address-dialog"
     @close="handleClose"
   >
     <el-form
       ref="formRef"
          :model="form"
       :rules="rules"
-      label-width="100px"
+      label-width="8rem"
     >
       <el-form-item label="收货人" prop="consignee">
         <el-input v-model="form.consignee" placeholder="请输入收货人姓名" />
@@ -33,7 +34,7 @@
           :props="{ expandTrigger: 'hover' }"
           placeholder="请选择省市区"
           @change="handleRegionChange"
-          style="width: 100%"
+          class="mt-cascader"
         />
       </el-form-item>
 
@@ -209,3 +210,26 @@ const handleClose = () => {
   visible.value = false
 }
 </script>
+
+<style scoped>
+.mt-address-dialog :deep(.el-dialog) {
+  max-width: 36rem;
+  border-radius: 1.6rem;
+}
+
+.mt-address-dialog :deep(.el-dialog__header) {
+  padding: 1.6rem 1.6rem 1rem;
+}
+
+.mt-address-dialog :deep(.el-dialog__body) {
+  padding: 1rem 1.6rem 0.8rem;
+}
+
+.mt-address-dialog :deep(.el-dialog__footer) {
+  padding: 0.8rem 1.6rem 1.6rem;
+}
+
+.mt-cascader {
+  width: 100%;
+}
+</style>

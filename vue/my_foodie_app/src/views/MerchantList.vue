@@ -1,10 +1,10 @@
 <template>
-  <div class="page-container safe-area-bottom">
+  <div class="page-container mobile-page safe-area-bottom">
     <!-- Meituan Advanced Header -->
     <div class="meituan-header">
       <div class="top-main">
         <div class="location-trigger" @click="onAddressClick">
-          <van-icon name="location" color="#FFD100" size="18" />
+          <van-icon name="location" color="#FFD100" size="1.8rem" />
           <span class="addr-txt van-ellipsis">{{ locationStore.address || '正在定位...' }}</span>
           <van-icon name="arrow-down" class="arrow" />
         </div>
@@ -20,8 +20,7 @@
     </div>
 
     <div class="scroll-content">
-     
-
+    
       <!-- Categories -->
       <div class="mt-categories">
         <div v-for="cat in categoryIcons" :key="cat.id" class="mt-cat-item" @click="onCategoryClick(cat.id)">
@@ -47,7 +46,7 @@
       <!-- Merchant List -->
       <van-list :loading="loading" :finished="finished" finished-text="没有更多了" class="mt-merchant-list" @load="onLoad">
         <div v-if="loading && list.length === 0" class="mt-skeleton-list">
-          <div v-for="i in 4" :key="i" class="mt-skeleton-item"><van-skeleton avatar avatar-size="88px" :row="3" /></div>
+          <div v-for="i in 4" :key="i" class="mt-skeleton-item"><van-skeleton avatar avatar-size="8.8rem" :row="3" /></div>
         </div>
         <merchant-card v-for="item in list" :key="item.id" :item="item" @click="router.push(`/merchant/${item.id}`)" />
         <van-empty v-if="!loading && list.length === 0" description="该区域暂无商家" />
@@ -107,33 +106,138 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.page-container { background-color: #f5f5f5; min-height: 100vh; }
-
-.meituan-header { background-color: #fff; padding: 10px 16px 12px; position: sticky; top: 0; z-index: 100; }
-.top-main { display: flex; align-items: center; margin-bottom: 8px; }
-.location-trigger { 
-  display: flex; align-items: center; gap: 6px; 
-  max-width: 85%; cursor: pointer;
+.page-container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
-.addr-txt { font-size: 17px; font-weight: 800; color: #222; }
-.arrow { font-size: 10px; color: #333; }
 
-.search-bar-wrap { width: 100%; }
-:deep(.van-search) { padding: 0; }
-:deep(.van-search__content) { background-color: #f2f2f2; }
+.meituan-header {
+  background-color: #fff;
+  padding: 1rem 1.6rem 1.2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-.banner-wrapper { padding: 12px; }
-.mt-banner { height: 110px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.mt-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 12px; background-color: #fff; border-radius: 16px 16px 0 0; }
-.mt-cat-item { display: flex; flex-direction: column; align-items: center; }
-.mt-cat-icon-bg { width: 48px; height: 48px; background: #f9f9f9; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
-.mt-cat-icon-bg.active { background: #FFD100; }
-.mt-cat-svg { width: 30px; height: 30px; display: block; }
-.mt-cat-text { font-size: 12px; color: #444; margin-top: 6px; }
-.mt-filter-bar { display: flex; align-items: center; background: #fff; border-bottom: 1px solid #f2f2f2; padding-right: 16px; position: relative; z-index: 110; }
-:deep(.van-dropdown-menu__bar) { box-shadow: none; height: 44px; flex: 1; }
-.nearby-btn { font-size: 14px; color: #666; padding: 0 12px; position: relative; }
-.nearby-btn.active { color: #222; font-weight: 800; }
-.mt-merchant-list { padding: 12px; }
-.mt-skeleton-item { background: #fff; padding: 16px; margin-bottom: 12px; border-radius: 12px; }
+.top-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.location-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 85%;
+  cursor: pointer;
+  min-height: 4.4rem;
+}
+
+.addr-txt {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.arrow {
+  font-size: 1rem;
+  color: #333;
+}
+
+.search-bar-wrap {
+  width: 100%;
+}
+
+:deep(.van-search) {
+  padding: 0;
+}
+
+:deep(.van-search__content) {
+  background-color: #f2f2f2;
+  min-height: 4.4rem;
+  border-radius: 1.2rem;
+}
+
+.mt-categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  padding: 1.6rem 1.2rem;
+  background-color: #fff;
+  border-radius: 1.6rem 1.6rem 0 0;
+}
+
+.mt-cat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mt-cat-icon-bg {
+  width: 4.8rem;
+  height: 4.8rem;
+  background: #f9f9f9;
+  border-radius: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mt-cat-icon-bg.active {
+  background: #ffd100;
+}
+
+.mt-cat-svg {
+  width: 3rem;
+  height: 3rem;
+  display: block;
+}
+
+.mt-cat-text {
+  font-size: 1.2rem;
+  color: #444;
+  margin-top: 0.6rem;
+}
+
+.mt-filter-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #f2f2f2;
+  padding-right: 1.6rem;
+  position: relative;
+  z-index: 110;
+}
+
+:deep(.van-dropdown-menu__bar) {
+  box-shadow: none;
+  min-height: 4.4rem;
+  flex: 1;
+}
+
+.nearby-btn {
+  font-size: 1.4rem;
+  color: #666;
+  padding: 0 1.2rem;
+  min-height: 4.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.nearby-btn.active {
+  color: #222;
+  font-weight: 700;
+}
+
+.mt-merchant-list {
+  padding: 1.2rem;
+}
+
+.mt-skeleton-item {
+  background: #fff;
+  padding: 1.6rem;
+  margin-bottom: 1.2rem;
+  border-radius: 1.2rem;
+}
 </style>
