@@ -5,7 +5,7 @@
       <div class="top-main">
         <div class="location-trigger" @click="onAddressClick">
           <van-icon name="location" color="var(--primary-color)" size="1.8rem" />
-          <span class="addr-txt van-ellipsis">{{ locationStore.address || '正在定位...' }}</span>
+          <span class="addr-txt van-ellipsis">{{ headerLocationText }}</span>
           <van-icon name="arrow-down" class="arrow" />
         </div>
       </div>
@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocationStore } from '../store/modules/location'
 import { getMerchantPage } from '../services/merchant'
@@ -77,6 +77,13 @@ import MerchantCard from '../components/MerchantCard.vue'
 const router = useRouter(); const locationStore = useLocationStore()
 const searchValue = ref(''); const sortType = ref(0); const activeCategoryId = ref(null)
 const loading = ref(false); const finished = ref(false); const list = ref([]); const page = ref(1); const pageSize = 10
+const getRegeoCity = (regeo) => regeo?.addressComponent?.city || regeo?.addressComponent?.province || ''
+const headerLocationText = computed(() => {
+  if (locationStore.isManual && locationStore.manualMode === 'city') {
+    return locationStore.city || locationStore.locatedCity || '定位中'
+  }
+  return locationStore.address || locationStore.locatedAddress || '正在定位...'
+})
 
 const banners = ['https://img.meituan.net/waimaipicture/82df066ed50df1101971cf5c4a783097315648.jpg', 'https://img.meituan.net/waimaipicture/066ed50df1101971cf5c4a78309731564882df.jpg']
 const categoryIcons = [{ id: 1, name: '美食' }, { id: 2, name: '甜点饮品' }, { id: 3, name: '超市便利' }, { id: 4, name: '蔬菜水果' }]
@@ -107,7 +114,7 @@ onMounted(async () => {
     try {
       const loc = await getCurrentLocation()
       const info = await reverseGeocode(loc.lng, loc.lat)
-      if (info) locationStore.setLocation({ longitude: loc.lng, latitude: loc.lat, address: info.formatted_address, city: info.city })
+      if (info) locationStore.setLocation({ longitude: loc.lng, latitude: loc.lat, address: info.formatted_address, city: getRegeoCity(info) })
     } catch(e) {}
   }
   onRefresh()
@@ -188,8 +195,34 @@ onMounted(async () => {
 
 :deep(.van-search__content) {
   background-color: var(--van-search-content-background);
-  min-height: 4.4rem;
-  border-radius: 1.2rem;
+  min-height: 3.8rem;
+  border-radius: 1rem;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+}
+
+:deep(.van-search__field) {
+  padding: 0;
+}
+
+:deep(.van-field__body) {
+  min-height: 3.8rem;
+  display: flex;
+  align-items: center;
+}
+
+:deep(.van-field__control) {
+  height: 3.8rem;
+  line-height: 3.8rem;
+  padding: 0;
+  font-size: 1.4rem;
+}
+
+:deep(.van-field__left-icon),
+:deep(.van-field__clear),
+:deep(.van-field__control::placeholder) {
+  line-height: 3.8rem;
 }
 
 .mt-categories {

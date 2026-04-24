@@ -170,7 +170,7 @@ const promoText = computed(() => {
 }
 
 .m-rating {
-  color: var(--mt-warning);
+  color: #d39a00;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
@@ -178,7 +178,7 @@ const promoText = computed(() => {
 }
 
 .m-star {
-  color: var(--primary-color);
+  color: #f0b400;
 }
 
 .m-eta {
@@ -221,14 +221,16 @@ const promoText = computed(() => {
 
 :deep(.mt-tag--yellow.van-tag--plain) {
   color: var(--mt-strong);
-  border-color: var(--primary-color);
+  border-color: rgba(232, 178, 22, 0.72);
+  border-width: 1.5px;
   background: var(--mt-soft-yellow);
 }
 
 :deep(.mt-tag--gray.van-tag--plain) {
-  color: var(--mt-muted);
-  border-color: #EAEAEA;
-  background: #FAFAFA;
+  color: var(--mt-strong);
+  border-color: rgba(232, 178, 22, 0.72);
+  border-width: 1.5px;
+  background: var(--mt-soft-yellow);
 }
 
 :deep(.mt-tag--outline.van-tag--plain) {

@@ -227,10 +227,20 @@ const getStatusClass = (s) => {
     border-top: 1px solid var(--mt-divider);
     padding-top: 1.2rem;
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
 }
 
-:deep(.van-button--small) {
-    min-height: 4.4rem;
+:deep(.card-actions .van-button--small) {
+    min-height: 3.2rem;
+    height: 3.2rem;
+    padding: 0 1.3rem;
     font-size: 1.2rem;
+    line-height: 3rem;
+}
+
+:deep(.card-actions .van-button) {
+    border-radius: 999px;
 }
 </style>

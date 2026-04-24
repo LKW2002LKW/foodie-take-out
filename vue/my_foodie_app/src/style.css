@@ -50,6 +50,22 @@ textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+/* 避免手机浏览器在输入框聚焦时自动放大页面 */
+input,
+textarea,
+select,
+:where(.van-field__control),
+:where(.van-search__field input) {
+  font-size: 16px !important;
+}
+
 .mobile-page {
   width: 100%;
   min-height: 100vh;

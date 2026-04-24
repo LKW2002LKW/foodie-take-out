@@ -59,7 +59,12 @@ const getDishCountInCart = (item) => {
   return cartStore.getCartItemCount(!!item.setmealId ? null : id, !!item.setmealId ? id : null)
 }
 const getCategoryDishCount = (category) => {
-  let count = 0; cartStore.list.forEach(item => { if (item.categoryId === category.id) count += item.number });
+  let count = 0
+  cartStore.list.forEach(item => {
+    if (String(item.categoryId) === String(category.id)) {
+      count += Number(item.number || 0)
+    }
+  })
   return count > 0 ? count : 0
 }
 const hasSpecs = (item) => !item.setmealId && item.flavors?.length > 0
@@ -106,18 +111,22 @@ const hasSpecs = (item) => !item.setmealId && item.flavors?.length > 0
 
 .mt-cat-badge {
   position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
-  color: var(--secondary-color);
+  top: 0.7rem;
+  right: 0.7rem;
+  background: linear-gradient(180deg, #ff6b6b 0%, #ee0a24 100%);
+  color: #fff;
   font-size: 1rem;
-  height: 1.6rem;
-  min-width: 1.6rem;
+  font-weight: 700;
+  height: 1.8rem;
+  min-width: 1.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.8rem;
-  padding: 0 0.4rem;
+  border-radius: 999px;
+  padding: 0 0.5rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(238, 10, 36, 0.28);
+  border: 0.1rem solid rgba(255, 255, 255, 0.95);
+  line-height: 1;
 }
 
 .mt-food-content {
@@ -209,25 +218,34 @@ const hasSpecs = (item) => !item.setmealId && item.flavors?.length > 0
 
 .mt-btn-sub,
 .mt-btn-add {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.6rem;
+  height: 2.6rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  box-sizing: border-box;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .mt-btn-sub {
-  border: 1px solid rgba(245, 194, 0, 0.28);
-  color: var(--mt-muted);
-  background-color: rgba(255, 252, 240, 0.98);
+  border: 0.14rem solid #f5c200;
+  color: var(--mt-strong);
+  background: var(--mt-card-bg);
+  box-shadow: 0 0.2rem 0.5rem rgba(245, 194, 0, 0.1);
 }
 
 .mt-btn-add {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  background: linear-gradient(180deg, #ffe27f 0%, #f5c200 100%);
   color: var(--mt-strong);
   font-weight: 900;
+  box-shadow: 0 0.3rem 0.8rem rgba(245, 194, 0, 0.24);
+}
+
+.mt-btn-sub:active,
+.mt-btn-add:active {
+  transform: scale(0.96);
 }
 
 .mt-ctrl-num {
@@ -244,9 +262,15 @@ const hasSpecs = (item) => !item.setmealId && item.flavors?.length > 0
 
 .mt-btn-add:has(.mt-spec-btn) {
   width: auto;
-  height: 2.6rem;
-  border-radius: 1.3rem;
-  padding-right: 0.4rem;
+  min-width: 2.6rem;
+  border-radius: 1.4rem;
+  padding: 0 0.8rem 0 0.4rem;
+}
+
+.mt-btn-sub :deep(.van-icon),
+.mt-btn-add :deep(.van-icon) {
+  font-size: 1.3rem;
+  font-weight: 900;
 }
 
 .mt-slide-enter-active,

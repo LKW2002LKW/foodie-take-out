@@ -101,11 +101,14 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const res = await cleanCart(merchantId)
       if (res.code === 1) {
-        list.value = list.value.filter(i => i.merchantId !== merchantId)
+        const targetMerchantId = String(merchantId)
+        list.value = list.value.filter(i => String(i.merchantId) !== targetMerchantId)
+        return true
       }
     } catch (e) {
       showFailToast('清空失败')
     }
+    return false
   }
 
   const clearAllCartAction = async () => {
@@ -113,10 +116,12 @@ export const useCartStore = defineStore('cart', () => {
       const res = await cleanCart()
       if (res.code === 1) {
         list.value = []
+        return true
       }
     } catch (e) {
       showFailToast('清空失败')
     }
+    return false
   }
 
   const batchRemoveItems = async (items) => {

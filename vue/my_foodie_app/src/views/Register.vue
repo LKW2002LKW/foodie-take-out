@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="register-page mobile-page">
-    <van-nav-bar class="register-nav" title="注册" left-text="返回" left-arrow @click-left="$router.back()" />
+    <van-nav-bar class="register-nav" title="注册" left-arrow fixed placeholder @click-left="$router.back()" />
 
     <section class="register-content">
       <header class="register-header">
@@ -23,7 +23,7 @@
           center
           clearable
           label="验证码"
-          placeholder="请输入验证码"
+          placeholder="验证码"
           :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #button>
@@ -56,7 +56,7 @@
         </van-cell-group>
 
         <div class="register-submit-wrap">
-          <van-button round block type="primary" native-type="submit" class="register-submit touch-target">
+          <van-button round block type="primary" native-type="submit" color="var(--primary-color)" text-color="#1f1f1f" class="register-submit touch-target">
           注册
           </van-button>
         </div>
@@ -139,7 +139,9 @@ const onRegister = async () => {
 
 <style scoped>
 .register-page {
-  background: linear-gradient(180deg, var(--primary-color-light) 0%, var(--mt-page-bg) 35%);
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.24) 0, rgba(255, 255, 255, 0) 28%),
+    linear-gradient(180deg, #ffe27f 0%, #fff6d6 22%, var(--mt-page-bg) 38%);
 }
 
 .register-nav {
@@ -153,21 +155,22 @@ const onRegister = async () => {
 
 .register-header {
   margin-bottom: 1.6rem;
+  padding: 0.6rem 0 0.8rem;
 }
 
 .register-title {
   margin: 0;
-  font-size: 2rem;
-  line-height: 2.8rem;
+  font-size: 2.2rem;
+  line-height: 3rem;
   color: var(--mt-strong);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .register-subtitle {
   margin: 0.8rem 0 0;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   line-height: 2rem;
-  color: var(--text-color-secondary);
+  color: rgba(31, 31, 31, 0.68);
 }
 
 .register-form {
@@ -175,34 +178,62 @@ const onRegister = async () => {
 }
 
 .register-group {
-  border-radius: 1.6rem;
+  border-radius: 1.8rem;
   overflow: hidden;
+  border: 1px solid rgba(245, 194, 0, 0.12);
+  box-shadow: 0 0.8rem 2rem rgba(245, 194, 0, 0.08);
 }
 
 :deep(.register-group .van-field) {
-  min-height: 4.4rem;
+  min-height: 5rem;
+  background: linear-gradient(180deg, #ffffff 0%, #fffdf7 100%);
 }
 
 :deep(.register-group .van-field__label),
 :deep(.register-group .van-field__control),
 :deep(.register-group .van-field__control::placeholder) {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
+}
+
+:deep(.register-group .van-field__label) {
+  color: var(--mt-strong);
+  font-weight: 700;
+}
+
+:deep(.register-group .van-field__control) {
+  color: #1f1f1f;
+}
+
+:deep(.register-group .van-field__body) {
+  gap: 0.6rem;
+}
+
+:deep(.register-group .van-field__button) {
+  margin-left: 0.6rem;
+  flex-shrink: 0;
+}
+
+:deep(.register-group .van-field::after) {
+  left: 1.6rem;
+  right: 1.6rem;
+  border-color: rgba(245, 194, 0, 0.12);
 }
 
 .code-btn {
-  min-height: 4.4rem;
-  min-width: 9.8rem;
-  color: var(--text-color-secondary) !important;
-  background: var(--van-search-content-background) !important;
-  border: 1px solid var(--border-color) !important;
-  font-size: 1.2rem;
-  padding: 0 1.2rem;
+  min-height: 3.6rem;
+  min-width: 7.2rem;
+  color: #6b5200 !important;
+  background: linear-gradient(180deg, #fff8dc 0%, #ffe9a0 100%) !important;
+  border: 1px solid rgba(245, 194, 0, 0.28) !important;
+  font-size: 1rem;
+  padding: 0 0.6rem;
+  white-space: nowrap;
 }
 
 .code-btn.van-button--disabled {
-  color: var(--text-color-placeholder) !important;
-  background: var(--mt-page-bg) !important;
-  border-color: var(--mt-divider) !important;
+  color: #b79a4b !important;
+  background: #fff5cf !important;
+  border-color: rgba(245, 194, 0, 0.18) !important;
 }
 
 .register-submit-wrap {
@@ -212,7 +243,13 @@ const onRegister = async () => {
 .register-submit {
   font-size: 1.6rem;
   font-weight: 600;
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-color-dark) 100%) !important;
+  color: #1f1f1f !important;
+  background: linear-gradient(180deg, #ffe27f 0%, #f5c200 100%) !important;
   border: none !important;
+  box-shadow: 0 0.8rem 1.6rem rgba(245, 194, 0, 0.2);
+}
+
+:deep(.register-submit .van-button__text) {
+  color: #1f1f1f !important;
 }
 </style>

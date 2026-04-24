@@ -1,12 +1,12 @@
 <template>
   <div class="cart-page mobile-page">
-    <van-nav-bar :title="isDetail ? currentMerchant.name : '购物车'" :left-arrow="isDetail" @click-left="onBack">
+    <van-nav-bar :title="isDetail ? currentMerchant.name : '购物车'" :left-arrow="isDetail" fixed placeholder @click-left="onBack">
       <template #right>
         <span v-if="showManageButton" class="manage-btn" @click="toggleEdit">{{ isEditing ? '完成' : '管理' }}</span>
       </template>
     </van-nav-bar>
 
-    <div class="cart-content">
+    <div class="cart-content" :class="{ 'cart-content--with-footer': showBottomBar }">
       <!-- Grouped View -->
       <div v-if="!isDetail" class="merchant-groups">
         <van-empty v-if="Object.keys(groupedCart).length === 0" description="购物车还是空的" />
@@ -115,6 +115,7 @@ const groupedCart = computed(() => {
 const merchantGroupList = computed(() => Object.values(groupedCart.value))
 const currentMerchant = computed(() => groupedCart.value[currentMerchantId.value] || {})
 const showManageButton = computed(() => merchantGroupList.value.length > 0 && (isDetail.value ? currentMerchant.value.items?.length > 0 : true))
+const showBottomBar = computed(() => isDetail.value || (isEditing.value && merchantGroupList.value.length > 0))
 const selectedCount = computed(() => {
   if (isDetail.value) {
     return (currentMerchant.value.items || []).filter(i => i.selected).length
@@ -227,6 +228,7 @@ onMounted(() => cartStore.fetchCartList())
   overflow: hidden;
 }
 .cart-content { flex: 1; padding: 1.2rem; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.cart-content--with-footer { padding-bottom: calc(13rem + env(safe-area-inset-bottom)); }
 .merchant-card {
   background: var(--mt-card-bg);
   border-radius: var(--mt-card-radius);
@@ -236,7 +238,7 @@ onMounted(() => cartStore.fetchCartList())
   position: relative;
 }
 .merchant-card.is-managing {
-  padding-left: 5rem;
+  padding-left: 5.2rem;
 }
 .merchant-checkbox {
   position: absolute;
@@ -265,29 +267,53 @@ onMounted(() => cartStore.fetchCartList())
 .item-spec { font-size: 1.2rem; color: var(--mt-muted); margin-top: 0.2rem; }
 .item-price { color: var(--van-danger-color); font-weight: 800; font-size: 1.8rem; }
 .mt-checkbox {
-  width: 2rem;
-  height: 2rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: var(--mt-card-bg);
+  border: 0.14rem solid rgba(232, 178, 22, 0.88);
+  background: linear-gradient(180deg, #fffef9 0%, #fff7df 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0.2rem 0.6rem rgba(245, 194, 0, 0.12);
 }
-.mt-checkbox.checked { background: var(--primary-color); border-color: var(--primary-color); }
-.check-icon { font-size: 1.4rem; color: var(--mt-strong); opacity: 0; }
+.mt-checkbox.checked { background: linear-gradient(180deg, #ffe27f 0%, #f5c200 100%); border-color: #e2a900; }
+.check-icon { font-size: 1.2rem; color: var(--mt-strong); opacity: 0; }
 .mt-checkbox.checked .check-icon { opacity: 1; }
 .cart-ctrl { display: flex; align-items: center; }
-.btn-sub, .btn-add { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; min-height: 2.2rem; }
-.btn-sub { border: 1px solid var(--border-color); color: var(--mt-muted); background: var(--mt-card-bg); }
-.btn-add { background: var(--primary-color); color: var(--mt-strong); font-weight: 900; }
+.btn-sub, .btn-add {
+  width: 2.6rem;
+  height: 2.6rem;
+  min-height: 2.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn-sub {
+  border: 0.14rem solid #f5c200;
+  color: var(--mt-strong);
+  background: var(--mt-card-bg);
+  box-shadow: 0 0.2rem 0.5rem rgba(245, 194, 0, 0.12);
+}
+.btn-add {
+  background: linear-gradient(180deg, #ffe27f 0%, #f5c200 100%);
+  color: var(--mt-strong);
+  font-weight: 900;
+  box-shadow: 0 0.3rem 0.8rem rgba(245, 194, 0, 0.24);
+}
+.btn-sub:active, .btn-add:active { transform: scale(0.96); }
+.btn-sub :deep(.van-icon), .btn-add :deep(.van-icon) { font-size: 1.3rem; font-weight: 900; }
 .num { width: 2.8rem; text-align: center; font-size: 1.3rem; }
 .detail-footer-wrapper { 
   position: fixed; 
-  bottom: calc(5rem + env(safe-area-inset-bottom)); 
-  left: 0; 
-  right: 0; 
-  z-index: 100; 
+  bottom: calc(5.8rem + env(safe-area-inset-bottom)); 
+  left: 1.2rem; 
+  right: 1.2rem; 
+  z-index: 2100; 
 }
 .detail-footer,
 .manage-footer {
@@ -296,8 +322,9 @@ onMounted(() => cartStore.fetchCartList())
   display: flex;
   align-items: center;
   padding: 0 1.6rem;
-  box-shadow: 0 -0.2rem 1rem rgba(0, 0, 0, 0.05);
-  border-top: 1px solid var(--mt-divider);
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(245, 194, 0, 0.12);
+  border-radius: 1.8rem;
 }
 .total-amount { font-size: 2.2rem; font-weight: 800; color: var(--van-danger-color); }
 .checkout-btn { background: var(--primary-color); color: var(--mt-strong); font-weight: 900; padding: 1rem 2.4rem; border-radius: 2.2rem; margin-left: auto; min-height: 4.4rem; display: flex; align-items: center; }
@@ -305,5 +332,22 @@ onMounted(() => cartStore.fetchCartList())
 .select-all-wrap { display: flex; align-items: center; gap: 0.8rem; min-height: 4.4rem; }
 .delete-btn { background: var(--van-danger-color); color: var(--mt-card-bg); padding: 1rem 2.4rem; border-radius: 2.2rem; min-height: 4.4rem; display: flex; align-items: center; }
 .delete-btn.disabled { opacity: 0.5; }
-.manage-btn { color: var(--secondary-color); font-size: 1.4rem; font-weight: 800; padding: 0.4rem 0.6rem; }
+.manage-btn {
+  color: var(--secondary-color);
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 0.6rem 1.1rem;
+  min-height: 3.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #fffdf7 0%, #fff2bf 100%);
+  border: 1px solid rgba(245, 194, 0, 0.28);
+  border-radius: 999px;
+  box-shadow: 0 0.3rem 0.8rem rgba(245, 194, 0, 0.12);
+}
+
+:deep(.van-nav-bar__right) {
+  padding-right: 1.2rem;
+}
 </style>

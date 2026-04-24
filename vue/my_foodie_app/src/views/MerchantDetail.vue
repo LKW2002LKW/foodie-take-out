@@ -114,6 +114,20 @@
       </div>
       <div class="cart-list">
         <div v-for="(item, idx) in currentMerchantCart" :key="idx" class="cart-item-row">
+          <van-image
+            class="ci-cover"
+            :src="item.image || item.pic"
+            width="4.8rem"
+            height="4.8rem"
+            fit="cover"
+            radius="0.8rem"
+          >
+            <template #error>
+              <div class="ci-cover-fallback">
+                <van-icon name="photo-o" size="1.8rem" />
+              </div>
+            </template>
+          </van-image>
           <div class="ci-info">
             <div class="ci-name">{{ item.name }}</div>
             <div v-if="item.dishFlavor" class="ci-spec">{{ formatFlavor(item.dishFlavor) }}</div>
@@ -389,9 +403,11 @@ const onSubItem = (item) => cartStore.subFromCart(item)
 const onCheckout = () => router.push({ path: '/order/create', query: { merchantId } })
 const toggleCartPopup = () => { if (currentMerchantCart.value.length > 0) showCartPopup.value = !showCartPopup.value }
 const onClearCart = () => {
-  showConfirmDialog({ title: '确认清空吗？' }).then(() => {
-    cartStore.clearCartAction(Number(merchantId))
-    showCartPopup.value = false
+  showConfirmDialog({ title: '确认清空吗？' }).then(async () => {
+    const cleared = await cartStore.clearCartAction(Number(merchantId))
+    if (cleared) {
+      showCartPopup.value = false
+    }
   })
 }
 const formatFlavor = (str) => { try { return JSON.parse(str).map(f => f.value).join(',') } catch (error) { return str } }
@@ -571,27 +587,52 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.6rem;
+  gap: 1rem;
+  padding: 1.2rem 1.6rem;
   border-bottom: 1px solid rgba(245, 194, 0, 0.1);
+}
+
+.ci-cover {
+  flex-shrink: 0;
+  border: 1px solid rgba(245, 194, 0, 0.14);
+  box-shadow: 0 0.2rem 0.6rem rgba(245, 194, 0, 0.1);
+}
+
+.ci-cover-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b6923e;
+  background: linear-gradient(180deg, #FFF9E8 0%, #FFF1CC 100%);
 }
 
 .ci-info {
   flex: 1;
+  min-width: 0;
 }
 
 .ci-name {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--mt-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ci-spec {
   font-size: 1.2rem;
   color: var(--mt-muted);
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ci-price {
-  width: 7rem;
+  width: 6.4rem;
   text-align: right;
   color: var(--van-danger-color);
   font-weight: 800;
@@ -611,22 +652,38 @@ onMounted(() => {
 
 .btn-sub,
 .btn-add {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.6rem;
+  height: 2.6rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .btn-sub {
-  border: 1px solid rgba(245, 194, 0, 0.2);
-  color: var(--mt-muted);
+  border: 0.14rem solid #f5c200;
+  background: var(--mt-card-bg);
+  color: var(--mt-strong);
+  box-shadow: 0 0.2rem 0.5rem rgba(245, 194, 0, 0.12);
 }
 
 .btn-add {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  background: linear-gradient(180deg, #ffe27f 0%, #f5c200 100%);
   color: var(--mt-strong);
   font-weight: 800;
+  box-shadow: 0 0.3rem 0.8rem rgba(245, 194, 0, 0.24);
+}
+
+.btn-sub:active,
+.btn-add:active {
+  transform: scale(0.96);
+}
+
+.btn-sub :deep(.van-icon),
+.btn-add :deep(.van-icon) {
+  font-size: 1.3rem;
+  font-weight: 900;
 }
 </style>

@@ -21,6 +21,7 @@
         :model-value="Number(review.rating || 0)"
         readonly
         allow-half
+        size="16"
         color="#ffb400"
         void-icon="star"
         void-color="#e5e5e5"

@@ -584,6 +584,18 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
                 vo.setMerchantName(merchant.getMerchantName());
             }
 
+            if (cart.getDishId() != null) {
+                Dish dish = dishMapper.selectById(cart.getDishId());
+                if (dish != null) {
+                    vo.setCategoryId(dish.getCategoryId());
+                }
+            } else if (cart.getSetmealId() != null) {
+                Setmeal setmeal = setmealMapper.selectById(cart.getSetmealId());
+                if (setmeal != null) {
+                    vo.setCategoryId(setmeal.getCategoryId());
+                }
+            }
+
             return vo;
         }).collect(Collectors.toList());
     }

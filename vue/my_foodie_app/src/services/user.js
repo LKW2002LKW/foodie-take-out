@@ -24,6 +24,14 @@ export const sendCode = (phone) => {
   })
 }
 
+export const loginByWechat = (code) => {
+  return request({
+    url: '/user/wechat/login',
+    method: 'post',
+    data: { code },
+  })
+}
+
 export const getUserInfo = () => {
   return request({
     url: '/user/info',

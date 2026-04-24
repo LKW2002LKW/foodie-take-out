@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+let amapSdkPromise = null
+
 /**
  * 高德地图服务封装 (安全脱敏版)
  * 请求由 Vite Proxy 转发，在服务器端自动填充 Key
@@ -7,6 +9,28 @@ import axios from 'axios'
 const amapInstance = axios.create({
   baseURL: '/amap-api'
 })
+
+export const loadAmapSdk = async () => {
+  if (window.AMap) return window.AMap
+  if (amapSdkPromise) return amapSdkPromise
+
+  amapSdkPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = `https://webapi.amap.com/maps?v=2.0&key=${import.meta.env.VITE_AMAP_KEY}`
+    script.async = true
+    script.onload = () => {
+      if (window.AMap) {
+        resolve(window.AMap)
+      } else {
+        reject(new Error('高德地图加载失败'))
+      }
+    }
+    script.onerror = () => reject(new Error('高德地图脚本加载失败'))
+    document.head.appendChild(script)
+  })
+
+  return amapSdkPromise
+}
 
 /**
  * 地址输入联想

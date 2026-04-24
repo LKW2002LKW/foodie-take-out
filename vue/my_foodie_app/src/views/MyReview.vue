@@ -24,6 +24,7 @@
                   round
                   plain
                   type="danger"
+                  class="delete-review-btn"
                   :loading="isDeleting(item.id)"
                   :disabled="isDeleting(item.id)"
                   @click="onDeleteReview(item, index)"
@@ -46,7 +47,7 @@
               <div class="order-amount">实付 ￥{{ item.totalAmount }}</div>
             </div>
             <div class="pending-actions">
-              <van-button size="small" round type="primary" @click="goToReview(item)">去评价</van-button>
+              <van-button size="small" round type="primary" class="review-action-btn" @click="goToReview(item)">去评价</van-button>
             </div>
           </div>
         </div>
@@ -304,15 +305,21 @@ onActivated(() => {
 <style scoped>
 .my-review-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--mt-page-bg);
 }
 
 .review-tabs {
   background: var(--mt-card-bg);
+  position: sticky;
+  top: calc(4.6rem + env(safe-area-inset-top));
+  z-index: 20;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
 }
 
 .list-wrap {
   padding: 1.2rem;
+  padding-top: 1.6rem;
 }
 
 .review-list {
@@ -384,5 +391,25 @@ onActivated(() => {
 :deep(.van-button--small) {
   min-height: 4.4rem;
   font-size: 1.2rem;
+}
+
+:deep(.van-tabs__wrap) {
+  min-height: 4.8rem;
+}
+
+:deep(.van-tabs__nav) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 248, 235, 0.98) 100%);
+}
+
+:deep(.delete-review-btn.van-button--small) {
+  min-height: 3.2rem;
+  padding: 0 1rem;
+  font-size: 1.15rem;
+}
+
+:deep(.review-action-btn.van-button--small) {
+  min-height: 3.2rem;
+  padding: 0 1rem;
+  font-size: 1.15rem;
 }
 </style>

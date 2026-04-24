@@ -53,16 +53,17 @@ const onCheckout = () => { if (canCheckout.value) emit('checkout') }
 .mt-cart-bar {
   height: calc(5rem + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
-  background: linear-gradient(180deg, #4A361E 0%, #322414 100%);
+  background: linear-gradient(180deg, #FFF6D7 0%, #FFEAB1 100%);
   border-radius: 0;
   display: flex;
   align-items: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 -0.3rem 1.2rem rgba(245, 194, 0, 0.12);
   transition: background-color 0.2s;
+  border-top: 1px solid rgba(245, 194, 0, 0.2);
 }
 
 .mt-cart-active {
-  background: linear-gradient(180deg, #3E2E19 0%, #2B1F11 100%);
+  background: linear-gradient(180deg, #FFEFBF 0%, #FFE29A 100%);
 }
 
 .mt-cart-left {
@@ -75,14 +76,15 @@ const onCheckout = () => { if (canCheckout.value) emit('checkout') }
 .mt-cart-icon-box {
   width: 4.4rem;
   height: 4.4rem;
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.76);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.65);
+  color: #846211;
   position: relative;
   transition: all 0.2s;
+  border: 1px solid rgba(245, 194, 0, 0.28);
 }
 
 .mt-cart-active .mt-cart-icon-box {
@@ -108,7 +110,7 @@ const onCheckout = () => { if (canCheckout.value) emit('checkout') }
 
 .mt-cart-price-info {
   margin-left: 1.2rem;
-  color: var(--mt-card-bg);
+  color: var(--mt-strong);
 }
 
 .mt-total-price {
@@ -125,27 +127,33 @@ const onCheckout = () => { if (canCheckout.value) emit('checkout') }
 
 .mt-empty-text {
   font-size: 1.4rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-color-secondary);
 }
 
 .mt-delivery-text {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: #8f7532;
 }
 
 .mt-cart-right {
-  height: 100%;
-  padding: 0 2.2rem;
-  background-color: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.65);
+  height: 3.6rem;
+  margin-right: 1rem;
+  padding: 0 2rem;
+  background: linear-gradient(180deg, #ffe593 0%, #ffd96b 100%);
+  color: var(--mt-strong);
   font-size: 1.5rem;
   font-weight: 900;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 156, 16, 0.16);
+  box-shadow: inset 0 0.1rem 0 rgba(255, 255, 255, 0.45), 0 0.4rem 1rem rgba(245, 194, 0, 0.16);
+  min-width: 10.8rem;
 }
 
 .mt-can-pay {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  background: linear-gradient(180deg, #ffd95f 0%, #f5c200 100%);
   color: var(--mt-strong);
 }
 .mt-pop-anim { animation: mt-pop 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67); }

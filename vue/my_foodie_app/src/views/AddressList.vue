@@ -14,8 +14,8 @@
       </div>
     </div>
 
-    <!-- 2. 搜索建议 -->
-    <div v-if="isSearching && tips.length > 0" class="search-tips-overlay">
+    <!-- 2. 搜索结果 -->
+    <div v-if="showSearchPanel" class="search-tips-overlay">
       <div v-for="tip in tips" :key="tip.id" class="suggestion-item" @click="onSelectSuggestion(tip)">
         <van-icon name="location-o" class="item-icon" />
         <div class="item-info">
@@ -23,22 +23,23 @@
           <div class="item-addr van-ellipsis">{{ tip.district }}{{ tip.address }}</div>
         </div>
       </div>
+      <van-empty v-if="tips.length === 0" image-size="72" description="未搜索到相关地址" class="search-empty" />
     </div>
 
     <!-- 3. 地址管理 -->
-    <div class="scroll-container" @click="isSearching = false">
+    <div v-else class="scroll-container" @click="isSearching = false">
       <div v-if="!isEditMode" class="current-loc-wrap">
-        <div class="row-title">{{ locationStore.isManual ? '当前选择城市' : '当前定位' }}</div>
+        <div class="row-title">{{ isManualCityMode ? '当前选择城市' : '当前定位' }}</div>
         <div class="loc-card" @click="useCurrentLoc">
           <div class="loc-info">
-            <van-icon :name="locationStore.isManual ? 'map-marked' : 'location'" color="var(--primary-color)" size="2rem" />
+            <van-icon :name="isManualCityMode ? 'map-marked' : 'location'" color="var(--primary-color)" size="2rem" />
             <transition name="fade-slide">
-              <span :key="locationStore.address" class="loc-name van-ellipsis">{{ locationStore.address }}</span>
+              <span :key="locationStore.locatedAddress" class="loc-name van-ellipsis">{{ locationStore.locatedAddress }}</span>
             </transition>
           </div>
-          <div class="relocate-btn" @click.stop="onForceRelocate">
+          <div class="relocate-btn" @click.stop="onRelocateAction">
             <van-icon name="aim" :class="{ 'loading-anim': locating }" />
-            <span>{{ locationStore.isManual ? '回到当前' : '重新定位' }}</span>
+            <span>{{ isManualCityMode ? '回到当前' : '重新定位' }}</span>
           </div>
         </div>
       </div>
@@ -60,8 +61,21 @@
               <div class="mt-checkbox" :class="{ 'checked': addr.selected }"><van-icon name="success" class="check-icon" /></div>
             </div>
             <div class="card-content">
-              <div class="card-main"><span class="card-addr van-ellipsis">{{ addr.address }}</span></div>
-              <div class="card-sub">{{ addr.consignee }} {{ addr.phone }}<van-tag v-if="addr.isDefault" color="var(--primary-color-light)" text-color="var(--primary-color)" class="default-tag">默认</van-tag></div>
+              <div class="card-main">
+                <span class="card-addr">{{ addr.fullAddress || addr.detail || [addr.provinceName, addr.cityName, addr.districtName].filter(Boolean).join('') }}</span>
+              </div>
+              <div class="card-sub">
+                <span>{{ addr.consignee }}</span>
+                <span>{{ addr.phone }}</span>
+                <van-tag v-if="addr.isDefault" color="var(--primary-color-light)" text-color="var(--primary-color)" class="default-tag">默认</van-tag>
+                <van-tag
+                  v-if="addr.label"
+                  class="addr-label-tag"
+                  :class="`addr-label-tag--${addr.label}`"
+                >
+                  {{ addr.label }}
+                </van-tag>
+              </div>
             </div>
             <van-icon v-if="!isEditMode" name="edit" class="edit-btn" @click.stop="onEdit(addr)" />
           </div>
@@ -100,15 +114,19 @@ import { showToast, showConfirmDialog } from 'vant'
 const router = useRouter(); const locationStore = useLocationStore()
 const searchQuery = ref(''); const locating = ref(false); const savedAddresses = ref([]); const showCityPicker = ref(false)
 const isSearching = ref(false); const tips = ref([]); const isEditMode = ref(false)
+const isManualCityMode = computed(() => locationStore.isManual && locationStore.manualMode === 'city')
+const showSearchPanel = computed(() => Boolean(searchQuery.value.trim()))
 
 const cityData = [{ initial: 'A', list: ['阿坝', '安康', '安庆', '鞍山'] }, { initial: 'B', list: ['北京', '保定', '宝鸡', '包头', '蚌埠'] }, { initial: 'C', list: ['成都', '重庆', '长沙', '常州', '沧州'] }, { initial: 'D', list: ['大连', '东莞', '大理', '德州', '大庆'] }, { initial: 'F', list: ['佛山', '福州', '抚顺', '阜阳'] }, { initial: 'G', list: ['广州', '深圳', '贵阳', '桂林', '赣州'] }, { initial: 'H', list: ['杭州', '合肥', '哈尔滨', '海口', '邯郸', '惠州'] }, { initial: 'J', list: ['济南', '嘉兴', '金华', '九江', '吉林'] }, { initial: 'K', list: ['昆明', '开封'] }, { initial: 'L', list: ['兰州', '洛阳', '临沂', '拉萨', '廊坊'] }, { initial: 'M', list: ['马鞍山', '茂名', '绵阳'] }, { initial: 'N', list: ['南昌', '南充', '南京', '南宁', '南通', '宁波', '南特'] }, { initial: 'Q', list: ['青岛', '泉州', '秦皇岛', '齐齐哈尔'] }, { initial: 'S', list: ['上海', '苏州', '沈阳', '石家庄', '三亚', '汕头'] }, { initial: 'T', list: ['天津', '太原', '唐山', '泰州', '台州'] }, { initial: 'W', list: ['武汉', '无锡', '温州', '潍坊', '威海'] }, { initial: 'X', list: ['西安', '厦门', '西宁', '徐州', '邢台', '咸阳'] }, { initial: 'Y', list: ['扬州', '烟台', '银川', '宜昌', '延安'] }, { initial: 'Z', list: ['郑州', '珠海', '中山', '淄博', '湛江', '枣庄'] }]
 const cityIndexList = computed(() => cityData.map(g => g.initial))
+const getRegeoCity = (regeo) => regeo?.addressComponent?.city || regeo?.addressComponent?.province || ''
+const getRegeoAdcode = (regeo) => regeo?.addressComponent?.adcode || ''
 
 const onBack = () => router.back()
 const loadAddresses = async () => { const res = await getAddressList(); if (res && res.code === 1) savedAddresses.value = (res.data || []).map(a => ({ ...a, selected: false })) }
 
 // 核心：升级后的初始化定位 (延长GPS时间，加入持久化感应)
-const initSmartLocation = async (force = false) => {
+const initSmartLocation = async (force = false, allowIpFallback = !force) => {
   // 如果不是强制刷新，且当前已经是手动模式，不自动触发
   if (!force && locationStore.isManual) return
 
@@ -128,28 +146,58 @@ const initSmartLocation = async (force = false) => {
     if (info) {
       locationStore.setLocation({ 
         longitude: loc.lng, latitude: loc.lat, 
-        address: info.formatted_address, city: info.city, adcode: info.adcode 
+        address: info.formatted_address, city: getRegeoCity(info), adcode: getRegeoAdcode(info)
       })
-      locationStore.isManual = false
+      return true
     }
   } catch (e) {
     console.warn('GPS location attempt finished with error or timeout:', e)
-    // 准则 2: 只有在完全没有历史缓存的情况下，才执行 IP 兜底
-    if (!locationStore.longitude || force) {
+    // 非强制“回到当前”时，且完全没有定位缓存，才允许 IP 兜底
+    if (allowIpFallback && !locationStore.locatedLongitude) {
       const ipInfo = await ipLocation()
       if (ipInfo) {
-        locationStore.setCity(ipInfo.city, false)
-        locationStore.setAddress(ipInfo.city)
-        const geo = await geocode(ipInfo.city); if (geo) locationStore.setCoordinates(geo.lng, geo.lat)
+        const geo = await geocode(ipInfo.city)
+        locationStore.setLocation({
+          longitude: geo?.lng,
+          latitude: geo?.lat,
+          address: ipInfo.city,
+          city: ipInfo.city,
+          adcode: ipInfo.adcode
+        })
+        return true
       }
     }
+    return false
   } finally { locating.value = false }
 }
 
-const onForceRelocate = () => initSmartLocation(true)
+const onForceRelocate = () => initSmartLocation(true, false)
+const switchToCurrentLoc = () => { locationStore.useLocatedLocation() }
+const onRelocateAction = async () => {
+  if (isManualCityMode.value) {
+    const relocated = await onForceRelocate()
+    if (relocated) {
+      switchToCurrentLoc()
+    } else {
+      showToast('当前定位失败，请检查定位权限')
+    }
+    return
+  }
+  await onForceRelocate()
+}
 const toggleEditMode = () => { isEditMode.value = !isEditMode.value; if (!isEditMode.value) savedAddresses.value.forEach(a => a.selected = false) }
 const toggleSelectAll = () => { const target = !isAllSelected.value; savedAddresses.value.forEach(a => a.selected = target) }
-const onItemClick = (addr) => { if (isEditMode.value) addr.selected = !addr.selected; else { locationStore.setAddress(addr.address); locationStore.setCoordinates(addr.longitude, addr.latitude); onBack() } }
+const onItemClick = (addr) => {
+  if (isEditMode.value) {
+    addr.selected = !addr.selected
+  } else {
+    const selectedAddress = addr.fullAddress || addr.detail || [addr.provinceName, addr.cityName, addr.districtName].filter(Boolean).join('')
+    locationStore.setAddress(selectedAddress, true, 'address')
+    locationStore.setCity(addr.cityName || locationStore.city, true, 'address')
+    locationStore.setCoordinates(addr.longitude, addr.latitude)
+    onBack()
+  }
+}
 const onBatchDelete = () => {
   const ids = savedAddresses.value.filter(a => a.selected).map(a => a.id)
   if (ids.length === 0) return
@@ -160,19 +208,31 @@ const onBatchDelete = () => {
 
 let timer = null
 const onSearchInput = (val) => {
-  if (!val) { tips.value = []; isSearching.value = false; return }
+  if (!val || !val.trim()) { tips.value = []; isSearching.value = false; return }
+  isSearching.value = true
   clearTimeout(timer); timer = setTimeout(async () => {
     const results = await inputTips(val, locationStore.city); tips.value = results.filter(t => t.location && typeof t.location === 'string')
   }, 300)
 }
 const onSelectSuggestion = async (tip) => {
-  const [lng, lat] = tip.location.split(','); locationStore.setCoordinates(parseFloat(lng), parseFloat(lat)); locationStore.setAddress(tip.name)
-  const info = await reverseGeocode(lng, lat); if (info) locationStore.setCity(info.city, true)
+  const [lng, lat] = tip.location.split(',')
+  locationStore.setCoordinates(parseFloat(lng), parseFloat(lat))
+  locationStore.setAddress(tip.name, true, 'address')
+  const info = await reverseGeocode(lng, lat)
+  if (info) {
+    locationStore.setCity(getRegeoCity(info), true, 'address')
+  }
   router.push('/merchant/list')
 }
 
 const onAdd = () => router.push('/address/edit'); const onEdit = (addr) => router.push(`/address/edit?id=${addr.id}`)
-const useCurrentLoc = () => onBack(); const onCitySelect = async (city) => { locationStore.setCity(city, true); locationStore.setAddress(city); const geo = await geocode(city); if (geo) locationStore.setCoordinates(geo.lng, geo.lat); showCityPicker.value = false }
+const useCurrentLoc = () => { switchToCurrentLoc(); onBack() }
+const onCitySelect = async (city) => {
+  locationStore.setCity(city, true, 'city')
+  const geo = await geocode(city)
+  if (geo) locationStore.setCoordinates(geo.lng, geo.lat)
+  showCityPicker.value = false
+}
 const selectedCount = computed(() => savedAddresses.value.filter(a => a.selected).length)
 const isAllSelected = computed(() => savedAddresses.value.length > 0 && savedAddresses.value.every(a => a.selected))
 
@@ -189,9 +249,15 @@ onMounted(() => { loadAddresses(); initSmartLocation() })
 .arrow { font-size: 0.8rem; color: var(--primary-color-dark); }
 .search-box { flex: 1; }
 .search-box :deep(.van-search) { padding: 0; }
-:deep(.van-search__content) { background: var(--van-search-content-background); min-height: 4.4rem; border: 1px solid rgba(245, 194, 0, 0.18); box-shadow: inset 0 0 0 0.1rem rgba(255,255,255,0.7), 0 0.4rem 1.2rem rgba(245, 194, 0, 0.08); }
+:deep(.van-search__content) { background: var(--van-search-content-background); min-height: 3.8rem; padding: 0 1rem; display: flex; align-items: center; border: 1px solid rgba(245, 194, 0, 0.18); box-shadow: inset 0 0 0 0.1rem rgba(255,255,255,0.7), 0 0.4rem 1.2rem rgba(245, 194, 0, 0.08); }
 :deep(.van-search__content--round) { border-radius: 999rem; }
 :deep(.van-field__left-icon) { color: var(--primary-color-dark); }
+:deep(.van-search__field) { padding: 0; }
+:deep(.van-field__body) { min-height: 3.8rem; display: flex; align-items: center; }
+:deep(.van-field__control) { height: 3.8rem; line-height: 3.8rem; padding: 0; font-size: 1.4rem; }
+:deep(.van-field__left-icon),
+:deep(.van-field__clear),
+:deep(.van-field__control::placeholder) { line-height: 3.8rem; }
 .search-tips-overlay { position: absolute; top: 5.4rem; left: 0; right: 0; bottom: 0; background: var(--mt-card-bg); z-index: 120; overflow-y: auto; padding: 0 1.6rem; }
 .suggestion-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.6rem 0; border-bottom: 1px solid var(--mt-divider); }
 .item-icon { font-size: 1.8rem; color: var(--mt-muted); }
@@ -217,10 +283,43 @@ onMounted(() => { loadAddresses(); initSmartLocation() })
 .card-item.selectable { padding-left: 0.8rem; }
 .checkbox-box { padding-right: 1.2rem; }
 .card-content { flex: 1; overflow: hidden; }
-.card-main { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
-.card-addr { font-size: 1.5rem; font-weight: 900; color: var(--mt-strong); }
-.card-sub { font-size: 1.2rem; color: var(--text-color-secondary); }
+.card-main { display: flex; align-items: flex-start; gap: 0.8rem; margin-bottom: 0.8rem; }
+.card-addr {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--mt-strong);
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-all;
+}
+.card-sub {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  font-size: 1.2rem;
+  color: var(--text-color-secondary);
+}
 .default-tag { margin-left: 0.8rem; }
+.addr-label-tag {
+  border-radius: 999px;
+  padding: 0 0.8rem;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1.8rem;
+}
+.addr-label-tag--家 {
+  background: rgba(245, 194, 0, 0.16);
+  color: #9a6a00;
+}
+.addr-label-tag--学校 {
+  background: rgba(76, 175, 80, 0.16);
+  color: #2e7d32;
+}
+.addr-label-tag--公司 {
+  background: rgba(33, 150, 243, 0.16);
+  color: #1565c0;
+}
 .edit-btn { font-size: 1.8rem; color: var(--text-color-placeholder); padding-left: 1rem; }
 .mt-checkbox { width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid rgba(245, 194, 0, 0.35); background: rgba(255, 252, 240, 0.98); display: flex; align-items: center; justify-content: center; }
 .mt-checkbox.checked { background: var(--primary-color); border-color: var(--primary-color); }
