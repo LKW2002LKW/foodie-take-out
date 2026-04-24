@@ -123,7 +123,7 @@ const onSubmit = async () => {
 
 <style scoped>
 .bind-phone {
-  background-color: #f7f8fa;
+  background-color: var(--mt-page-bg);
   min-height: 100vh;
 }
 
@@ -134,9 +134,9 @@ const onSubmit = async () => {
 .code-btn {
   min-height: 4.4rem;
   min-width: 9.8rem;
-  color: #4b5563 !important;
-  background: #f3f4f6 !important;
-  border: 1px solid #d1d5db !important;
+  color: var(--text-color-secondary) !important;
+  background: var(--van-search-content-background) !important;
+  border: 1px solid var(--border-color) !important;
   font-size: 1.2rem;
 }
 

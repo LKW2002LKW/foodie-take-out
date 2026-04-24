@@ -4,7 +4,7 @@
     <div class="meituan-header">
       <div class="top-main">
         <div class="location-trigger" @click="onAddressClick">
-          <van-icon name="location" color="#FFD100" size="1.8rem" />
+          <van-icon name="location" color="var(--primary-color)" size="1.8rem" />
           <span class="addr-txt van-ellipsis">{{ locationStore.address || '正在定位...' }}</span>
           <van-icon name="arrow-down" class="arrow" />
         </div>
@@ -20,7 +20,15 @@
     </div>
 
     <div class="scroll-content">
-    
+      <!-- Banner (运营位) -->
+      <div class="mt-banner" v-if="banners && banners.length">
+        <van-swipe class="mt-swipe" :autoplay="3500" :duration="260" indicator-color="white" lazy-render>
+          <van-swipe-item v-for="(img, idx) in banners" :key="idx" class="mt-swipe-item">
+            <van-image :src="img" fit="cover" width="100%" height="11.2rem" radius="1.6rem" />
+          </van-swipe-item>
+        </van-swipe>
+      </div>
+
       <!-- Categories -->
       <div class="mt-categories">
         <div v-for="cat in categoryIcons" :key="cat.id" class="mt-cat-item" @click="onCategoryClick(cat.id)">
@@ -34,9 +42,10 @@
       </div>
 
       <!-- Filters -->
-      <van-sticky offset-top="0">
+      <!-- offset-top uses px; 96px ~= 9.6rem at 375px viewport (fits header height) -->
+      <van-sticky :offset-top="96">
         <div class="mt-filter-bar">
-          <van-dropdown-menu active-color="#FFD100">
+          <van-dropdown-menu active-color="var(--primary-color)">
             <van-dropdown-item v-model="sortType" :options="sortOptions" @change="onRefresh" />
           </van-dropdown-menu>
           <div class="nearby-btn" :class="{ active: sortType === 1 }" @click="onNearbyClick">附近商家</div>
@@ -107,16 +116,40 @@ onMounted(async () => {
 
 <style scoped>
 .page-container {
-  background-color: #f5f5f5;
+  background: var(--mt-page-bg);
   min-height: 100vh;
 }
 
 .meituan-header {
-  background-color: #fff;
+  background: linear-gradient(180deg, rgba(255, 244, 203, 0.98) 0%, rgba(255, 252, 244, 0.98) 100%);
   padding: 1rem 1.6rem 1.2rem;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 0.2rem 1.2rem rgba(245, 194, 0, 0.08);
+  border-bottom: 1px solid rgba(245, 194, 0, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.scroll-content {
+  padding: 1.2rem 0 0;
+}
+
+.mt-banner {
+  padding: 0 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.mt-swipe {
+  border-radius: 1.6rem;
+  overflow: hidden;
+  box-shadow: 0 0.8rem 2rem rgba(245, 194, 0, 0.12);
+  border: 1px solid rgba(245, 194, 0, 0.12);
+}
+
+.mt-swipe-item {
+  border-radius: 1.6rem;
+  overflow: hidden;
 }
 
 .top-main {
@@ -137,12 +170,12 @@ onMounted(async () => {
 .addr-txt {
   font-size: 1.7rem;
   font-weight: 700;
-  color: #222;
+  color: var(--mt-strong);
 }
 
 .arrow {
   font-size: 1rem;
-  color: #333;
+  color: var(--mt-strong);
 }
 
 .search-bar-wrap {
@@ -154,7 +187,7 @@ onMounted(async () => {
 }
 
 :deep(.van-search__content) {
-  background-color: #f2f2f2;
+  background-color: var(--van-search-content-background);
   min-height: 4.4rem;
   border-radius: 1.2rem;
 }
@@ -164,8 +197,11 @@ onMounted(async () => {
   grid-template-columns: repeat(4, 1fr);
   gap: 1.2rem;
   padding: 1.6rem 1.2rem;
-  background-color: #fff;
-  border-radius: 1.6rem 1.6rem 0 0;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF6 100%);
+  border-radius: 1.6rem;
+  margin: 0 1.2rem 1.2rem;
+  box-shadow: 0 0.8rem 2rem rgba(245, 194, 0, 0.08);
+  border: 1px solid rgba(245, 194, 0, 0.12);
 }
 
 .mt-cat-item {
@@ -177,15 +213,17 @@ onMounted(async () => {
 .mt-cat-icon-bg {
   width: 4.8rem;
   height: 4.8rem;
-  background: #f9f9f9;
+  background: linear-gradient(180deg, #FFF9E3 0%, #FFF3C4 100%);
   border-radius: 1.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 0.1rem 0.3rem rgba(255, 255, 255, 0.85);
 }
 
 .mt-cat-icon-bg.active {
-  background: #ffd100;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  box-shadow: 0 0.6rem 1.2rem rgba(245, 194, 0, 0.22);
 }
 
 .mt-cat-svg {
@@ -196,38 +234,46 @@ onMounted(async () => {
 
 .mt-cat-text {
   font-size: 1.2rem;
-  color: #444;
+  color: var(--mt-strong);
   margin-top: 0.6rem;
+  font-weight: 700;
 }
 
 .mt-filter-bar {
   display: flex;
   align-items: center;
-  background: #fff;
-  border-bottom: 1px solid #f2f2f2;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 250, 239, 0.96) 100%);
+  border-bottom: 1px solid rgba(245, 194, 0, 0.12);
   padding-right: 1.6rem;
   position: relative;
-  z-index: 110;
+  z-index: 90;
+  box-shadow: 0 0.6rem 1.6rem rgba(245, 194, 0, 0.05);
 }
 
 :deep(.van-dropdown-menu__bar) {
   box-shadow: none;
   min-height: 4.4rem;
   flex: 1;
+  background: transparent;
 }
 
 .nearby-btn {
   font-size: 1.4rem;
-  color: #666;
+  color: var(--text-color-secondary);
   padding: 0 1.2rem;
   min-height: 4.4rem;
   display: flex;
   align-items: center;
+  border-radius: 999rem;
+  margin: 0.4rem 0;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(245, 194, 0, 0.12);
 }
 
 .nearby-btn.active {
-  color: #222;
+  color: var(--mt-strong);
   font-weight: 700;
+  background: var(--mt-soft-yellow);
 }
 
 .mt-merchant-list {
@@ -235,9 +281,11 @@ onMounted(async () => {
 }
 
 .mt-skeleton-item {
-  background: #fff;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF8 100%);
   padding: 1.6rem;
   margin-bottom: 1.2rem;
-  border-radius: 1.2rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgba(245, 194, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 </style>

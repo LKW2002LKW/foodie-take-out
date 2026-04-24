@@ -15,8 +15,8 @@ const route = useRoute()
     <van-tabbar 
       v-if="route.meta.showTabbar" 
       route 
-      active-color="#222" 
-      inactive-color="#999"
+      active-color="var(--primary-color-dark)" 
+      inactive-color="var(--text-color-placeholder)"
       class="mt-tabbar"
     >
       <van-tabbar-item replace to="/merchant/list">
@@ -62,6 +62,7 @@ const route = useRoute()
 }
 
 .mt-tabbar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 248, 235, 0.98) 100%);
   box-shadow: 0 -0.2rem 1rem rgba(0, 0, 0, 0.05);
 }
 
@@ -72,6 +73,10 @@ const route = useRoute()
 
 :deep(.van-tabbar-item--active) {
   font-weight: 700;
+}
+
+:deep(.van-tabbar-item__icon) {
+  color: inherit;
 }
 
 .mt-fade-enter-active,

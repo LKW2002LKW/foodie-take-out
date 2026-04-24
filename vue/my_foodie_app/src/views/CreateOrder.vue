@@ -81,7 +81,7 @@
 
     <!-- 底部提交栏 -->
     <van-submit-bar 
-        :price="estimatedTotal * 100" 
+                :price="Number(estimatedTotal) * 100" 
         button-text="去支付" 
         @submit="onSubmit" 
         :loading="submitting"    
@@ -246,15 +246,16 @@ onMounted(() => {
 
 <style scoped>
 .create-order {
-    background: #f3f3f3;
+    background: var(--mt-page-bg);
     min-height: 100vh;
     padding-bottom: calc(6rem + env(safe-area-inset-bottom));
 }
 .address-card {
-    background: #fff;
+    background: var(--mt-card-bg);
     margin: 1.2rem;
     padding: 1.6rem;
-    border-radius: 0.8rem;
+    border-radius: var(--mt-card-radius);
+    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -269,30 +270,31 @@ onMounted(() => {
     margin-bottom: 0.8rem;
     font-size: 1.6rem;
     font-weight: bold;
-    color: #333;
+    color: var(--mt-strong);
 }
 .addr-detail {
     line-height: 1.4;
 }
 .addr-user {
     font-size: 1.4rem;
-    color: #666;
+    color: var(--text-color-secondary);
 }
 .phone {
     margin-left: 1rem;
 }
 .addr-tag {
-    background: #FF9800;
-    color: #fff;
+    background: rgba(255, 149, 0, 0.14);
+    color: var(--mt-strong);
     font-size: 1rem;
     padding: 0.1rem 0.4rem;
     border-radius: 0.2rem;
     margin-right: 0.6rem;
     font-weight: normal;
+    border: 1px solid rgba(255, 149, 0, 0.28);
 }
 .addr-empty {
-    color: #FF9800;
-    font-weight: bold;
+    color: var(--mt-warning);
+    font-weight: 900;
     font-size: 1.6rem;
 }
 
@@ -300,15 +302,17 @@ onMounted(() => {
     margin: 1.2rem;
 }
 .merchant-card {
-    background: #fff;
-    border-radius: 0.8rem;
+    background: var(--mt-card-bg);
+    border-radius: var(--mt-card-radius);
     padding: 1.6rem;
     margin-bottom: 1.2rem;
+    box-shadow: var(--shadow-sm);
 }
 .m-header {
     font-size: 1.6rem;
     font-weight: bold;
-    border-bottom: 1px solid #f9f9f9;
+    color: var(--mt-strong);
+    border-bottom: 1px solid var(--mt-divider);
     padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
@@ -323,11 +327,11 @@ onMounted(() => {
 .o-name {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #333;
+    color: var(--mt-strong);
 }
 .o-spec {
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
     margin-top: 0.4rem;
 }
 .o-price-row {
@@ -339,38 +343,40 @@ onMounted(() => {
 }
 .o-num {
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
     margin-top: 0.4rem;
 }
 .fee-row {
     display: flex;
     justify-content: space-between;
     font-size: 1.4rem;
-    color: #333;
+    color: var(--text-color-secondary);
     margin-bottom: 1rem;
 }
 .total-row {
     display: flex;
     justify-content: flex-end;
     align-items: baseline;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--mt-divider);
     padding-top: 1.2rem;
     margin-top: 1rem;
 }
 .total-label {
     font-size: 1.4rem;
     margin-right: 1rem;
+    color: var(--text-color-secondary);
 }
 .total-val {
-    color: #333;
-    font-weight: bold;
+    color: var(--mt-strong);
+    font-weight: 900;
 }
 .total-val .big {
     font-size: 2rem;
 }
 
 .meta-card {
-    border-radius: 0.8rem;
+    border-radius: var(--mt-card-radius);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 </style>

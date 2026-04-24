@@ -7,11 +7,18 @@
       </div>
     </div>
     <div class="mt-food-content">
-      <div v-if="loading" class="mt-loading-box"><van-loading color="#FFD000" /></div>
+      <div v-if="loading" class="mt-loading-box"><van-loading :color="'var(--primary-color)'" /></div>
       <div v-else class="mt-food-list">
         <div v-if="currentCategory" class="mt-section-title">{{ currentCategory.name }}</div>
         <div v-for="item in currentDishes" :key="item.id" class="mt-food-card">
-          <van-image :src="item.image" width="92" height="92" radius="8" fit="cover" @click="emit('show-food-detail', item)" />
+          <van-image
+            :src="item.image"
+            width="9.2rem"
+            height="9.2rem"
+            radius="1.2rem"
+            fit="cover"
+            @click="emit('show-food-detail', item)"
+          />
           <div class="mt-food-info">
             <div class="mt-food-name">{{ item.name }}</div>
             <div class="mt-food-desc van-multi-ellipsis--l2">{{ item.description }}</div>
@@ -59,31 +66,197 @@ const hasSpecs = (item) => !item.setmealId && item.flavors?.length > 0
 </script>
 
 <style scoped>
-.mt-menu-container { flex: 1; display: flex; background-color: #fff; overflow: hidden; }
-.mt-sidebar { width: 85px; background-color: #f7f7f7; overflow-y: auto; }
-.mt-sidebar-item { padding: 18px 12px; font-size: 13px; color: #666; position: relative; line-height: 1.4; }
-.mt-sidebar-active { background-color: #fff; color: #222; font-weight: 800; }
-.mt-sidebar-active::before { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 4px; background-color: #FFD000; border-radius: 0 2px 2px 0; }
-.mt-cat-badge { position: absolute; top: 6px; right: 6px; background-color: #FF4B33; color: #fff; font-size: 9px; height: 14px; min-width: 14px; display: flex; align-items: center; justify-content: center; border-radius: 7px; padding: 0 3px; }
-.mt-food-content { flex: 1; overflow-y: auto; padding-bottom: 100px; }
-.mt-section-title { padding: 12px 16px; font-size: 12px; font-weight: 800; color: #333; background-color: #fff; position: sticky; top: 0; z-index: 10; }
-.mt-food-card { display: flex; padding: 12px 16px; gap: 12px; }
-.mt-food-info { flex: 1; display: flex; flex-direction: column; }
-.mt-food-name { font-size: 16px; font-weight: 800; color: #222; margin-bottom: 4px; }
-.mt-food-desc { font-size: 11px; color: #999; margin-bottom: 6px; line-height: 1.4; }
-.mt-food-sales { font-size: 11px; color: #999; margin-top: auto; margin-bottom: 8px; }
-.mt-food-bottom { display: flex; justify-content: space-between; align-items: center; }
-.mt-food-price { color: #FB4E44; font-weight: 800; }
-.mt-price-symbol { font-size: 12px; }
-.mt-price-val { font-size: 19px; }
-.mt-cart-ctrl { display: flex; align-items: center; }
-.mt-ctrl-wrap { display: flex; align-items: center; }
-.mt-btn-sub, .mt-btn-add { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-.mt-btn-sub { border: 1px solid #ccc; color: #999; background-color: #fff; }
-.mt-btn-add { background-color: #FFD000; color: #222; font-weight: 800; }
-.mt-ctrl-num { width: 28px; text-align: center; font-size: 14px; font-weight: 500; }
-.mt-spec-btn { font-size: 11px; padding: 0 8px; }
-.mt-btn-add:has(.mt-spec-btn) { width: auto; height: 24px; border-radius: 12px; }
-.mt-slide-enter-active, .mt-slide-leave-active { transition: all 0.3s ease; }
-.mt-slide-enter-from, .mt-slide-leave-to { opacity: 0; transform: translateX(20px) rotate(180deg); }
+.mt-menu-container {
+  flex: 1;
+  display: flex;
+  background-color: var(--mt-card-bg);
+  overflow: hidden;
+}
+
+.mt-sidebar {
+  width: 8.5rem;
+  background: linear-gradient(180deg, #FFF9E8 0%, #FFF3CF 100%);
+  overflow-y: auto;
+}
+
+.mt-sidebar-item {
+  padding: 1.8rem 1.2rem;
+  font-size: 1.3rem;
+  color: var(--text-color-secondary);
+  position: relative;
+  line-height: 1.4;
+}
+
+.mt-sidebar-active {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 248, 235, 0.98) 100%);
+  color: var(--mt-strong);
+  font-weight: 900;
+}
+
+.mt-sidebar-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2rem;
+  bottom: 2rem;
+  width: 0.4rem;
+  background-color: var(--primary-color);
+  border-radius: 0 0.2rem 0.2rem 0;
+}
+
+.mt-cat-badge {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  color: var(--secondary-color);
+  font-size: 1rem;
+  height: 1.6rem;
+  min-width: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.8rem;
+  padding: 0 0.4rem;
+}
+
+.mt-food-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: calc(10rem + env(safe-area-inset-bottom));
+}
+
+.mt-loading-box {
+  padding: 2.4rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.mt-section-title {
+  padding: 1.2rem 1.6rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--mt-strong);
+  background-color: var(--mt-card-bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--mt-divider);
+}
+
+.mt-food-card {
+  display: flex;
+  padding: 1.2rem 1.6rem;
+  gap: 1.2rem;
+}
+
+.mt-food-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mt-food-name {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--mt-strong);
+  margin-bottom: 0.4rem;
+}
+
+.mt-food-desc {
+  font-size: 1.1rem;
+  color: var(--mt-muted);
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+
+.mt-food-sales {
+  font-size: 1.1rem;
+  color: var(--mt-muted);
+  margin-top: auto;
+  margin-bottom: 0.8rem;
+}
+
+.mt-food-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mt-food-price {
+  color: var(--van-danger-color);
+  font-weight: 900;
+}
+
+.mt-price-symbol {
+  font-size: 1.2rem;
+}
+
+.mt-price-val {
+  font-size: 1.9rem;
+}
+
+.mt-cart-ctrl {
+  display: flex;
+  align-items: center;
+}
+
+.mt-ctrl-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.mt-btn-sub,
+.mt-btn-add {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.mt-btn-sub {
+  border: 1px solid rgba(245, 194, 0, 0.28);
+  color: var(--mt-muted);
+  background-color: rgba(255, 252, 240, 0.98);
+}
+
+.mt-btn-add {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  color: var(--mt-strong);
+  font-weight: 900;
+}
+
+.mt-ctrl-num {
+  width: 2.8rem;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.mt-spec-btn {
+  font-size: 1.1rem;
+  padding: 0 0.8rem;
+}
+
+.mt-btn-add:has(.mt-spec-btn) {
+  width: auto;
+  height: 2.6rem;
+  border-radius: 1.3rem;
+  padding-right: 0.4rem;
+}
+
+.mt-slide-enter-active,
+.mt-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.mt-slide-enter-from,
+.mt-slide-leave-to {
+  opacity: 0;
+  transform: translateX(2rem) rotate(180deg);
+}
 </style>

@@ -32,14 +32,20 @@ export const useCartStore = defineStore('cart', () => {
 
   const addToCart = async (item, flavorSelect = null, merchantId) => {
     const mId = merchantId || item.merchantId
+    const dishId = item.dishId || (item.setmealId ? null : item.id)
+    const setmealId = item.setmealId || (item.dishId ? null : (item.setmealId ? item.id : null))
+    // 确保口味统一为字符串或 null
+    const dishFlavor = flavorSelect ? JSON.stringify(flavorSelect) : (item.dishFlavor || null)
+
     const dto = {
       merchantId: mId,
-      dishId: item.dishId || (item.setmealId ? null : item.id),
-      setmealId: item.setmealId || (item.dishId ? null : (item.setmealId ? item.id : null)),
-      dishFlavor: flavorSelect ? JSON.stringify(flavorSelect) : item.dishFlavor,
+      dishId: dishId,
+      setmealId: setmealId,
+      dishFlavor: dishFlavor,
       amount: item.amount || item.price,
       name: item.name,
-      image: item.image || item.pic
+      image: item.image || item.pic,
+      number: 1
     }
 
     try {
@@ -59,16 +65,32 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   const subFromCart = async (item) => {
+    const merchantId = item.merchantId
+    const dishId = item.dishId || (item.setmealId ? null : item.id)
+    const setmealId = item.setmealId || null
+    let dishFlavor = item.dishFlavor || null
+
+    // 菜单列表里的菜品对象只有 id，没有 dishId；如果是多规格菜品，这里优先从购物车里找一个实际条目来减一。
+    if (dishId && !dishFlavor) {
+      const matchedCartItem = list.value.find(cartItem =>
+        Number(cartItem.merchantId) === Number(merchantId) &&
+        Number(cartItem.dishId) === Number(dishId)
+      )
+      if (matchedCartItem) {
+        dishFlavor = matchedCartItem.dishFlavor || null
+      }
+    }
+
     const dto = {
-      merchantId: item.merchantId,
-      dishId: item.dishId,
-      setmealId: item.setmealId,
-      dishFlavor: item.dishFlavor
+      merchantId: merchantId,
+      dishId: dishId,
+      setmealId: setmealId,
+      dishFlavor: dishFlavor
     }
     try {
       const res = await subCart(dto)
       if (res.code === 1) {
-        await fetchCartList(item.merchantId)
+        await fetchCartList(merchantId)
       }
     } catch (e) {
       showFailToast('操作失败')
@@ -80,6 +102,17 @@ export const useCartStore = defineStore('cart', () => {
       const res = await cleanCart(merchantId)
       if (res.code === 1) {
         list.value = list.value.filter(i => i.merchantId !== merchantId)
+      }
+    } catch (e) {
+      showFailToast('清空失败')
+    }
+  }
+
+  const clearAllCartAction = async () => {
+    try {
+      const res = await cleanCart()
+      if (res.code === 1) {
+        list.value = []
       }
     } catch (e) {
       showFailToast('清空失败')
@@ -102,19 +135,27 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   const getCartItemCount = (dishId, setmealId, flavorStr = null) => {
+    const cartList = list.value || []
     if (setmealId) {
-      const target = list.value.find(i => i.setmealId === setmealId)
-      return target ? target.number : 0
+      const target = cartList.find(i => i.setmealId === setmealId)
+      return target ? Number(target.number || 0) : 0
     }
-    const filtered = list.value.filter(i => i.dishId === dishId)
-    if (flavorStr === null) return filtered.reduce((s, i) => s + i.number, 0)
+    // 过滤出该菜品的所有记录
+    const filtered = cartList.filter(i => String(i.dishId) === String(dishId))
+    
+    // 如果没有传特定口味，返回该菜品在购物车里的总数（所有口味之和）
+    if (flavorStr === null || flavorStr === undefined) {
+      return filtered.reduce((s, i) => s + Number(i.number || 0), 0)
+    }
+    
+    // 如果传了特定口味，返回该特定口味的数量
     const target = filtered.find(i => i.dishFlavor === flavorStr)
-    return target ? target.number : 0
+    return target ? Number(target.number || 0) : 0
   }
 
   return {
     list, totalNum, totalPrice,
-    fetchCartList, addToCart, subFromCart, clearCartAction,
+    fetchCartList, addToCart, subFromCart, clearCartAction, clearAllCartAction,
     getCartItemCount, batchRemoveItems
   }
 })

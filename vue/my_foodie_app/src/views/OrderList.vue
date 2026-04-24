@@ -152,36 +152,37 @@ const getStatusClass = (s) => {
 
 <style scoped>
 .order-list-page {
-    background: #f7f8fa;
+    background: var(--mt-page-bg);
     min-height: 100vh;
 }
 .list-content {
     padding: 1.2rem;
 }
 .order-card {
-    background: #fff;
-    border-radius: 0.8rem;
+    background: var(--mt-card-bg);
+    border-radius: var(--mt-card-radius);
     padding: 1.2rem 1.6rem;
     margin-bottom: 1.2rem;
+    box-shadow: var(--shadow-sm);
 }
 .card-header {
     display: flex;
     justify-content: space-between;
     padding-bottom: 1.2rem;
-    border-bottom: 1px solid #f9f9f9;
+    border-bottom: 1px solid var(--mt-divider);
     margin-bottom: 1.2rem;
     font-size: 1.4rem;
 }
 .m-name {
     font-weight: bold;
-    color: #333;
+    color: var(--mt-strong);
 }
 .status-tag {
     font-size: 1.3rem;
 }
-.s-orange { color: #FF9800; }
-.s-gray { color: #999; }
-.s-black { color: #333; }
+.s-orange { color: var(--mt-warning); }
+.s-gray { color: var(--mt-muted); }
+.s-black { color: var(--mt-strong); }
 
 .dish-row {
     display: flex;
@@ -192,15 +193,15 @@ const getStatusClass = (s) => {
     flex: 1;
     margin-left: 0.8rem;
     font-size: 1.4rem;
-    color: #333;
+    color: var(--mt-strong);
 }
 .dish-count {
-    color: #999;
+    color: var(--mt-muted);
     font-size: 1.2rem;
 }
 .more-tip {
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
     margin-top: 0.4rem;
     margin-bottom: 0.8rem;
 }
@@ -211,19 +212,19 @@ const getStatusClass = (s) => {
     align-items: center;
     margin-top: 0.8rem;
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
 }
 .total {
-    color: #333;
+    color: var(--mt-strong);
 }
 .price {
     font-size: 1.6rem;
     font-weight: bold;
-    color: #333;
+    color: var(--mt-strong);
 }
 .card-actions {
     margin-top: 1.2rem;
-    border-top: 1px solid #f9f9f9;
+    border-top: 1px solid var(--mt-divider);
     padding-top: 1.2rem;
     text-align: right;
 }

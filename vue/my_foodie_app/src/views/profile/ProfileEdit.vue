@@ -199,7 +199,7 @@ const onSubmit = async () => {
 
 <style scoped>
 .profile-edit {
-  background-color: #f7f8fa;
+  background-color: var(--mt-page-bg);
   min-height: 100vh;
 }
 

@@ -89,7 +89,7 @@ onMounted(() => {
 <style scoped>
 .notice-detail-page {
     min-height: 100vh;
-    background: #fff;
+    background: var(--mt-page-bg);
 }
 .loading-box {
     padding-top: 10rem;
@@ -101,7 +101,7 @@ onMounted(() => {
 .n-title {
     font-size: 2rem;
     font-weight: bold;
-    color: #333;
+    color: var(--mt-strong);
     line-height: 1.4;
     margin-bottom: 1.2rem;
 }
@@ -109,7 +109,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     margin-bottom: 1.6rem;
-    color: #999;
+    color: var(--mt-muted);
     font-size: 1.2rem;
 }
 .n-tag {
@@ -117,7 +117,7 @@ onMounted(() => {
 }
 .n-content {
     font-size: 1.5rem;
-    color: #444;
+    color: var(--text-color);
     line-height: 1.8;
     text-align: justify;
     word-break: break-all;

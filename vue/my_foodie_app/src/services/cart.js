@@ -44,6 +44,6 @@ export const cleanCart = (merchantId) => {
   return request({
     url: '/user/shoppingCart/clean',
     method: 'delete',
-    params: { merchantId },
+    params: merchantId == null ? {} : { merchantId },
   })
 }

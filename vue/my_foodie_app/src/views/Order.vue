@@ -23,7 +23,7 @@
                  <van-icon name="logistics" size="2rem" />
                  <span style="margin-left:0.8rem; font-weight:bold">订单跟踪</span>
             </div>
-            <div style="margin-top:0.8rem; font-size:1.2rem; color:#666">
+            <div style="margin-top:0.8rem; font-size:1.2rem; color:var(--text-color-secondary)">
                 {{ trackInfo.trackNodes?.[trackInfo.trackNodes.length-1]?.title || '查看进度' }}
             </div>
         </div>
@@ -115,7 +115,7 @@
     <van-action-sheet :show="showReviewPanel" @update:show="showReviewPanel = $event" title="评价订单">
         <div style="padding: 1.6rem;">
             <div style="text-align:center; margin-bottom:1.6rem;">
-                <van-rate v-model="reviewRating" :size="25" color="#ffd21e" void-icon="star" void-color="#eee" />
+                <van-rate v-model="reviewRating" :size="25" color="var(--primary-color)" void-icon="star" void-color="rgba(245, 194, 0, 0.22)" />
             </div>
             <van-field
                 v-model="reviewContent"
@@ -125,7 +125,7 @@
                 placeholder="请输入您的评价..."
                 maxlength="100"
                 show-word-limit
-                style="background:#f5f5f5; border-radius:0.8rem;"
+                style="background:rgba(255, 248, 235, 0.96); border-radius:0.8rem; border:1px solid rgba(245, 194, 0, 0.16);"
             />
             <div style="margin-top: 1.6rem;">
                 <van-uploader v-model="reviewFileList" :after-read="afterRead" multiple :max-count="3" preview-size="8rem" />
@@ -370,14 +370,14 @@ onMounted(() => {
 
 <style scoped>
 .order-detail-page {
-    background: #f7f8fa;
+    background: var(--mt-page-bg);
     min-height: 100vh;
     padding-bottom: calc(2rem + env(safe-area-inset-bottom));
 }
 .status-header {
-    background: #FF9800;
+    background: var(--mt-warning);
     padding: 2.4rem 2rem;
-    color: #fff;
+    color: var(--mt-card-bg);
 }
 .status-text {
     font-size: 2rem;
@@ -393,16 +393,17 @@ onMounted(() => {
 }
 .cancel-btn {
     margin-left: 1rem;
-    color: #fff !important;
-    border-color: #fff !important;
+    color: var(--mt-card-bg) !important;
+    border-color: var(--mt-card-bg) !important;
     background: transparent; 
 }
 
 .card {
-    background: #fff;
+    background: var(--mt-card-bg);
     margin: 1.2rem;
     padding: 1.6rem;
-    border-radius: 0.8rem;
+    border-radius: var(--mt-card-radius);
+    box-shadow: var(--shadow-sm);
 }
 .addr-row {
     margin-bottom: 0.8rem;
@@ -412,7 +413,7 @@ onMounted(() => {
     margin-bottom: 0;
 }
 .addr-tag {
-    color: #999;
+    color: var(--mt-muted);
     margin-right: 1.2rem;
     font-size: 1.2rem;
 }
@@ -421,7 +422,7 @@ onMounted(() => {
     font-weight: bold;
     font-size: 1.6rem;
     padding-bottom: 1.2rem;
-    border-bottom: 1px solid #f9f9f9;
+    border-bottom: 1px solid var(--mt-divider);
     margin-bottom: 1.2rem;
 }
 .goods-item {
@@ -434,15 +435,15 @@ onMounted(() => {
 }
 .g-name {
     font-size: 1.4rem;
-    color: #333;
+    color: var(--mt-strong);
 }
 .g-spec {
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
 }
 .g-count {
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
     margin-top: 0.4rem;
 }
 .g-price {
@@ -456,7 +457,7 @@ onMounted(() => {
     font-size: 1.4rem;
 }
 .total-row {
-    border-top: 1px solid #f9f9f9;
+    border-top: 1px solid var(--mt-divider);
     padding-top: 1.2rem;
     margin-top: 1rem;
     font-weight: bold;
@@ -464,7 +465,7 @@ onMounted(() => {
 }
 .total-row .price {
     font-size: 1.8rem;
-    color: #e4393c;
+    color: var(--van-danger-color);
 }
 
 .pay-content {

@@ -2,7 +2,7 @@
     <div class="notice-list-page mobile-page">
     <van-nav-bar title="消息通知" left-arrow fixed placeholder @click-left="onClickLeft" />
     
-    <van-tabs :active="activeTab" @update:active="activeTab = $event" sticky @change="onTabChange" color="#FF9800" title-active-color="#FF9800">
+        <van-tabs :active="activeTab" @update:active="activeTab = $event" sticky @change="onTabChange" color="var(--primary-color)" title-active-color="var(--mt-strong)">
       <van-tab title="全部" :name="0"></van-tab>
       <van-tab title="系统公告" :name="1"></van-tab>
       <van-tab title="活动公告" :name="2"></van-tab>
@@ -164,16 +164,16 @@ const toDetail = (id) => {
 <style scoped>
 .notice-list-page {
     min-height: 100vh;
-    background: #f7f8fa;
+    background: var(--mt-page-bg);
 }
 .notice-item {
-    background: #fff;
+    background: var(--mt-card-bg);
     margin: 1.2rem 1.2rem 0;
     padding: 1.6rem;
-    border-radius: 0.8rem;
+    border-radius: var(--mt-card-radius);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0.1rem 0.4rem rgba(0,0,0,0.02);
+    box-shadow: var(--shadow-sm);
 }
 .notice-item:last-child {
     margin-bottom: calc(1.2rem + env(safe-area-inset-bottom));
@@ -193,7 +193,7 @@ const toDetail = (id) => {
 .notice-title {
     font-size: 1.6rem;
     font-weight: bold;
-    color: #333;
+    color: var(--mt-strong);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -201,13 +201,13 @@ const toDetail = (id) => {
 }
 .notice-time {
     font-size: 1.2rem;
-    color: #999;
+    color: var(--mt-muted);
     margin-top: 0.4rem;
 }
 
 .notice-brief {
     font-size: 1.3rem;
-    color: #666;
+    color: var(--text-color-secondary);
     line-height: 1.5;
     margin-top: 0.4rem;
     display: -webkit-box;

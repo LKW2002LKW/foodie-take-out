@@ -39,7 +39,7 @@
       <div class="map-preview">
         <van-image v-if="form.longitude" :src="mapUrl" width="100%" height="16rem" fit="cover" />
         <div v-else class="map-placeholder">
-          <van-icon name="map-marked" size="4rem" color="#ddd" />
+          <van-icon name="map-marked" size="4rem" color="var(--mt-divider)" />
           <p>请选择准确的收货地址</p>
         </div>
       </div>
@@ -50,8 +50,8 @@
         <van-cell title="性别">
           <template #value>
             <van-radio-group v-model="form.sex" direction="horizontal">
-              <van-radio :name="1" checked-color="#FFD100">先生</van-radio>
-              <van-radio :name="2" checked-color="#FFD100">女士</van-radio>
+              <van-radio :name="1" checked-color="var(--primary-color)">先生</van-radio>
+              <van-radio :name="2" checked-color="var(--primary-color)">女士</van-radio>
             </van-radio-group>
           </template>
         </van-cell>
@@ -73,21 +73,21 @@
         <van-cell title="标签">
           <template #value>
             <van-radio-group v-model="form.label" direction="horizontal">
-              <van-radio name="家" checked-color="#FFD100">家</van-radio>
-              <van-radio name="公司" checked-color="#FFD100">公司</van-radio>
-              <van-radio name="学校" checked-color="#FFD100">学校</van-radio>
+              <van-radio name="家" checked-color="var(--primary-color)">家</van-radio>
+              <van-radio name="公司" checked-color="var(--primary-color)">公司</van-radio>
+              <van-radio name="学校" checked-color="var(--primary-color)">学校</van-radio>
             </van-radio-group>
           </template>
         </van-cell>
         <van-cell title="设为默认地址">
           <template #right-icon>
-            <van-switch v-model="isDefaultBool" size="2rem" active-color="#FFD100" />
+            <van-switch v-model="isDefaultBool" size="2rem" active-color="var(--primary-color)" />
           </template>
         </van-cell>
       </van-cell-group>
 
       <div class="action-bar">
-        <van-button round block type="primary" color="#FFD100" text-color="#222" :loading="saving" @click="onSave">保存地址</van-button>
+        <van-button round block type="primary" color="var(--primary-color)" text-color="var(--mt-strong)" :loading="saving" @click="onSave">保存地址</van-button>
         <van-button v-if="isEdit" round block plain class="mt-10" @click="onDelete">删除地址</van-button>
       </div>
     </div>
@@ -95,12 +95,12 @@
     <!-- 城市选择弹窗 -->
     <van-popup :show="showCityPopup" @update:show="showCityPopup = $event" position="right" style="width: 100%; height: 100%">
       <div class="city-picker-layout">
-        <van-nav-bar title="选择收货城市" left-arrow @click-left="showCityPicker = false" />
+        <van-nav-bar title="选择收货城市" left-arrow @click-left="showCityPopup = false" />
         <div class="city-search-box">
           <van-search v-model="citySearchQuery" placeholder="输入城市名筛选" shape="round" />
         </div>
         <div class="city-list-container">
-          <van-index-bar :index-list="filteredIndexList" highlight-color="#FFD100">
+          <van-index-bar :index-list="filteredIndexList" :highlight-color="'var(--primary-color)'">
             <div v-for="group in filteredCityData" :key="group.initial">
               <van-index-anchor :index="group.initial" />
               <van-cell v-for="city in group.list" :key="city" :title="city" @click="onCitySelect(city)" />
@@ -226,18 +226,19 @@ onMounted(async () => {
 <style scoped>
 .address-edit-page {
   min-height: 100vh;
-  background: #f7f7f7;
+  background: var(--mt-page-bg);
   padding-bottom: calc(10rem + env(safe-area-inset-bottom));
 }
 
 .mt-search-wrap {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: var(--mt-card-bg);
   padding: 0.8rem 1.2rem;
   position: sticky;
   top: 4.6rem;
   z-index: 110;
+  border-bottom: 1px solid var(--mt-divider);
 }
 
 .city-box {
@@ -245,7 +246,7 @@ onMounted(async () => {
   align-items: center;
   gap: 0.4rem;
   padding-right: 1.2rem;
-  border-right: 1px solid #eee;
+  border-right: 1px solid var(--mt-divider);
   max-width: 8rem;
   flex-shrink: 0;
   min-height: 4.4rem;
@@ -254,10 +255,10 @@ onMounted(async () => {
 .city-txt {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #222;
+  color: var(--mt-strong);
 }
 
-.arrow { font-size: 0.8rem; color: #999; }
+.arrow { font-size: 0.8rem; color: var(--text-color-placeholder); }
 .search-input-box { flex: 1; }
 .custom-search { padding: 0 0 0 1.2rem; }
 
@@ -267,7 +268,7 @@ onMounted(async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
+  background: var(--mt-card-bg);
   z-index: 120;
   overflow-y: auto;
   padding: 0 1.6rem;
@@ -275,11 +276,11 @@ onMounted(async () => {
 
 .tip-item {
   padding: 1.6rem 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--mt-divider);
 }
 
 .tip-main { font-size: 1.5rem; font-weight: 700; }
-.tip-sub { font-size: 1.2rem; color: #999; margin-top: 0.4rem; }
+.tip-sub { font-size: 1.2rem; color: var(--mt-muted); margin-top: 0.4rem; }
 
 .map-preview {
   height: 16rem;
@@ -303,7 +304,8 @@ onMounted(async () => {
   left: 0;
   right: 0;
   padding: 1.6rem;
-  background: #fff;
+  background: var(--mt-card-bg);
+  border-top: 1px solid var(--mt-divider);
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -314,7 +316,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #fff;
+  background: var(--mt-card-bg);
 }
 
 .city-search-box { padding: 0 1.2rem; }

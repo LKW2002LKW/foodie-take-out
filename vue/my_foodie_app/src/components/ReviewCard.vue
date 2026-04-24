@@ -95,10 +95,10 @@ const orderDetailText = computed(() => {
 
 <style scoped>
 .review-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  background: var(--mt-card-bg);
+  border-radius: var(--mt-card-radius);
+  padding: 1.4rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .review-head {
@@ -121,7 +121,7 @@ const orderDetailText = computed(() => {
 .user-name {
   font-size: 15px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--mt-strong);
 }
 
 .meta-row {
@@ -130,18 +130,18 @@ const orderDetailText = computed(() => {
   gap: 8px;
   margin-top: 4px;
   font-size: 12px;
-  color: #8b95a7;
+  color: var(--mt-muted);
 }
 
 .merchant-name {
-  color: #f59e0b;
+  color: var(--mt-warning);
 }
 
 .review-content {
   margin-top: 12px;
   font-size: 14px;
   line-height: 1.7;
-  color: #374151;
+  color: var(--text-color);
   white-space: pre-wrap;
 }
 
@@ -162,7 +162,7 @@ const orderDetailText = computed(() => {
   padding: 10px 12px;
   border-radius: 10px;
   background: #f8fafc;
-  color: #475569;
+  color: var(--text-color-secondary);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -170,7 +170,7 @@ const orderDetailText = computed(() => {
 .order-detail-label {
   display: block;
   margin-bottom: 4px;
-  color: #0f172a;
+  color: var(--mt-strong);
   font-weight: 700;
 }
 
@@ -178,34 +178,34 @@ const orderDetailText = computed(() => {
   margin-top: 12px;
   padding: 12px;
   border-radius: 12px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  background: rgba(255, 208, 0, 0.14);
+  border: 1px solid rgba(255, 208, 0, 0.3);
 }
 
 .reply-title {
   font-size: 13px;
   font-weight: 700;
-  color: #9a3412;
+  color: var(--mt-strong);
   margin-bottom: 6px;
 }
 
 .reply-content {
   font-size: 13px;
   line-height: 1.7;
-  color: #7c2d12;
+  color: var(--text-color);
   white-space: pre-wrap;
 }
 
 .reply-time {
   margin-top: 6px;
   font-size: 12px;
-  color: #b45309;
+  color: var(--text-color-secondary);
 }
 
 .card-actions {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--mt-divider);
   display: flex;
   justify-content: flex-end;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="merchant-detail mobile-page">
+  <div class="merchant-detail mobile-page" :class="{ 'has-cart-bar': shouldShowCartBar }">
     <van-nav-bar left-arrow title="店铺详情" fixed placeholder @click-left="$router.back()" />
     <merchant-header :merchant-info="merchantInfo" />
 
@@ -88,14 +88,16 @@
     </van-tabs>
 
     <bottom-cart-bar
-      v-if="activeTab === 0"
+      v-if="shouldShowCartBar"
       :merchant-info="merchantInfo"
+      :total-num="currentMerchantTotalNum"
+      :total-price="currentMerchantTotalPrice"
       @checkout="onCheckout"
       @toggle-cart-popup="toggleCartPopup"
     />
 
     <van-popup
-      v-if="activeTab === 0"
+      v-if="shouldShowCartBar"
       :show="showCartPopup"
       @update:show="showCartPopup = $event"
       position="bottom"
@@ -126,6 +128,12 @@
         <van-empty v-if="currentMerchantCart.length === 0" description="购物车为空" />
       </div>
     </van-popup>
+
+    <flavor-picker
+      v-model:show="showFlavorPicker"
+      :food="selectedFood"
+      @confirm="onConfirmFlavor"
+    />
   </div>
 </template>
 
@@ -142,6 +150,7 @@ import MerchantHeader from '../components/MerchantHeader.vue'
 import DishList from '../components/DishList.vue'
 import BottomCartBar from '../components/BottomCartBar.vue'
 import ReviewCard from '../components/ReviewCard.vue'
+import FlavorPicker from '../components/FlavorPicker.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -154,6 +163,8 @@ const categories = ref([])
 const currentDishes = ref([])
 const loading = ref(false)
 const showCartPopup = ref(false)
+const showFlavorPicker = ref(false)
+const selectedFood = ref(null)
 
 const reviewStats = ref({})
 const reviewList = ref([])
@@ -183,6 +194,13 @@ const statLabelMap = {
 }
 
 const currentMerchantCart = computed(() => cartStore.list.filter(item => item.merchantId == merchantId))
+const currentMerchantTotalNum = computed(() => currentMerchantCart.value.reduce((sum, item) => sum + Number(item.number || 0), 0))
+const currentMerchantTotalPrice = computed(() => (
+  currentMerchantCart.value
+    .reduce((sum, item) => sum + Number(item.amount || 0) * Number(item.number || 0), 0)
+    .toFixed(1)
+))
+const shouldShowCartBar = computed(() => activeTab.value === 0 && currentMerchantTotalNum.value > 0)
 
 const reviewStatItems = computed(() => {
   const entries = Object.entries(reviewStats.value || {})
@@ -346,7 +364,27 @@ watch(activeTab, async (tab) => {
   }
 })
 
-const onAddItem = (item) => cartStore.addToCart(item, null, Number(merchantId))
+watch(currentMerchantTotalNum, (totalNum) => {
+  if (totalNum <= 0) {
+    showCartPopup.value = false
+  }
+})
+
+const onAddItem = (item) => {
+  if (!item.setmealId && item.flavors?.length > 0) {
+    selectedFood.value = item
+    showFlavorPicker.value = true
+  } else {
+    cartStore.addToCart(item, null, Number(merchantId))
+  }
+}
+
+const onConfirmFlavor = (flavors) => {
+  if (selectedFood.value) {
+    cartStore.addToCart(selectedFood.value, flavors, Number(merchantId))
+  }
+}
+
 const onSubItem = (item) => cartStore.subFromCart(item)
 const onCheckout = () => router.push({ path: '/order/create', query: { merchantId } })
 const toggleCartPopup = () => { if (currentMerchantCart.value.length > 0) showCartPopup.value = !showCartPopup.value }
@@ -371,11 +409,15 @@ onMounted(() => {
 
 <style scoped>
 .merchant-detail {
-  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  padding-bottom: 0;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--mt-page-bg);
+}
+
+.merchant-detail.has-cart-bar {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 }
 
 :deep(.van-tabs) {
@@ -383,6 +425,21 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+:deep(.van-tabs__nav) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 239, 0.98) 100%);
+  box-shadow: 0 0.4rem 1.2rem rgba(245, 194, 0, 0.06);
+}
+
+:deep(.van-tab--active) {
+  font-weight: 800;
+}
+
+:deep(.van-tabs__line) {
+  background: linear-gradient(90deg, var(--primary-color-dark), var(--primary-color));
+  height: 0.3rem;
+  border-radius: 999px;
 }
 
 :deep(.van-tabs__content) {
@@ -401,23 +458,24 @@ onMounted(() => {
 
 .review-tab {
   padding: 1.2rem;
-  background: #f8fafc;
+  background: var(--mt-page-bg);
   min-height: 100%;
 }
 
 .review-stats-card,
 .review-filter-card {
-  background: #fff;
-  border-radius: 1.2rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 100%);
+  border-radius: 1.6rem;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 0.6rem 1.4rem rgba(15, 23, 42, 0.05);
+  box-shadow: 0 0.8rem 2rem rgba(245, 194, 0, 0.08);
+  border: 1px solid rgba(245, 194, 0, 0.12);
 }
 
 .review-section-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--mt-strong);
   margin-bottom: 0.8rem;
 }
 
@@ -429,21 +487,21 @@ onMounted(() => {
 
 .stat-item {
   padding: 0.8rem 1rem;
-  border-radius: 999px;
-  background: #f2f3f5;
-  border: none;
+  border-radius: 1.2rem;
+  background: linear-gradient(180deg, #FFF9E6 0%, #FFF5D6 100%);
+  border: 1px solid rgba(245, 194, 0, 0.12);
 }
 
 .stat-value {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--mt-strong);
 }
 
 .stat-label {
   margin-top: 0.2rem;
   font-size: 1.2rem;
-  color: #4b5563;
+  color: var(--text-color-secondary);
 }
 
 .review-filter-row {
@@ -456,8 +514,8 @@ onMounted(() => {
   min-height: 4.4rem;
   padding: 0 1.4rem;
   border-radius: 999px;
-  background: #f2f3f5;
-  color: #111827;
+  background: linear-gradient(180deg, #FFFDF8 0%, #FFF4D1 100%);
+  color: var(--mt-strong);
   font-size: 1.3rem;
   font-weight: 600;
   display: inline-flex;
@@ -466,11 +524,14 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.18s ease;
   user-select: none;
+  border: 1px solid rgba(245, 194, 0, 0.14);
 }
 
 .filter-pill.active {
-  background: #fff4cc;
-  color: #ff7a00;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  color: var(--mt-strong);
+  font-weight: 800;
+  box-shadow: 0 0.6rem 1.2rem rgba(245, 194, 0, 0.2);
 }
 
 .review-list {
@@ -487,8 +548,8 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   padding: 1.2rem 1.6rem;
-  background: #fcfcfc;
-  border-bottom: 1px solid #eee;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF9EB 100%);
+  border-bottom: 1px solid rgba(245, 194, 0, 0.12);
   align-items: center;
 }
 
@@ -498,7 +559,7 @@ onMounted(() => {
 }
 
 .cart-clear {
-  color: #666;
+  color: var(--text-color-secondary);
   font-size: 1.2rem;
   display: flex;
   align-items: center;
@@ -511,7 +572,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 1.6rem;
-  border-bottom: 1px solid #f9f9f9;
+  border-bottom: 1px solid rgba(245, 194, 0, 0.1);
 }
 
 .ci-info {
@@ -520,18 +581,19 @@ onMounted(() => {
 
 .ci-name {
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: 700;
+  color: var(--mt-strong);
 }
 
 .ci-spec {
   font-size: 1.2rem;
-  color: #999;
+  color: var(--mt-muted);
 }
 
 .ci-price {
   width: 7rem;
   text-align: right;
-  color: #fb4e44;
+  color: var(--van-danger-color);
   font-weight: 800;
 }
 
@@ -558,11 +620,13 @@ onMounted(() => {
 }
 
 .btn-sub {
-  border: 1px solid #ccc;
+  border: 1px solid rgba(245, 194, 0, 0.2);
+  color: var(--mt-muted);
 }
 
 .btn-add {
-  background: #ffd000;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+  color: var(--mt-strong);
   font-weight: 800;
 }
 </style>

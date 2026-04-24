@@ -304,11 +304,11 @@ onActivated(() => {
 <style scoped>
 .my-review-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  background: var(--mt-page-bg);
 }
 
 .review-tabs {
-  background: #fff;
+  background: var(--mt-card-bg);
 }
 
 .list-wrap {
@@ -333,10 +333,10 @@ onActivated(() => {
 }
 
 .pending-card {
-  background: #fff;
-  border-radius: 1.4rem;
+  background: var(--mt-card-bg);
+  border-radius: var(--mt-card-radius);
   padding: 1.4rem;
-  box-shadow: 0 0.6rem 1.8rem rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 .pending-header {
@@ -349,12 +349,12 @@ onActivated(() => {
 .merchant-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--mt-strong);
 }
 
 .order-time {
   font-size: 1.2rem;
-  color: #6b7280;
+  color: var(--mt-muted);
 }
 
 .pending-body {
@@ -366,12 +366,12 @@ onActivated(() => {
 
 .order-summary {
   font-size: 1.3rem;
-  color: #374151;
+  color: var(--text-color-secondary);
 }
 
 .order-amount {
   font-size: 1.3rem;
-  color: #111827;
+  color: var(--mt-strong);
   font-weight: 700;
 }
 

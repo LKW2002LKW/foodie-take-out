@@ -199,7 +199,7 @@ onMounted(() => {
 <style scoped>
 .review-create-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #fffaf4 0%, #f6f7fb 30%, #eef2ff 100%);
+  background: var(--mt-page-bg);
 }
 
 .page-body {
@@ -209,30 +209,30 @@ onMounted(() => {
 
 .summary-card,
 .review-card {
-  background: #fff;
-  border-radius: 1.6rem;
+  background: var(--mt-card-bg);
+  border-radius: var(--mt-card-radius);
   padding: 1.6rem;
-  box-shadow: 0 1rem 2.4rem rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 1.2rem;
 }
 
 .summary-title {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--mt-strong);
   margin-bottom: 0.8rem;
 }
 
 .summary-line {
   font-size: 1.3rem;
-  color: #6b7280;
+  color: var(--mt-muted);
   margin-top: 0.4rem;
 }
 
 .summary-dishes {
   margin-top: 1.2rem;
   padding-top: 1.2rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--mt-divider);
 }
 
 .summary-dish {
@@ -241,7 +241,7 @@ onMounted(() => {
   gap: 1.2rem;
   padding: 0.4rem 0;
   font-size: 1.3rem;
-  color: #374151;
+  color: var(--text-color-secondary);
 }
 
 .dish-name {
@@ -256,7 +256,7 @@ onMounted(() => {
   margin: 1.4rem 0 1rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--mt-strong);
 }
 
 .rate-row {
@@ -267,7 +267,7 @@ onMounted(() => {
 
 .rate-text {
   font-size: 1.4rem;
-  color: #f59e0b;
+  color: var(--mt-warning);
   font-weight: 700;
 }
 

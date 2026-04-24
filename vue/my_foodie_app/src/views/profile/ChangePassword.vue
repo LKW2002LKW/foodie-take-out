@@ -85,7 +85,7 @@ const onSubmit = async () => {
 
 <style scoped>
 .change-password {
-  background-color: #f7f8fa;
+  background-color: var(--mt-page-bg);
   min-height: 100vh;
 }
 

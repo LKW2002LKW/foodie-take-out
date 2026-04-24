@@ -139,7 +139,7 @@ const onRegister = async () => {
 
 <style scoped>
 .register-page {
-  background: linear-gradient(180deg, #fff9de 0%, #f7f8fa 35%);
+  background: linear-gradient(180deg, var(--primary-color-light) 0%, var(--mt-page-bg) 35%);
 }
 
 .register-nav {
@@ -159,7 +159,7 @@ const onRegister = async () => {
   margin: 0;
   font-size: 2rem;
   line-height: 2.8rem;
-  color: #222;
+  color: var(--mt-strong);
   font-weight: 700;
 }
 
@@ -167,7 +167,7 @@ const onRegister = async () => {
   margin: 0.8rem 0 0;
   font-size: 1.3rem;
   line-height: 2rem;
-  color: #636363;
+  color: var(--text-color-secondary);
 }
 
 .register-form {
@@ -192,17 +192,17 @@ const onRegister = async () => {
 .code-btn {
   min-height: 4.4rem;
   min-width: 9.8rem;
-  color: #4b5563 !important;
-  background: #f3f4f6 !important;
-  border: 1px solid #d1d5db !important;
+  color: var(--text-color-secondary) !important;
+  background: var(--van-search-content-background) !important;
+  border: 1px solid var(--border-color) !important;
   font-size: 1.2rem;
   padding: 0 1.2rem;
 }
 
 .code-btn.van-button--disabled {
-  color: #9ca3af !important;
-  background: #f9fafb !important;
-  border-color: #e5e7eb !important;
+  color: var(--text-color-placeholder) !important;
+  background: var(--mt-page-bg) !important;
+  border-color: var(--mt-divider) !important;
 }
 
 .register-submit-wrap {
@@ -212,7 +212,7 @@ const onRegister = async () => {
 .register-submit {
   font-size: 1.6rem;
   font-weight: 600;
-  background: linear-gradient(90deg, #ffd000 0%, #ffc107 100%) !important;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-color-dark) 100%) !important;
   border: none !important;
 }
 </style>

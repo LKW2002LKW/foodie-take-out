@@ -3,7 +3,7 @@
     <!-- 1. 顶部复合搜索头 -->
     <div class="sticky-top">
       <div class="nav-bar">
-        <van-icon name="arrow-left" size="2rem" color="#333" @click="onBack" />
+        <van-icon name="arrow-left" size="2rem" color="var(--mt-strong)" @click="onBack" />
         <div class="city-entry" @click="showCityPicker = true">
           <span class="curr-city van-ellipsis">{{ locationStore.city }}</span>
           <van-icon name="arrow-down" class="arrow" />
@@ -31,7 +31,7 @@
         <div class="row-title">{{ locationStore.isManual ? '当前选择城市' : '当前定位' }}</div>
         <div class="loc-card" @click="useCurrentLoc">
           <div class="loc-info">
-            <van-icon :name="locationStore.isManual ? 'map-marked' : 'location'" color="#FFD100" size="2rem" />
+            <van-icon :name="locationStore.isManual ? 'map-marked' : 'location'" color="var(--primary-color)" size="2rem" />
             <transition name="fade-slide">
               <span :key="locationStore.address" class="loc-name van-ellipsis">{{ locationStore.address }}</span>
             </transition>
@@ -47,8 +47,8 @@
         <div class="section-header">
           <span class="title">我的收货地址</span>
           <div class="mini-actions">
-            <van-button v-if="!isEditMode" size="mini" plain round icon="plus" @click="onAdd">新增</van-button>
-            <van-button size="mini" :type="isEditMode ? 'warning' : 'default'" plain round @click="toggleEditMode">
+            <van-button v-if="!isEditMode" size="mini" class="add-btn" plain round icon="plus" @click="onAdd">新增</van-button>
+            <van-button size="mini" class="manage-btn" :type="isEditMode ? 'warning' : 'default'" plain round @click="toggleEditMode">
               {{ isEditMode ? '取消' : '管理' }}
             </van-button>
           </div>
@@ -61,7 +61,7 @@
             </div>
             <div class="card-content">
               <div class="card-main"><span class="card-addr van-ellipsis">{{ addr.address }}</span></div>
-              <div class="card-sub">{{ addr.consignee }} {{ addr.phone }}<van-tag v-if="addr.isDefault" color="#FFF9E6" text-color="#FFD100" class="default-tag">默认</van-tag></div>
+              <div class="card-sub">{{ addr.consignee }} {{ addr.phone }}<van-tag v-if="addr.isDefault" color="var(--primary-color-light)" text-color="var(--primary-color)" class="default-tag">默认</van-tag></div>
             </div>
             <van-icon v-if="!isEditMode" name="edit" class="edit-btn" @click.stop="onEdit(addr)" />
           </div>
@@ -79,7 +79,7 @@
       <div class="city-picker-layout">
         <van-nav-bar title="选择收货城市" left-arrow @click-left="showCityPicker = false" />
         <div class="city-scroll-box">
-          <van-index-bar :index-list="cityIndexList" highlight-color="#FFD100">
+          <van-index-bar :index-list="cityIndexList" :highlight-color="'var(--primary-color)'">
             <div v-for="group in cityData" :key="group.initial"><van-index-anchor :index="group.initial" /><van-cell v-for="city in group.list" :key="city" :title="city" @click="onCitySelect(city)" /></div>
           </van-index-bar>
         </div>
@@ -180,48 +180,57 @@ onMounted(() => { loadAddresses(); initSmartLocation() })
 </script>
 
 <style scoped>
-.address-selector-page { min-height: 100vh; background: #f7f7f7; position: relative; padding-bottom: 6rem; }
+.address-selector-page { min-height: 100vh; background: var(--mt-page-bg); position: relative; padding-bottom: 6rem; }
 .address-selector-page.is-managing { padding-bottom: 8rem; }
-.sticky-top { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.8rem 1.2rem; border-bottom: 1px solid #f5f5f5; }
+.sticky-top { position: sticky; top: 0; z-index: 100; background: linear-gradient(180deg, rgba(255, 233, 157, 0.96) 0%, rgba(255, 248, 235, 0.96) 100%); padding: 0.8rem 1.2rem 1rem; border-bottom: 1px solid rgba(245, 194, 0, 0.16); box-shadow: 0 0.2rem 1.2rem rgba(245, 194, 0, 0.08); backdrop-filter: blur(10px); }
 .nav-bar { display: flex; align-items: center; gap: 0.8rem; }
-.city-entry { display: flex; align-items: center; gap: 0.2rem; padding: 0 0.8rem; border-right: 1px solid #eee; max-width: 8.5rem; flex-shrink: 0; cursor: pointer; min-height: 4.4rem; }
-.curr-city { font-size: 1.4rem; font-weight: bold; color: #333; }
-.arrow { font-size: 0.8rem; color: #999; }
+.city-entry { display: flex; align-items: center; gap: 0.2rem; padding: 0 0.9rem; border-right: 1px solid rgba(245, 194, 0, 0.2); max-width: 8.5rem; flex-shrink: 0; cursor: pointer; min-height: 4.4rem; background: rgba(255, 255, 255, 0.45); border-radius: 999rem 0 0 999rem; margin-right: 0.2rem; }
+.curr-city { font-size: 1.4rem; font-weight: 900; color: var(--mt-strong); }
+.arrow { font-size: 0.8rem; color: var(--primary-color-dark); }
 .search-box { flex: 1; }
-:deep(.van-search__content) { background: #f2f2f2; min-height: 4.4rem; }
-.search-tips-overlay { position: absolute; top: 5.4rem; left: 0; right: 0; bottom: 0; background: #fff; z-index: 120; overflow-y: auto; padding: 0 1.6rem; }
-.suggestion-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.6rem 0; border-bottom: 1px solid #f5f5f5; }
-.item-icon { font-size: 1.8rem; color: #999; }
+.search-box :deep(.van-search) { padding: 0; }
+:deep(.van-search__content) { background: var(--van-search-content-background); min-height: 4.4rem; border: 1px solid rgba(245, 194, 0, 0.18); box-shadow: inset 0 0 0 0.1rem rgba(255,255,255,0.7), 0 0.4rem 1.2rem rgba(245, 194, 0, 0.08); }
+:deep(.van-search__content--round) { border-radius: 999rem; }
+:deep(.van-field__left-icon) { color: var(--primary-color-dark); }
+.search-tips-overlay { position: absolute; top: 5.4rem; left: 0; right: 0; bottom: 0; background: var(--mt-card-bg); z-index: 120; overflow-y: auto; padding: 0 1.6rem; }
+.suggestion-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.6rem 0; border-bottom: 1px solid var(--mt-divider); }
+.item-icon { font-size: 1.8rem; color: var(--mt-muted); }
 .item-info { flex: 1; overflow: hidden; }
-.item-name { font-size: 1.5rem; font-weight: bold; color: #333; }
-.item-addr { font-size: 1.2rem; color: #999; margin-top: 0.4rem; }
+.item-name { font-size: 1.5rem; font-weight: 900; color: var(--mt-strong); }
+.item-addr { font-size: 1.2rem; color: var(--mt-muted); margin-top: 0.4rem; }
 .scroll-container { padding-top: 1rem; min-height: calc(100vh - 5.4rem); }
-.row-title { font-size: 1.2rem; color: #999; padding: 1rem 1.6rem; }
-.loc-card { display: flex; justify-content: space-between; align-items: center; background: #fff; margin: 0 1.6rem 1.6rem; padding: 1.4rem; border-radius: 1.2rem; box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.02); min-height: 4.4rem; }
-.loc-name { font-size: 1.4rem; font-weight: 700; flex: 1; color: #333; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 0.8rem; }
-.relocate-btn { display: flex; align-items: center; gap: 0.4rem; color: #FFD100; font-size: 1.2rem; font-weight: bold; min-height: 4.4rem; }
+.row-title { font-size: 1.2rem; color: var(--mt-muted); padding: 1rem 1.6rem; }
+.loc-card { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #FFFDF5 0%, #FFFFFF 50%, #FFF6D8 100%); margin: 0 1.6rem 1.6rem; padding: 1.4rem; border-radius: var(--mt-card-radius); box-shadow: var(--shadow-sm); min-height: 4.4rem; border: 1px solid rgba(255, 208, 0, 0.18); position: relative; overflow: hidden; }
+.loc-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0.4rem; background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-color-dark) 100%); }
+.loc-info { display: flex; align-items: center; flex: 1; min-width: 0; }
+.loc-name { font-size: 1.4rem; font-weight: 900; flex: 1; color: var(--mt-strong); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 0.8rem; }
+.relocate-btn { display: flex; align-items: center; gap: 0.4rem; color: var(--primary-color-dark); font-size: 1.2rem; font-weight: 900; min-height: 4.4rem; background: rgba(255, 208, 0, 0.14); padding: 0 1rem; border-radius: 999rem; }
 .address-list-wrap { padding: 0 1.6rem 2rem; }
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding: 1rem 0; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding: 1rem 0; position: relative; }
+.section-header .title { position: relative; padding-left: 1rem; font-size: 1.4rem; font-weight: 900; color: var(--mt-strong); }
+.section-header .title::before { content: ''; position: absolute; left: 0; top: 50%; width: 0.4rem; height: 1.4rem; transform: translateY(-50%); border-radius: 999rem; background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-color-dark) 100%); }
 .mini-actions { display: flex; gap: 0.8rem; }
-:deep(.van-button--mini) { min-height: 2.8rem; padding: 0 1rem; border-color: #eee; color: #666; font-size: 1.1rem; }
-.card-item { display: flex; align-items: center; background: #fff; border-radius: 1.2rem; padding: 1.6rem; margin-bottom: 1.2rem; box-shadow: 0 0.4rem 1.2rem rgba(0,0,0,0.03); min-height: 4.4rem; }
+:deep(.van-button--mini) { min-height: 2.8rem; padding: 0 1rem; border-color: var(--border-color); color: var(--text-color-secondary); font-size: 1.1rem; }
+:deep(.add-btn) { border-color: rgba(245, 194, 0, 0.3); color: var(--secondary-color); background: var(--mt-soft-yellow); font-weight: 800; }
+:deep(.manage-btn) { border-color: rgba(245, 194, 0, 0.3); color: var(--secondary-color); background: rgba(255, 255, 255, 0.86); font-weight: 800; }
+.card-item { display: flex; align-items: center; background: var(--mt-card-bg); border-radius: var(--mt-card-radius); padding: 1.6rem; margin-bottom: 1.2rem; box-shadow: var(--shadow-sm); min-height: 4.4rem; }
 .card-item.selectable { padding-left: 0.8rem; }
 .checkbox-box { padding-right: 1.2rem; }
 .card-content { flex: 1; overflow: hidden; }
 .card-main { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
-.card-addr { font-size: 1.5rem; font-weight: 700; color: #222; }
-.card-sub { font-size: 1.2rem; color: #666; }
+.card-addr { font-size: 1.5rem; font-weight: 900; color: var(--mt-strong); }
+.card-sub { font-size: 1.2rem; color: var(--text-color-secondary); }
 .default-tag { margin-left: 0.8rem; }
-.edit-btn { font-size: 1.8rem; color: #ccc; padding-left: 1rem; }
-.mt-checkbox { width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; }
-.mt-checkbox.checked { background: #FFD100; border-color: #FFD100; }
-.check-icon { font-size: 1.4rem; color: #222; opacity: 0; }
+.edit-btn { font-size: 1.8rem; color: var(--text-color-placeholder); padding-left: 1rem; }
+.mt-checkbox { width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid rgba(245, 194, 0, 0.35); background: rgba(255, 252, 240, 0.98); display: flex; align-items: center; justify-content: center; }
+.mt-checkbox.checked { background: var(--primary-color); border-color: var(--primary-color); }
+.check-icon { font-size: 1.4rem; color: var(--mt-strong); opacity: 0; }
 .mt-checkbox.checked .check-icon { opacity: 1; }
-.batch-footer { position: fixed; bottom: 0; left: 0; right: 0; min-height: 6.4rem; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 1.6rem; box-shadow: 0 -0.2rem 1rem rgba(0,0,0,0.05); z-index: 200; }
-.select-all { display: flex; align-items: center; gap: 0.8rem; font-size: 1.4rem; color: #333; min-height: 4.4rem; }
-.batch-del-btn { background: #ff3f3f; color: #fff; width: 12rem; min-height: 4.4rem; font-weight: 800; border: none; }
-.batch-del-btn:disabled { background: #ff9999; }
-.city-picker-layout { display: flex; flex-direction: column; height: 100vh; background: #fff; }
+.batch-footer { position: fixed; bottom: 0; left: 0; right: 0; min-height: 6.4rem; background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 248, 235, 0.98) 100%); display: flex; justify-content: space-between; align-items: center; padding: 0 1.6rem; box-shadow: 0 -0.2rem 1rem rgba(245, 194, 0, 0.08); border-top: 1px solid rgba(245, 194, 0, 0.16); z-index: 200; }
+.select-all { display: flex; align-items: center; gap: 0.8rem; font-size: 1.4rem; color: var(--mt-strong); min-height: 4.4rem; }
+.batch-del-btn { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%); color: var(--secondary-color); width: 12rem; min-height: 4.4rem; font-weight: 800; border: none; box-shadow: 0 0.6rem 1.2rem rgba(245, 194, 0, 0.22); }
+.batch-del-btn:disabled { opacity: 0.5; }
+.city-picker-layout { display: flex; flex-direction: column; height: 100vh; background: linear-gradient(180deg, #FFF9EC 0%, #FFFFFF 100%); }
 .city-scroll-box { flex: 1; overflow-y: auto; }
 .loading-anim { animation: rotate 1s linear infinite; }
 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

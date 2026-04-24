@@ -10,7 +10,7 @@
     </div>
 
     <section class="home-banner">
-      <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+      <van-swipe class="my-swipe" :autoplay="3000" :indicator-color="'var(--mt-strong)'">
       <van-swipe-item>1</van-swipe-item>
       <van-swipe-item>2</van-swipe-item>
       <van-swipe-item>3</van-swipe-item>
@@ -39,7 +39,7 @@ const value = ref('')
 </script>
 <style scoped>
 .home-page {
-  background: #f6f7fb;
+  background: var(--mt-page-bg);
   padding-bottom: calc(1.6rem + env(safe-area-inset-bottom));
 }
 
@@ -53,14 +53,14 @@ const value = ref('')
   font-size: 2rem;
   line-height: 2.8rem;
   font-weight: 700;
-  color: #222;
+  color: var(--mt-strong);
 }
 
 .home-subtitle {
   margin: 0.8rem 0 0;
   font-size: 1.3rem;
   line-height: 2rem;
-  color: #636363;
+  color: var(--text-color-secondary);
 }
 
 .home-search,
@@ -86,11 +86,11 @@ const value = ref('')
 }
 
 .my-swipe .van-swipe-item {
-  color: #fff;
+  color: var(--mt-strong);
   font-size: 1.6rem;
   line-height: 15rem;
   text-align: center;
-  background: linear-gradient(135deg, #5b8cff 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
   border-radius: 1.6rem;
 }
 

@@ -15,7 +15,7 @@
           </h3>
           <p class="phone">{{ userInfo.phone || '点击编辑资料' }}</p>
         </div>
-        <van-icon name="arrow" style="margin-left: auto; color: white; font-size: 1.6rem;" />
+        <van-icon name="arrow" style="margin-left: auto; color: var(--mt-strong); font-size: 1.6rem;" />
       </div>
     </div>
 
@@ -149,13 +149,13 @@ const handleLogout = () => {
 
 <style scoped>
 .profile-page {
-  background-color: #f7f8fa;
+  background-color: var(--mt-page-bg);
   min-height: 100vh;
 }
 .user-header {
-  background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
   padding: 4rem 2rem 6rem;
-  color: white;
+  color: var(--mt-strong);
 }
 .user-info {
   display: flex;
@@ -183,7 +183,7 @@ const handleLogout = () => {
   margin: 3rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom));
 }
 .logout {
-  color: #ee0a24;
+  color: var(--van-danger-color);
   min-height: 4.4rem;
   font-size: 1.4rem;
 }

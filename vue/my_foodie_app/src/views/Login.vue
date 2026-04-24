@@ -2,13 +2,13 @@
   <div class="mt-login-page">
     <div class="mt-login-header">
       <div class="mt-logo-wrap">
-        <div class="mt-logo"><van-icon name="bag" size="2.4rem" color="#222" /></div>
+        <div class="mt-logo"><van-icon name="bag" size="2.4rem" color="var(--mt-strong)" /></div>
         <h1 class="mt-app-name">吃货联盟</h1>
         <p class="mt-app-slogan">美食，就在身边</p>
       </div>
     </div>
     <div class="mt-login-card">
-      <van-tabs :active="activeTab" line-width="2rem" color="#FFD000" @update:active="onTabChange">
+      <van-tabs :active="activeTab" line-width="2rem" color="var(--primary-color)" @update:active="onTabChange">
         <van-tab title="手机验证码" /><van-tab title="账号密码" />
       </van-tabs>
       <div class="mt-form-box">
@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
   padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
-  background-color: #fff;
+  background-color: var(--mt-page-bg);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
 .mt-login-header {
   width: 100%;
   min-height: 26rem;
-  background: linear-gradient(180deg, #ffd000 0%, #ffc107 100%);
+  background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -138,13 +138,13 @@ onBeforeUnmount(() => {
 .mt-logo {
   width: 8rem;
   height: 8rem;
-  background-color: #fff;
+  background-color: var(--mt-card-bg);
   border-radius: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto var(--space-16);
-  box-shadow: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .mt-app-name {
@@ -152,22 +152,22 @@ onBeforeUnmount(() => {
   font-size: 2.4rem;
   line-height: 3.2rem;
   font-weight: 800;
-  color: #222;
+  color: var(--mt-strong);
 }
 
 .mt-app-slogan {
   margin: var(--space-8) 0 0;
   font-size: 1.3rem;
   line-height: 2rem;
-  color: #525252;
+  color: var(--text-color-secondary);
 }
 
 .mt-login-card {
   width: calc(100% - 3.2rem);
   margin: -4rem auto 0;
-  background-color: #fff;
+  background-color: var(--mt-card-bg);
   border-radius: 2.4rem;
-  box-shadow: 0 1.2rem 3.2rem rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   padding: 2.4rem 1.6rem 2rem;
 }
 
@@ -177,7 +177,7 @@ onBeforeUnmount(() => {
 }
 
 .mt-input {
-  background-color: #f7f7f7;
+  background-color: var(--van-search-content-background);
   border-radius: 1.2rem;
   margin-bottom: var(--space-16);
 }
@@ -202,23 +202,23 @@ onBeforeUnmount(() => {
   min-width: 9.2rem;
   min-height: 4.4rem;
   padding: 0 var(--space-12);
-  color: #4b5563 !important;
-  background: #f3f4f6 !important;
-  border: 1px solid #d1d5db !important;
+  color: var(--text-color-secondary) !important;
+  background: var(--van-search-content-background) !important;
+  border: 1px solid var(--border-color) !important;
   font-size: 1.2rem;
 }
 
 .mt-code-btn.van-button--disabled {
-  color: #9ca3af !important;
-  background: #f9fafb !important;
-  border-color: #e5e7eb !important;
+  color: var(--text-color-placeholder) !important;
+  background: var(--mt-page-bg) !important;
+  border-color: var(--mt-divider) !important;
 }
 
 .mt-login-btn {
   min-height: 4.8rem;
   font-size: 1.7rem;
   font-weight: 600;
-  background: linear-gradient(90deg, #ffd000 0%, #ffc107 100%) !important;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-color-dark) 100%) !important;
   border: none !important;
 }
 </style>

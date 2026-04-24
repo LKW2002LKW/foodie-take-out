@@ -147,7 +147,7 @@ const emit = defineEmits(['update:visible', 'success'])
 const loading = ref(false)
 const formRef = ref(null)
 const categoryList = ref([])
-const uploadUrl = '/api/merchant/common/upload' // 生产环境应从配置文件读取
+const uploadUrl = 'http://localhost:8082/merchant/common/upload' // 生产环境应从配置文件读取
 
 const headers = computed(() => ({
   Authorization: 'Bearer ' + localStorage.getItem('merchant_token')
@@ -208,6 +208,13 @@ const fetchDetail = async (id) => {
   try {
     const { data } = await dishApi.getDishById(id)
     if (data) {
+      // 处理口味数据，确保 value 是数组
+      if (data.flavors) {
+        data.flavors = data.flavors.map(f => ({
+          ...f,
+          value: typeof f.value === 'string' ? JSON.parse(f.value) : f.value
+        }))
+      }
       Object.assign(form, data)
     }
   } catch (e) {

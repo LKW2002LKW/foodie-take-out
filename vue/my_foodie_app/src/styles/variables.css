@@ -10,26 +10,73 @@
   --text-color-secondary: #666666;
   --text-color-placeholder: #999999;
   
-  --background-color: #F5F5F5;
+  --background-color: #FFF8EB;
   --surface-color: #FFFFFF;
   
   --border-color: #EEEEEE;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 0.4rem;
+  --radius-md: 0.8rem;
+  --radius-lg: 1.2rem;
+  --radius-xl: 1.6rem;
+
+  /* Spacing (rem-based, matches root font scaling in main.js) */
+  --space-4: 0.4rem;
+  --space-6: 0.6rem;
+  --space-8: 0.8rem;
+  --space-10: 1rem;
+  --space-12: 1.2rem;
+  --space-16: 1.6rem;
+  --space-20: 2rem;
+
+  /* Typography */
+  --text-11: 1.1rem;
+  --text-12: 1.2rem;
+  --text-13: 1.3rem;
+  --text-14: 1.4rem;
+  --text-16: 1.6rem;
+  --text-18: 1.8rem;
+
+  /* Surfaces */
+  --shadow-sm: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.06);
+
+  /* Meituan-like UI primitives */
+  --mt-page-bg: linear-gradient(180deg, #FFF9EC 0%, #FFF7E4 100%);
+  --mt-card-bg: var(--surface-color);
+  --mt-card-radius: 1.6rem;
+  --mt-divider: #F4E8C8;
+  --mt-muted: #8A8A8A;
+  --mt-strong: #222222;
+  --mt-soft-yellow: rgba(255, 208, 0, 0.22);
+  --mt-warning: #FF9500;
 
   --font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Vant Overrides */
   --van-primary-color: var(--primary-color);
+  --van-text-color: var(--text-color);
+  --van-text-color-2: var(--text-color-secondary);
+  --van-text-color-3: var(--text-color-placeholder);
+  --van-background: var(--background-color);
+  --van-background-2: var(--surface-color);
+  --van-border-color: var(--border-color);
+
   --van-nav-bar-background-color: var(--surface-color);
   --van-nav-bar-title-text-color: var(--text-color);
   --van-nav-bar-icon-color: var(--text-color);
+
   --van-button-primary-background-color: var(--primary-color);
   --van-button-primary-border-color: var(--primary-color);
   --van-button-primary-text-color: var(--secondary-color);
+
   --van-tabs-bottom-bar-color: var(--primary-color);
   --van-tab-active-text-color: var(--text-color);
+
   --van-sidebar-selected-border-color: var(--primary-color);
+
+  /* Search / Tabbar */
+  --van-search-content-background: #FFFDF5;
+  --van-tabbar-background: var(--surface-color);
+  --van-tabbar-item-active-color: var(--text-color);
+  --van-tabbar-item-text-color: var(--text-color-placeholder);
 }
