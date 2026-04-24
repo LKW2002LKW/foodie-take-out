@@ -85,7 +85,7 @@ const headerLocationText = computed(() => {
   return locationStore.address || locationStore.locatedAddress || '正在定位...'
 })
 
-const banners = ['https://img.meituan.net/waimaipicture/82df066ed50df1101971cf5c4a783097315648.jpg', 'https://img.meituan.net/waimaipicture/066ed50df1101971cf5c4a78309731564882df.jpg']
+const banners = ['https://images.pexels.com/photos/37074051/pexels-photo-37074051.jpeg', 'https://images.pexels.com/photos/19106471/pexels-photo-19106471.jpeg']
 const categoryIcons = [{ id: 1, name: '美食' }, { id: 2, name: '甜点饮品' }, { id: 3, name: '超市便利' }, { id: 4, name: '蔬菜水果' }]
 const getCatIcon = (id) => ({
   1: 'icon-meishi2',

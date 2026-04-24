@@ -1,5 +1,10 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+
+window._AMapSecurityConfig = {
+  securityJsCode: import.meta.env.VITE_AMAP_SECURITY_JS_CODE,
+}
+
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'

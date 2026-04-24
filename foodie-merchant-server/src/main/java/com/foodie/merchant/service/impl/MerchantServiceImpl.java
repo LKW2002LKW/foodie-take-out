@@ -1,11 +1,11 @@
 package com.foodie.merchant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.foodie.common.constant.MessageConstant;
 import com.foodie.common.constant.RedisKeyConstant;
 import com.foodie.common.constant.StatusConstant;
-import com.foodie.common.context.BaseContext;
 import com.foodie.common.exception.BaseException;
 import com.foodie.dto.merchant.MerchantBusinessHoursDTO;
 import com.foodie.dto.merchant.MerchantStatusDTO;
@@ -16,7 +16,6 @@ import com.foodie.merchant.service.MerchantService;
 import com.foodie.vo.merchant.MerchantVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -78,11 +77,28 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> i
             throw new BaseException(MessageConstant.MERCHANT_AUDIT_PENDING);
         }
 
-        // 更新信息
-        BeanUtils.copyProperties(merchantUpdateDTO, merchant);
-        merchant.setId(merchantId);
+        LambdaUpdateWrapper<Merchant> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Merchant::getId, merchantId)
+                .set(merchantUpdateDTO.getMerchantName() != null, Merchant::getMerchantName, merchantUpdateDTO.getMerchantName())
+                .set(merchantUpdateDTO.getContactName() != null, Merchant::getContactName, merchantUpdateDTO.getContactName())
+                .set(merchantUpdateDTO.getContactPhone() != null, Merchant::getContactPhone, merchantUpdateDTO.getContactPhone())
+                .set(merchantUpdateDTO.getProvinceCode() != null, Merchant::getProvinceCode, merchantUpdateDTO.getProvinceCode())
+                .set(merchantUpdateDTO.getProvinceName() != null, Merchant::getProvinceName, merchantUpdateDTO.getProvinceName())
+                .set(merchantUpdateDTO.getCityCode() != null, Merchant::getCityCode, merchantUpdateDTO.getCityCode())
+                .set(merchantUpdateDTO.getCityName() != null, Merchant::getCityName, merchantUpdateDTO.getCityName())
+                .set(merchantUpdateDTO.getDistrictCode() != null, Merchant::getDistrictCode, merchantUpdateDTO.getDistrictCode())
+                .set(merchantUpdateDTO.getDistrictName() != null, Merchant::getDistrictName, merchantUpdateDTO.getDistrictName())
+                .set(merchantUpdateDTO.getAddress() != null, Merchant::getAddress, merchantUpdateDTO.getAddress())
+                .set(merchantUpdateDTO.getLongitude() != null, Merchant::getLongitude, merchantUpdateDTO.getLongitude())
+                .set(merchantUpdateDTO.getLatitude() != null, Merchant::getLatitude, merchantUpdateDTO.getLatitude())
+                .set(merchantUpdateDTO.getLogo() != null, Merchant::getLogo, merchantUpdateDTO.getLogo())
+                .set(merchantUpdateDTO.getDescription() != null, Merchant::getDescription, merchantUpdateDTO.getDescription())
+                .set(merchantUpdateDTO.getBizCategoryId() != null, Merchant::getBizCategoryId, merchantUpdateDTO.getBizCategoryId())
+                .set(merchantUpdateDTO.getBusinessHours() != null, Merchant::getBusinessHours, merchantUpdateDTO.getBusinessHours())
+                .set(merchantUpdateDTO.getMinDeliveryAmount() != null, Merchant::getMinDeliveryAmount, merchantUpdateDTO.getMinDeliveryAmount())
+                .set(merchantUpdateDTO.getDeliveryFee() != null, Merchant::getDeliveryFee, merchantUpdateDTO.getDeliveryFee());
 
-        this.updateById(merchant);
+        this.update(updateWrapper);
 
         log.info("商户信息修改成功：merchantId={}", merchantId);
     }
@@ -146,16 +162,12 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantMapper, Merchant> i
 
     @Override
     @Transactional
-    public void updateLogo( Long merchantId,String logoUrl) {
-
-
+    public void updateLogo(Long merchantId, String logoUrl) {
         // 方法2：也可以用 UpdateWrapper（可选）
-
         UpdateWrapper<Merchant> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", merchantId);
         wrapper.set("logo", logoUrl);
         this.update(wrapper);
-
     }
 
     /**
