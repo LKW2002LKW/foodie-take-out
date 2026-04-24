@@ -21,19 +21,46 @@ import com.foodie.vo.user.ShoppingCartVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, ShoppingCart> implements ShoppingCartService {
+
+    private static final String META_SUFFIX = ":meta";
+
+    private static final String NUM_SUFFIX = ":num";
+
+    private static final DefaultRedisScript<Long> DECREASE_CART_ITEM_SCRIPT = new DefaultRedisScript<>();
+
+    static {
+        DECREASE_CART_ITEM_SCRIPT.setResultType(Long.class);
+        DECREASE_CART_ITEM_SCRIPT.setScriptText(
+                "local current = redis.call('HGET', KEYS[1], ARGV[1]) "
+                        + "if not current then return -1 end "
+                        + "current = tonumber(current) "
+                        + "if current <= 1 then "
+                        + "  redis.call('HDEL', KEYS[1], ARGV[1], ARGV[2]) "
+                        + "  if redis.call('HLEN', KEYS[1]) == 0 then redis.call('DEL', KEYS[1]) end "
+                        + "  return 0 "
+                        + "end "
+                        + "return redis.call('HINCRBY', KEYS[1], ARGV[1], -1)"
+        );
+    }
 
     private final DishMapper dishMapper;
 
@@ -51,76 +78,21 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
     public void addCart(Long userId, ShoppingCartDTO shoppingCartDTO) {
         log.info("添加购物车：userId={}, dto={}", userId, shoppingCartDTO);
 
-        ShoppingCart shoppingCart = new ShoppingCart();
-        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
-        shoppingCart.setUserId(userId);
-
-        // 判断是菜品还是套餐
-        if (shoppingCartDTO.getDishId() != null) {
-            // 添加菜品
-            Dish dish = dishMapper.selectById(shoppingCartDTO.getDishId());
-            if (dish == null) {
-                throw new BaseException("菜品不存在");
-            }
-            if (!dish.getStatus().equals(StatusConstant.DISH_ON_SALE)) {
-                throw new BaseException(MessageConstant.DISH_NOT_ON_SALE);
-            }
-
-            shoppingCart.setMerchantId(dish.getMerchantId());
-            shoppingCart.setName(dish.getName());
-            shoppingCart.setImage(dish.getImage());
-            shoppingCart.setAmount(dish.getPrice());
-
-        } else if (shoppingCartDTO.getSetmealId() != null) {
-            // 添加套餐
-            Setmeal setmeal = setmealMapper.selectById(shoppingCartDTO.getSetmealId());
-            if (setmeal == null) {
-                throw new BaseException("套餐不存在");
-            }
-            if (!setmeal.getStatus().equals(StatusConstant.SETMEAL_ON_SALE)) {
-                throw new BaseException(MessageConstant.SETMEAL_NOT_ON_SALE);
-            }
-
-            shoppingCart.setMerchantId(setmeal.getMerchantId());
-            shoppingCart.setName(setmeal.getName());
-            shoppingCart.setImage(setmeal.getImage());
-            shoppingCart.setAmount(setmeal.getPrice());
-
-        } else {
-            throw new BaseException("请选择菜品或套餐");
+        ShoppingCart cart = buildCartMeta(userId, shoppingCartDTO);
+        Long latestNum;
+        try {
+            latestNum = increaseCartItemInRedis(userId, cart, 1);
+        } catch (Exception e) {
+            log.error("Redis添加购物车失败：userId={}, dto={}", userId, shoppingCartDTO, e);
+            throw new BaseException("购物车操作失败");
         }
 
-        // 允许多商户购物车：不再限制必须同一商户
-
-        // 查询购物车中是否已存在该商品（菜品需要匹配口味）
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ShoppingCart::getUserId, userId)
-                .eq(ShoppingCart::getMerchantId, shoppingCart.getMerchantId());
-
-        if (shoppingCartDTO.getDishId() != null) {
-            wrapper.eq(ShoppingCart::getDishId, shoppingCartDTO.getDishId());
-            // 口味相同才算同一商品
-            if (shoppingCartDTO.getDishFlavor() != null) {
-                wrapper.eq(ShoppingCart::getDishFlavor, shoppingCartDTO.getDishFlavor());
-            } else {
-                wrapper.isNull(ShoppingCart::getDishFlavor);
-            }
-        } else {
-            wrapper.eq(ShoppingCart::getSetmealId, shoppingCartDTO.getSetmealId());
-        }
-
-        ShoppingCart existCart = this.getOne(wrapper);
-
-        if (existCart != null) {
-            // 已存在，数量+1
-            existCart.setNumber(existCart.getNumber() + shoppingCartDTO.getNumber());
-            this.updateById(existCart);
-            writeCartItemToRedis(userId, existCart.getMerchantId(), existCart);
-        } else {
-            // 不存在，新增
-            shoppingCart.setNumber(shoppingCartDTO.getNumber());
-            this.save(shoppingCart);
-            writeCartItemToRedis(userId, shoppingCart.getMerchantId(), shoppingCart);
+        cart.setNumber(latestNum.intValue());
+        try {
+            syncCartItemToDb(cart, cart.getNumber());
+        } catch (Exception e) {
+            restoreCartItemInRedis(userId, cart, latestNum.intValue() - 1);
+            throw e;
         }
 
         log.info("购物车操作成功");
@@ -133,43 +105,18 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
     public List<ShoppingCartVO> listCart(String merchantIds, Long userId) {
         log.info("查看购物车：userId={}, merchantIds={}", userId, merchantIds);
 
-        List<Long> merchantIdList = new ArrayList<>();
-        if (merchantIds != null && !merchantIds.trim().isEmpty()) {
-            String[] ids = merchantIds.split(",");
-            for (String id : ids) {
-                try {
-                    merchantIdList.add(Long.parseLong(id.trim()));
-                } catch (NumberFormatException e) {
-                    log.warn("无效的商户ID: {}", id);
-                }
-            }
+        List<Long> merchantIdList = parseMerchantIds(merchantIds);
+        List<ShoppingCart> cartList = null;
+        try {
+            cartList = listCartFromRedis(userId, merchantIdList);
+        } catch (Exception e) {
+            log.warn("从Redis读取购物车失败：userId={}, merchantIds={}", userId, merchantIds, e);
         }
 
-        List<ShoppingCart> cartList = new ArrayList<>();
-
-        if (merchantIdList.isEmpty()) {
-            // 如果没有指定商户ID，则查询所有商户的购物车
-            LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(ShoppingCart::getUserId, userId)
-                    .orderByDesc(ShoppingCart::getCreateTime);
-            cartList = this.list(wrapper);
-        } else {
-            // 查询指定商户的购物车
-            LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(ShoppingCart::getUserId, userId)
-                    .in(ShoppingCart::getMerchantId, merchantIdList)
-                    .orderByDesc(ShoppingCart::getCreateTime);
-            cartList = this.list(wrapper);
+        if (cartList == null) {
+            cartList = loadCartFromDbAndWarmRedis(userId, merchantIdList);
         }
 
-        if (cartList != null && !cartList.isEmpty()) {
-            // 将每个购物车项写入对应的Redis缓存
-            for (ShoppingCart cart : cartList) {
-                writeCartItemToRedis(userId, cart.getMerchantId(), cart);
-            }
-        }
-
-        // 转换为VO，并补充商户名称
         return toCartVOList(cartList);
     }
 
@@ -181,38 +128,36 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
     public void subCart(Long userId, ShoppingCartDTO shoppingCartDTO) {
         log.info("减少购物车商品：userId={}, dto={}", userId, shoppingCartDTO);
 
-        // 查询购物车中的商品
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ShoppingCart::getUserId, userId)
-                .eq(ShoppingCart::getMerchantId, shoppingCartDTO.getMerchantId());
-
-        if (shoppingCartDTO.getDishId() != null) {
-            wrapper.eq(ShoppingCart::getDishId, shoppingCartDTO.getDishId());
-            if (shoppingCartDTO.getDishFlavor() != null) {
-                wrapper.eq(ShoppingCart::getDishFlavor, shoppingCartDTO.getDishFlavor());
-            } else {
-                wrapper.isNull(ShoppingCart::getDishFlavor);
-            }
-        } else if (shoppingCartDTO.getSetmealId() != null) {
-            wrapper.eq(ShoppingCart::getSetmealId, shoppingCartDTO.getSetmealId());
-        } else {
-            throw new BaseException("请指定要减少的商品");
+        Long merchantId = resolveMerchantId(shoppingCartDTO);
+        ShoppingCart currentCart = getCartItemFromRedis(userId, merchantId, shoppingCartDTO);
+        if (currentCart == null) {
+            loadCartFromDbAndWarmRedis(userId, List.of(merchantId));
+            currentCart = getCartItemFromRedis(userId, merchantId, shoppingCartDTO);
         }
 
-        ShoppingCart cart = this.getOne(wrapper);
-
-        if (cart == null) {
+        if (currentCart == null) {
             throw new BaseException(MessageConstant.CART_ITEM_NOT_FOUND);
         }
 
-        // 如果数量为1，直接删除；否则数量-1
-        if (cart.getNumber() == 1) {
-            this.removeById(cart.getId());
-            removeCartItemFromRedis(userId, shoppingCartDTO.getMerchantId(), cart);
-        } else {
-            cart.setNumber(cart.getNumber() - 1);
-            this.updateById(cart);
-            writeCartItemToRedis(userId, shoppingCartDTO.getMerchantId(), cart);
+        Long latestNum;
+        try {
+            latestNum = decreaseCartItemInRedis(userId, currentCart);
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Redis减少购物车失败：userId={}, dto={}", userId, shoppingCartDTO, e);
+            throw new BaseException("购物车操作失败");
+        }
+
+        try {
+            if (latestNum == 0L) {
+                removeCartItemFromDb(userId, shoppingCartDTO, merchantId);
+            } else {
+                syncCartItemToDb(currentCart, latestNum.intValue());
+            }
+        } catch (Exception e) {
+            restoreCartItemInRedis(userId, currentCart, currentCart.getNumber());
+            throw e;
         }
 
         log.info("购物车商品减少成功");
@@ -226,11 +171,13 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
     public void cleanCart(Long userId) {
         log.info("清空购物车：userId={}", userId);
 
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ShoppingCart::getUserId, userId);
-
-        this.remove(wrapper);
-        clearCartRedis(userId, null);
+        removeAllCartFromDb(userId);
+        try {
+            deleteAllCartInRedis(userId);
+        } catch (Exception e) {
+            log.error("清空Redis购物车失败：userId={}", userId, e);
+            throw new BaseException("清空购物车失败");
+        }
 
         log.info("购物车已清空");
     }
@@ -243,57 +190,384 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
     public void cleanCartByMerchant(Long userId, Long merchantId) {
         log.info("清空指定商户购物车：userId={}, merchantId={}", userId, merchantId);
 
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ShoppingCart::getUserId, userId)
-                .eq(ShoppingCart::getMerchantId, merchantId);
-
-        this.remove(wrapper);
-
-        String redisKey = String.format(RedisKeyConstant.SHOPPING_CART, userId, merchantId);
+        removeMerchantCartFromDb(userId, merchantId);
         try {
-            redisTemplate.delete(redisKey);
+            deleteMerchantCartInRedis(userId, merchantId);
         } catch (Exception e) {
-            log.warn("清空指定商户购物车缓存失败：userId={}, merchantId={}", userId, merchantId, e);
+            log.error("清空指定商户Redis购物车失败：userId={}, merchantId={}", userId, merchantId, e);
+            throw new BaseException("清空购物车失败");
         }
 
         log.info("指定商户购物车已清空");
     }
 
-    private String buildCartField(ShoppingCart cart) {
-        String itemId = cart.getDishId() != null ? "dish:" + cart.getDishId() : "setmeal:" + cart.getSetmealId();
-        String flavor = cart.getDishFlavor() != null ? ":flavor:" + cart.getDishFlavor() : "";
-        return itemId + flavor;
-    }
-
-    private void writeCartItemToRedis(Long userId, Long merchantId, ShoppingCart cart) {
-        String redisKey = String.format(RedisKeyConstant.SHOPPING_CART, userId, merchantId);
-        String field = buildCartField(cart);
-        try {
-            redisTemplate.opsForHash().put(redisKey, field, JsonUtil.toJson(cart));
-        } catch (Exception e) {
-            log.warn("写入购物车缓存失败：userId={}, field={}", userId, field, e);
+    private List<Long> parseMerchantIds(String merchantIds) {
+        List<Long> merchantIdList = new ArrayList<>();
+        if (merchantIds == null || merchantIds.trim().isEmpty()) {
+            return merchantIdList;
         }
-    }
 
-    private void removeCartItemFromRedis(Long userId, Long merchantId, ShoppingCart cart) {
-        String redisKey = String.format(RedisKeyConstant.SHOPPING_CART, userId, merchantId);
-        String field = buildCartField(cart);
-        try {
-            redisTemplate.opsForHash().delete(redisKey, field);
-        } catch (Exception e) {
-            log.warn("删除购物车缓存失败：userId={}, field={}", userId, field, e);
+        String[] ids = merchantIds.split(",");
+        for (String id : ids) {
+            try {
+                merchantIdList.add(Long.parseLong(id.trim()));
+            } catch (NumberFormatException e) {
+                log.warn("无效的商户ID: {}", id);
+            }
         }
+        return merchantIdList;
     }
 
-    private void clearCartRedis(Long userId, Long merchantId) {
-        if (merchantId == null) {
+    private ShoppingCart buildCartMeta(Long userId, ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart cart = new ShoppingCart();
+        cart.setUserId(userId);
+        cart.setDishId(shoppingCartDTO.getDishId());
+        cart.setSetmealId(shoppingCartDTO.getSetmealId());
+        cart.setDishFlavor(normalizeFlavor(shoppingCartDTO.getDishFlavor()));
+        cart.setCreateTime(LocalDateTime.now());
+
+        if (shoppingCartDTO.getDishId() != null) {
+            Dish dish = dishMapper.selectById(shoppingCartDTO.getDishId());
+            if (dish == null) {
+                throw new BaseException("菜品不存在");
+            }
+            if (!StatusConstant.DISH_ON_SALE.equals(dish.getStatus())) {
+                throw new BaseException(MessageConstant.DISH_NOT_ON_SALE);
+            }
+
+            cart.setMerchantId(dish.getMerchantId());
+            cart.setName(dish.getName());
+            cart.setImage(dish.getImage());
+            cart.setAmount(dish.getPrice());
+            return cart;
+        }
+
+        if (shoppingCartDTO.getSetmealId() != null) {
+            Setmeal setmeal = setmealMapper.selectById(shoppingCartDTO.getSetmealId());
+            if (setmeal == null) {
+                throw new BaseException("套餐不存在");
+            }
+            if (!StatusConstant.SETMEAL_ON_SALE.equals(setmeal.getStatus())) {
+                throw new BaseException(MessageConstant.SETMEAL_NOT_ON_SALE);
+            }
+
+            cart.setMerchantId(setmeal.getMerchantId());
+            cart.setName(setmeal.getName());
+            cart.setImage(setmeal.getImage());
+            cart.setAmount(setmeal.getPrice());
+            return cart;
+        }
+
+        throw new BaseException("请选择菜品或套餐");
+    }
+
+    private Long resolveMerchantId(ShoppingCartDTO shoppingCartDTO) {
+        if (shoppingCartDTO.getMerchantId() != null) {
+            return shoppingCartDTO.getMerchantId();
+        }
+
+        if (shoppingCartDTO.getDishId() != null) {
+            Dish dish = dishMapper.selectById(shoppingCartDTO.getDishId());
+            if (dish == null) {
+                throw new BaseException(MessageConstant.CART_ITEM_NOT_FOUND);
+            }
+            return dish.getMerchantId();
+        }
+
+        if (shoppingCartDTO.getSetmealId() != null) {
+            Setmeal setmeal = setmealMapper.selectById(shoppingCartDTO.getSetmealId());
+            if (setmeal == null) {
+                throw new BaseException(MessageConstant.CART_ITEM_NOT_FOUND);
+            }
+            return setmeal.getMerchantId();
+        }
+
+        throw new BaseException("请指定要减少的商品");
+    }
+
+    private String normalizeFlavor(String dishFlavor) {
+        if (dishFlavor == null || dishFlavor.trim().isEmpty()) {
+            return null;
+        }
+        return dishFlavor;
+    }
+
+    private String buildCartKey(Long userId, Long merchantId) {
+        return String.format(RedisKeyConstant.SHOPPING_CART, userId, merchantId);
+    }
+
+    private String buildUserCartPattern(Long userId) {
+        return String.format(RedisKeyConstant.SHOPPING_CART_PATTERN, userId);
+    }
+
+    private String buildItemKey(ShoppingCartDTO shoppingCartDTO) {
+        if (shoppingCartDTO.getDishId() != null) {
+            StringBuilder builder = new StringBuilder("dish:").append(shoppingCartDTO.getDishId());
+            String flavor = normalizeFlavor(shoppingCartDTO.getDishFlavor());
+            if (flavor != null) {
+                builder.append(":flavor:").append(flavor);
+            }
+            return builder.toString();
+        }
+
+        if (shoppingCartDTO.getSetmealId() != null) {
+            return "setmeal:" + shoppingCartDTO.getSetmealId();
+        }
+
+        throw new BaseException("请选择菜品或套餐");
+    }
+
+    private String buildItemKey(ShoppingCart cart) {
+        if (cart.getDishId() != null) {
+            StringBuilder builder = new StringBuilder("dish:").append(cart.getDishId());
+            if (cart.getDishFlavor() != null) {
+                builder.append(":flavor:").append(cart.getDishFlavor());
+            }
+            return builder.toString();
+        }
+        return "setmeal:" + cart.getSetmealId();
+    }
+
+    private String buildMetaField(String itemKey) {
+        return itemKey + META_SUFFIX;
+    }
+
+    private String buildNumField(String itemKey) {
+        return itemKey + NUM_SUFFIX;
+    }
+
+    private Long increaseCartItemInRedis(Long userId, ShoppingCart cart, int delta) {
+        String cartKey = buildCartKey(userId, cart.getMerchantId());
+        String itemKey = buildItemKey(cart);
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        hashOperations.putIfAbsent(cartKey, buildMetaField(itemKey), JsonUtil.toJson(cart));
+        Long latestNum = hashOperations.increment(cartKey, buildNumField(itemKey), delta);
+        if (latestNum == null) {
+            throw new BaseException("购物车操作失败");
+        }
+        return latestNum;
+    }
+
+    private Long decreaseCartItemInRedis(Long userId, ShoppingCart cart) {
+        String cartKey = buildCartKey(userId, cart.getMerchantId());
+        String itemKey = buildItemKey(cart);
+        Long latestNum = redisTemplate.execute(
+                DECREASE_CART_ITEM_SCRIPT,
+                List.of(cartKey),
+                buildNumField(itemKey),
+                buildMetaField(itemKey)
+        );
+        if (latestNum == null) {
+            throw new BaseException("购物车操作失败");
+        }
+        if (latestNum < 0) {
+            throw new BaseException(MessageConstant.CART_ITEM_NOT_FOUND);
+        }
+        return latestNum;
+    }
+
+    private ShoppingCart getCartItemFromRedis(Long userId, Long merchantId, ShoppingCartDTO shoppingCartDTO) {
+        String cartKey = buildCartKey(userId, merchantId);
+        String itemKey = buildItemKey(shoppingCartDTO);
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        Object metaJson = hashOperations.get(cartKey, buildMetaField(itemKey));
+        Object numValue = hashOperations.get(cartKey, buildNumField(itemKey));
+        if (metaJson == null || numValue == null) {
+            return null;
+        }
+
+        ShoppingCart cart = JsonUtil.fromJson(metaJson.toString(), ShoppingCart.class);
+        cart.setNumber(Integer.parseInt(numValue.toString()));
+        return cart;
+    }
+
+    private void restoreCartItemInRedis(Long userId, ShoppingCart cart, Integer targetNum) {
+        String cartKey = buildCartKey(userId, cart.getMerchantId());
+        String itemKey = buildItemKey(cart);
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+
+        if (targetNum == null || targetNum <= 0) {
+            hashOperations.delete(cartKey, buildMetaField(itemKey), buildNumField(itemKey));
+            if (Long.valueOf(0L).equals(hashOperations.size(cartKey))) {
+                redisTemplate.delete(cartKey);
+            }
             return;
         }
-        String redisKey = String.format(RedisKeyConstant.SHOPPING_CART, userId, merchantId);
-        try {
-            redisTemplate.delete(redisKey);
-        } catch (Exception e) {
-            log.warn("清空购物车缓存失败：userId={}, merchantId={}", userId, merchantId, e);
+
+        hashOperations.put(cartKey, buildMetaField(itemKey), JsonUtil.toJson(cart));
+        hashOperations.put(cartKey, buildNumField(itemKey), String.valueOf(targetNum));
+    }
+
+    private List<ShoppingCart> listCartFromRedis(Long userId, List<Long> merchantIdList) {
+        List<ShoppingCart> cartList = new ArrayList<>();
+        if (merchantIdList == null || merchantIdList.isEmpty()) {
+            Set<String> cartKeys = redisTemplate.keys(buildUserCartPattern(userId));
+            if (CollectionUtils.isEmpty(cartKeys)) {
+                return null;
+            }
+            for (String cartKey : cartKeys) {
+                cartList.addAll(readCartListByKey(cartKey));
+            }
+        } else {
+            for (Long merchantId : merchantIdList) {
+                String cartKey = buildCartKey(userId, merchantId);
+                if (!Boolean.TRUE.equals(redisTemplate.hasKey(cartKey))) {
+                    return null;
+                }
+                cartList.addAll(readCartListByKey(cartKey));
+            }
+        }
+
+        cartList.sort(Comparator.comparing(ShoppingCart::getCreateTime,
+                Comparator.nullsLast(Comparator.reverseOrder())));
+        return cartList;
+    }
+
+    private List<ShoppingCart> readCartListByKey(String cartKey) {
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(cartKey);
+        if (entries == null || entries.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Map<String, ShoppingCart> metaMap = new java.util.HashMap<>();
+        Map<String, Integer> numMap = new java.util.HashMap<>();
+        for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+            String field = entry.getKey().toString();
+            Object value = entry.getValue();
+            if (field.endsWith(META_SUFFIX)) {
+                String itemKey = field.substring(0, field.length() - META_SUFFIX.length());
+                metaMap.put(itemKey, JsonUtil.fromJson(value.toString(), ShoppingCart.class));
+            } else if (field.endsWith(NUM_SUFFIX)) {
+                String itemKey = field.substring(0, field.length() - NUM_SUFFIX.length());
+                numMap.put(itemKey, Integer.parseInt(value.toString()));
+            }
+        }
+
+        List<ShoppingCart> cartList = new ArrayList<>();
+        for (Map.Entry<String, ShoppingCart> entry : metaMap.entrySet()) {
+            Integer number = numMap.get(entry.getKey());
+            if (number == null || number <= 0) {
+                continue;
+            }
+            ShoppingCart cart = entry.getValue();
+            cart.setNumber(number);
+            cartList.add(cart);
+        }
+        return cartList;
+    }
+
+    private List<ShoppingCart> loadCartFromDbAndWarmRedis(Long userId, List<Long> merchantIdList) {
+        List<ShoppingCart> cartList;
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, userId)
+                .orderByDesc(ShoppingCart::getCreateTime);
+        if (merchantIdList != null && !merchantIdList.isEmpty()) {
+            wrapper.in(ShoppingCart::getMerchantId, merchantIdList);
+        }
+        cartList = this.list(wrapper);
+
+        if (!CollectionUtils.isEmpty(cartList)) {
+            try {
+                warmCartCache(userId, cartList);
+            } catch (Exception e) {
+                log.warn("回填购物车缓存失败：userId={}", userId, e);
+            }
+        }
+        return cartList;
+    }
+
+    private void warmCartCache(Long userId, List<ShoppingCart> cartList) {
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        for (ShoppingCart cart : cartList) {
+            String cartKey = buildCartKey(userId, cart.getMerchantId());
+            String itemKey = buildItemKey(cart);
+            hashOperations.put(cartKey, buildMetaField(itemKey), JsonUtil.toJson(cart));
+            hashOperations.put(cartKey, buildNumField(itemKey), String.valueOf(cart.getNumber()));
+        }
+    }
+
+    private void syncCartItemToDb(ShoppingCart cart, Integer latestNum) {
+        LambdaQueryWrapper<ShoppingCart> wrapper = buildCartItemWrapper(
+                cart.getUserId(),
+                cart.getMerchantId(),
+                cart.getDishId(),
+                cart.getSetmealId(),
+                cart.getDishFlavor()
+        );
+
+        ShoppingCart existCart = this.getOne(wrapper);
+        if (existCart != null) {
+            existCart.setNumber(latestNum);
+            existCart.setName(cart.getName());
+            existCart.setImage(cart.getImage());
+            existCart.setAmount(cart.getAmount());
+            this.updateById(existCart);
+            return;
+        }
+
+        cart.setNumber(latestNum);
+        this.save(cart);
+    }
+
+    private void removeCartItemFromDb(Long userId, ShoppingCartDTO shoppingCartDTO, Long merchantId) {
+        LambdaQueryWrapper<ShoppingCart> wrapper = buildCartItemWrapper(
+                userId,
+                merchantId,
+                shoppingCartDTO.getDishId(),
+                shoppingCartDTO.getSetmealId(),
+                normalizeFlavor(shoppingCartDTO.getDishFlavor())
+        );
+        this.remove(wrapper);
+    }
+
+    private void removeMerchantCartFromDb(Long userId, Long merchantId) {
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, userId)
+                .eq(ShoppingCart::getMerchantId, merchantId);
+        this.remove(wrapper);
+    }
+
+    private void removeAllCartFromDb(Long userId) {
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, userId);
+        this.remove(wrapper);
+    }
+
+    private LambdaQueryWrapper<ShoppingCart> buildCartItemWrapper(Long userId,
+                                                                  Long merchantId,
+                                                                  Long dishId,
+                                                                  Long setmealId,
+                                                                  String dishFlavor) {
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, userId)
+                .eq(ShoppingCart::getMerchantId, merchantId);
+
+        if (dishId != null) {
+            wrapper.eq(ShoppingCart::getDishId, dishId);
+            if (dishFlavor != null) {
+                wrapper.eq(ShoppingCart::getDishFlavor, dishFlavor);
+            } else {
+                wrapper.isNull(ShoppingCart::getDishFlavor);
+            }
+            return wrapper;
+        }
+
+        if (setmealId != null) {
+            wrapper.eq(ShoppingCart::getSetmealId, setmealId);
+            return wrapper;
+        }
+
+        throw new BaseException("请选择菜品或套餐");
+    }
+
+    private void deleteMerchantCartInRedis(Long userId, Long merchantId) {
+        redisTemplate.delete(buildCartKey(userId, merchantId));
+    }
+
+    private void deleteAllCartInRedis(Long userId) {
+        Set<String> cartKeys = redisTemplate.keys(buildUserCartPattern(userId));
+        if (!CollectionUtils.isEmpty(cartKeys)) {
+            redisTemplate.delete(cartKeys);
         }
     }
 
@@ -305,7 +579,6 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
             ShoppingCartVO vo = new ShoppingCartVO();
             BeanUtils.copyProperties(cart, vo);
 
-            // 查询商户名称
             Merchant merchant = merchantMapper.selectById(cart.getMerchantId());
             if (merchant != null) {
                 vo.setMerchantName(merchant.getMerchantName());

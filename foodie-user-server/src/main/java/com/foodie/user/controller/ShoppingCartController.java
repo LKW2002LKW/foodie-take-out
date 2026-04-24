@@ -71,11 +71,15 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/clean")
     @ApiOperation("清空购物车")
-    public Result<String> cleanCart(@RequestParam Long merchantId, HttpServletRequest request) {
+    public Result<String> cleanCart(@RequestParam(required = false) Long merchantId, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        log.info("清空购物车：userId={},merchantId={}", userId,merchantId);
+        log.info("清空购物车：userId={}, merchantId={}", userId, merchantId);
 
-        shoppingCartService.cleanCartByMerchant(userId,merchantId);
+        if (merchantId == null) {
+            shoppingCartService.cleanCart(userId);
+        } else {
+            shoppingCartService.cleanCartByMerchant(userId, merchantId);
+        }
         return Result.success(MessageConstant.CART_CLEAR_SUCCESS);
     }
 }
