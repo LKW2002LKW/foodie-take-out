@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from './request'
 
 /**
  * 查询菜品列表

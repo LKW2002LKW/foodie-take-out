@@ -1,6 +1,6 @@
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import categoryApi from '@/api/category'
+import categoryApi from '@/api/modules/category'
 
 /**
  * 分类管理业务逻辑 Composable

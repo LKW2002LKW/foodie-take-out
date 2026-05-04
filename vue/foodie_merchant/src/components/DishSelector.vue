@@ -100,8 +100,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { Search, Plus, Delete } from '@element-plus/icons-vue';
-import dishApi from '@/api/dish';
-import categoryApi from '@/api/category';
+import dishApi from '@/api/modules/dish';
+import categoryApi from '@/api/modules/category';
 
 // Props
 const props = defineProps({

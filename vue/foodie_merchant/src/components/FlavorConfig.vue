@@ -101,7 +101,7 @@ const flavorOptions = reactive({
   '温度': ['热饮', '常温', '去冰', '少冰', '多冰']
 });
 
-import dishApi from '@/api/dish'
+import dishApi from '@/api/modules/dish'
 import { onMounted } from 'vue'
 
 const fetchFlavors = async () => {

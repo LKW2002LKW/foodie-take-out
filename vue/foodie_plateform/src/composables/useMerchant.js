@@ -1,6 +1,6 @@
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import merchantApi from '@/api/merchant'
+import merchantApi from '@/api/modules/merchant'
 
 /**
  * 商户管理业务逻辑 Composable

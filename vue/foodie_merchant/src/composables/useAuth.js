@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import authApi from '@/api/auth'
-import { useMerchantStore } from '@/stores/merchant'
+import authApi from '@/api/modules/auth'
+import { useMerchantStore } from '@/stores/modules/merchantStore'
 
 /**
  * 认证逻辑 Composable

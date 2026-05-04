@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from './request'
 
 // 添加购物车
 export const addCart = (params) => {

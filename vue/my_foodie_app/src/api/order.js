@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from './request'
 
 /**
  * 提交订单
@@ -127,4 +127,3 @@ export const deleteOrder = (id) => {
     method: 'delete'
   })
 }
-

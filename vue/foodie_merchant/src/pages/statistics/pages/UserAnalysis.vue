@@ -1,0 +1,10 @@
+<template>
+  <UnderConstructionState
+    title="用户分析建设中"
+    subtitle="用户分析入口已迁入新页面目录，后续会在这里补齐留存、画像和消费分析。"
+  />
+</template>
+
+<script setup>
+import UnderConstructionState from '@/components/UnderConstructionState.vue'
+</script>

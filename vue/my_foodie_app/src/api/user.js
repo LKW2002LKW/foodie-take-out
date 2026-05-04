@@ -1,4 +1,4 @@
-﻿import request from '../utils/request'
+﻿import request from './request'
 
 // 1. 发送验证码
 // POST http://localhost:8083/user/code?phone=...

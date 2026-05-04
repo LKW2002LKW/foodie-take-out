@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from './request'
 
 // 获取地址列表
 export const getAddressList = () => {
@@ -47,6 +47,15 @@ export const deleteAddress = (id) => {
   return request({
     url: `/user/address/${id}`,
     method: 'delete'
+  })
+}
+
+// 批量删除地址
+export const batchDeleteAddress = (ids) => {
+  return request({
+    url: '/user/address/batch',
+    method: 'delete',
+    data: ids,
   })
 }
 

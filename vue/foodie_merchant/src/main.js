@@ -1,16 +1,16 @@
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
-window._AMapSecurityConfig = {
-  securityJsCode: import.meta.env.VITE_AMAP_SECURITY_JS_CODE,
-}
-
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { appEnv } from '@/config/env'
+import pinia from '@/config/pinia'
 import './style.css'
 import App from './App.vue'
 import router from './router'
+
+window._AMapSecurityConfig = {
+  securityJsCode: appEnv.amapSecurityJsCode,
+}
 
 const app = createApp(App)
 
@@ -18,7 +18,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 

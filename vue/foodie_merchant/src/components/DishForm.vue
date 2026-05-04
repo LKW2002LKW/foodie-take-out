@@ -132,8 +132,9 @@ import { ref, reactive, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import FlavorConfig from '@/components/FlavorConfig.vue'
-import dishApi from '@/api/dish'
-import categoryApi from '@/api/category'
+import { appEnv } from '@/config/env'
+import dishApi from '@/api/modules/dish'
+import categoryApi from '@/api/modules/category'
 
 const props = defineProps({
   visible: Boolean,
@@ -147,7 +148,7 @@ const emit = defineEmits(['update:visible', 'success'])
 const loading = ref(false)
 const formRef = ref(null)
 const categoryList = ref([])
-const uploadUrl = 'http://localhost:8082/merchant/common/upload' // 生产环境应从配置文件读取
+const uploadUrl = `${appEnv.apiBaseUrl}/merchant/common/upload`
 
 const headers = computed(() => ({
   Authorization: 'Bearer ' + localStorage.getItem('merchant_token')

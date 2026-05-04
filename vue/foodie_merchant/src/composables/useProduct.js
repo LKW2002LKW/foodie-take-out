@@ -1,7 +1,7 @@
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import dishApi from '@/api/dish'
-import categoryApi from '@/api/category'
+import dishApi from '@/api/modules/dish'
+import categoryApi from '@/api/modules/category'
 
 /**
  * 菜品管理业务逻辑 Composable

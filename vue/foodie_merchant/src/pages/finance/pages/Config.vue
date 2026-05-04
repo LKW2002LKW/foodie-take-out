@@ -1,0 +1,10 @@
+<template>
+  <UnderConstructionState
+    title="结算配置建设中"
+    subtitle="结算配置页面已切入新架构，后续会在这里继续补齐账户设置与打款规则。"
+  />
+</template>
+
+<script setup>
+import UnderConstructionState from '@/components/UnderConstructionState.vue'
+</script>
