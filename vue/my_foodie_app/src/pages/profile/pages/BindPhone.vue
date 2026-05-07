@@ -1,5 +1,6 @@
 <template>
   <div class="bind-phone mobile-page">
+    <!-- 绑定手机号页面只维护表单视图，验证与提交逻辑统一交给 useBindPhonePage。 -->
     <van-nav-bar
       title="绑定手机"
       left-arrow

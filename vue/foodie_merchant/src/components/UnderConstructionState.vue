@@ -1,4 +1,5 @@
 <template>
+  <!-- 统一的“建设中”占位组件，用于尚未补齐业务实现的页面。 -->
   <div class="construction-state">
     <div class="construction-state__card">
       <h1 class="construction-state__title">{{ title }}</h1>

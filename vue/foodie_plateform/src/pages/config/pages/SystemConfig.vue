@@ -1,5 +1,6 @@
 <template>
   <div class="config-container">
+    <!-- 系统配置页作为装配层，配置读取与保存动作统一来自 useConfigPage。 -->
     <el-card>
       <div class="header-actions">
         <h3>系统参数配置</h3>

@@ -1,4 +1,5 @@
 <template>
+  <!-- 套餐表单组件只承载输入视图，增改校验与保存逻辑由 useSetmealForm 管理。 -->
   <el-dialog
     :model-value="visible"
     :title="title"

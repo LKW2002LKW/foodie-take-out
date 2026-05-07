@@ -1,5 +1,6 @@
 <template>
   <div class="setmeal-list-page">
+    <!-- 套餐列表页作为装配层，列表查询、上下架与表单弹窗逻辑统一来自 useSetmealListPage。 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">套餐管理</h1>

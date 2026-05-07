@@ -4,6 +4,7 @@ import { showConfirmDialog } from 'vant'
 import { useCartActions } from '@/composables/business/useCartActions'
 import { useCartStore } from '@/stores/modules/cartStore'
 
+// 店铺详情购物车面板逻辑，负责弹层展示、加减购和去结算跳转。
 export const useMerchantCartPanel = (merchantId, activeTab) => {
   const router = useRouter()
   const cartStore = useCartStore()

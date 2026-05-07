@@ -1,3 +1,4 @@
+// 地址模块路由，集中维护地址列表与编辑页入口。
 const addressRoutes = [
   {
     path: '/address/list',

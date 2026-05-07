@@ -4,6 +4,7 @@ import { closeToast, showConfirmDialog, showLoadingToast, showSuccessToast, show
 import { bindWeChat, getUserProfile, logout } from '@/api/modules/user'
 import { useUserStore } from '@/stores/modules/userStore'
 
+// 个人中心首页组合式，负责资料拉取、微信绑定和退出登录。
 export const useProfilePage = () => {
   const router = useRouter()
   const userStore = useUserStore()

@@ -16,6 +16,7 @@ const createInitialReplyForm = () => ({
   content: '',
 })
 
+// 顾客评价页组合式，负责筛选查询、回复弹窗与回复提交流程。
 export const useCustomerReviewPage = () => {
   const loading = ref(false)
   const reviewList = ref([])

@@ -1,5 +1,6 @@
 <template>
   <div class="finance-container">
+    <!-- 财务中心页作为装配层，结算、抽成和报表逻辑统一来自 useFinancePage。 -->
     <el-tabs v-model="activeTab" type="card" class="demo-tabs">
       <el-tab-pane label="结算管理" name="settlement">
         <el-card>

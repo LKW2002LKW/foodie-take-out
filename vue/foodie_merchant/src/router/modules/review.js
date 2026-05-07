@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 评价模块路由，承接顾客评价与回复功能页。
 const reviewRoutes = [
   {
     path: '/review',

@@ -1,5 +1,6 @@
 <template>
   <div class="order-container">
+    <!-- 订单监控页只承载筛选、列表和弹窗视图，查询逻辑下沉到 useOrderPage。 -->
     <el-card>
       <el-form :inline="true" :model="queryParams" class="search-form">
         <el-form-item label="订单号">

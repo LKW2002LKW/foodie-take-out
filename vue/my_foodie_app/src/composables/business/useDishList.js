@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { useCartStore } from '@/stores/modules/cartStore'
 
+// 店铺详情中的菜品列表逻辑，负责分类切换与购物车数量映射。
 export const useDishList = (props, emit) => {
   const cartStore = useCartStore()
   const activeCategoryIndex = ref(0)

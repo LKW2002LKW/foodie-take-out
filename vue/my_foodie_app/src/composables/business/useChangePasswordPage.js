@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { showLoadingToast, showSuccessToast, showToast } from 'vant'
 import { logout, updatePassword } from '@/api/modules/user'
 
+// 修改密码页组合式，完成表单校验、提交与退出重登流程。
 export const useChangePasswordPage = () => {
   const router = useRouter()
 

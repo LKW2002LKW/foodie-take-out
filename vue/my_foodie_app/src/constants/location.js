@@ -1,3 +1,4 @@
+// 地址模块支持的手动切换城市列表，供地址页索引选择器复用。
 export const supportedCityData = [
   { initial: 'A', list: ['阿坝', '安康', '安庆', '鞍山'] },
   { initial: 'B', list: ['北京', '保定', '宝鸡', '包头', '蚌埠'] },

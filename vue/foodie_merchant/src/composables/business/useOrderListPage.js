@@ -30,6 +30,7 @@ const orderActionMap = {
   reject: { text: '拒单', method: 'rejectOrder', needReason: true },
 }
 
+// 订单列表页组合式，负责订单查询、统计面板与履约动作处理。
 export const useOrderListPage = () => {
   const loading = ref(false)
   const orderList = ref([])

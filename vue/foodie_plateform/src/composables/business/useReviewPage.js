@@ -2,6 +2,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import reviewApi from '@/api/modules/review'
 
+// 评价管理页组合式，负责评价查询、差评预警切换与删除操作。
 export const useReviewPage = () => {
   const activeTab = ref('all')
   const loading = ref(false)

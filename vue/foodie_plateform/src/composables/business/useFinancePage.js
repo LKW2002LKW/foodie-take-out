@@ -2,6 +2,7 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import financeApi from '@/api/modules/finance'
 
+// 财务中心页组合式，负责结算分页、抽成配置与报表概览装配。
 export const useFinancePage = () => {
   const activeTab = ref('settlement')
   const loadingSettlement = ref(false)

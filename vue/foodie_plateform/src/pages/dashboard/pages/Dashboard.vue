@@ -1,5 +1,6 @@
 <template>
   <div class="platform-dashboard">
+    <!-- 工作台页面只负责统计与图表渲染，数据刷新逻辑下沉到 useDashboardPage。 -->
     <header class="platform-dashboard__header">
       <div class="platform-dashboard__welcome">
         <h1 class="platform-dashboard__title">系统概览</h1>

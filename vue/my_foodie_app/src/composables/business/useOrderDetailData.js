@@ -4,6 +4,7 @@ import { closeToast, showLoadingToast, showToast } from 'vant'
 import { orderStatusTextMap } from '@/constants/order'
 import { getOrderDetail, getOrderDetailByNumber, getOrderTrack } from '@/api/modules/order'
 
+// 订单详情数据层，负责详情加载、状态映射与配送轨迹获取。
 export const useOrderDetailData = (routeId) => {
   const router = useRouter()
 

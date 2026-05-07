@@ -8,6 +8,7 @@ const createInitialQueryParams = () => ({
   status: undefined,
 })
 
+// 结算记录页组合式，负责条件查询与分页切换。
 export const useFinanceSettlementPage = () => {
   const loading = ref(false)
   const tableData = ref([])

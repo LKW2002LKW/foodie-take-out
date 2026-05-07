@@ -3,6 +3,7 @@ import { showToast } from 'vant'
 import { getStaticMapUrl, getAroundPois, inputTips, reverseGeocode } from '@/utils/location/amapLoader'
 import { getCurrentLocation } from '@/utils/location.js'
 
+// 负责地址编辑页的地点搜索建议、附近点位列表与候选项选择。
 export const useAddressEditSuggestions = ({
   currentCity,
   displayAddress,

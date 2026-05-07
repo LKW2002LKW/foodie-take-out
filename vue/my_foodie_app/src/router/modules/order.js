@@ -1,3 +1,4 @@
+// 订单模块路由，覆盖确认下单、订单列表与订单详情。
 const orderRoutes = [
   {
     path: '/order/create',

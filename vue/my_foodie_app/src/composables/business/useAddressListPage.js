@@ -6,6 +6,7 @@ import { useAddressSearchSuggestions } from '@/composables/business/useAddressSe
 import { useSavedAddressManager } from '@/composables/business/useSavedAddressManager'
 import { useLocationStore } from '@/stores/modules/locationStore'
 
+// 地址列表页总控组合式，串联当前定位、地址搜索与已保存地址管理。
 export const useAddressListPage = () => {
   const router = useRouter()
   const locationStore = useLocationStore()

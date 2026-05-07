@@ -4,6 +4,7 @@ import { useOrderDetailData } from '@/composables/business/useOrderDetailData'
 import { useOrderPaymentActions } from '@/composables/business/useOrderPaymentActions'
 import { useOrderReviewActions } from '@/composables/business/useOrderReviewActions'
 
+// 订单详情页总控组合式，将数据层、支付动作和评价动作进行装配。
 export const useOrderDetailPage = () => {
   const route = useRoute()
   const routeId = route.params.id

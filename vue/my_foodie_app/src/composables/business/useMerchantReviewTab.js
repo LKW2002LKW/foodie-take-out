@@ -13,6 +13,7 @@ const normalizeReviewImages = (imageList) => {
     .filter(Boolean)
 }
 
+// 店铺详情评价标签页逻辑，负责统计、筛选与分页加载。
 export const useMerchantReviewTab = (merchantId, activeTab) => {
   const reviewStats = ref({})
   const reviewList = ref([])

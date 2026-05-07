@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 财务模块路由，集中挂载结算、收入与充值相关页面。
 const financeRoutes = [
   {
     path: '/finance',

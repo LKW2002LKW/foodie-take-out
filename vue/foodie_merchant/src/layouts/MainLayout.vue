@@ -1,4 +1,5 @@
 <template>
+  <!-- 商家端主布局负责装配侧边菜单、顶部栏与路由内容区。 -->
   <el-container class="layout-container">
     <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
       <SidebarNav :isCollapse="isCollapse" />

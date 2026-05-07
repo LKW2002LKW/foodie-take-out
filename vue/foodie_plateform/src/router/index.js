@@ -12,6 +12,7 @@ import reportRoutes from '@/router/modules/report'
 import reviewRoutes from '@/router/modules/review'
 import userRoutes from '@/router/modules/user'
 
+// 主路由只负责聚合各业务模块的路由声明。
 const routes = [
   ...authRoutes,
   ...dashboardRoutes,
@@ -25,6 +26,7 @@ const routes = [
   ...configRoutes,
 ]
 
+// 平台端路由实例统一在这里创建，避免页面层散落 history 配置。
 const router = createRouter({
   history: createWebHistory(),
   routes

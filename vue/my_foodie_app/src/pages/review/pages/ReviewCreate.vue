@@ -1,5 +1,6 @@
 <template>
   <div class="review-create-page mobile-page">
+    <!-- 发布评价页只负责表单渲染，订单校验与提交逻辑由 useReviewCreatePage 接管。 -->
     <van-nav-bar title="提交评价" left-arrow fixed placeholder @click-left="goBack" />
 
     <div class="page-body" v-if="orderInfo.id">

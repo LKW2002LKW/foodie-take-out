@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 
+// 购物车页面状态层，专门维护详情态、编辑态和选中态。
 export const useCartPageState = ({
   cartStore,
   currentMerchant,

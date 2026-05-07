@@ -6,6 +6,7 @@ import { useAddressEditMap } from '@/composables/business/useAddressEditMap'
 import { useAddressEditSuggestions } from '@/composables/business/useAddressEditSuggestions'
 import { useLocationStore } from '@/stores/modules/locationStore'
 
+// 地址编辑页总控组合式，统一装配表单、地图和地点候选逻辑。
 export const useAddressEditPage = () => {
   const route = useRoute()
   const router = useRouter()

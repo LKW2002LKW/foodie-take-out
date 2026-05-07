@@ -15,6 +15,7 @@ const createShortcutRange = (days) => {
   return [start, end]
 }
 
+// 数据报表页组合式，负责多报表查询、ECharts 实例维护与切换刷新。
 export const useReportPage = () => {
   const activeTab = ref('revenue')
   const dateRange = ref([

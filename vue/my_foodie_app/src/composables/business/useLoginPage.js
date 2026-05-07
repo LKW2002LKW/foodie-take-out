@@ -5,6 +5,7 @@ import { loginByCode, loginByPassword, loginByWeChat as loginByWechat, sendCode 
 import { useSmsCountdown } from '@/composables/common/useSmsCountdown'
 import { useUserStore } from '@/stores/modules/userStore'
 
+// 登录页组合式，统一管理验证码登录、密码登录和微信登录入口。
 export const useLoginPage = () => {
   const router = useRouter()
   const userStore = useUserStore()

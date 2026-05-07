@@ -1,5 +1,6 @@
 <template>
   <div class="user-container">
+    <!-- 用户管理页作为装配层，分页查询、详情与启停动作统一来自 useUserPage。 -->
     <el-card>
       <el-form :inline="true" :model="queryParams" class="search-form">
         <el-form-item label="手机号">

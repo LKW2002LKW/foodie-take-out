@@ -1,4 +1,5 @@
 <template>
+  <!-- 全局底部导航只负责主业务入口跳转，不承载业务状态计算。 -->
   <van-tabbar
     route
     active-color="var(--text-color-placeholder)"

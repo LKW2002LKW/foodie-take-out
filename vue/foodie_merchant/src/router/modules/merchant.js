@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 商户模块路由，聚合资料维护与员工管理页面。
 const merchantRoutes = [
   {
     path: '/merchant',

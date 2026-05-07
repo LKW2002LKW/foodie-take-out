@@ -5,6 +5,7 @@ import { register, sendCode } from '@/api/modules/user'
 import { useSmsCountdown } from '@/composables/common/useSmsCountdown'
 import { useUserStore } from '@/stores/modules/userStore'
 
+// 注册页组合式，负责短信验证码发送、注册提交与注册后登录态落库。
 export const useRegisterPage = () => {
   const router = useRouter()
   const userStore = useUserStore()

@@ -3,6 +3,7 @@ import { showConfirmDialog, showSuccessToast, showToast } from 'vant'
 import { DEFAULT_PAGE_SIZE } from '@/constants/pagination'
 import { deleteMyReview, getMyReviewPage } from '@/api/modules/review'
 
+// 已评价列表数据层，负责我的评价分页拉取与删除操作。
 export const useReviewedReviewList = ({ refreshing }) => {
   const deletingMap = ref({})
   const reviewedList = ref([])

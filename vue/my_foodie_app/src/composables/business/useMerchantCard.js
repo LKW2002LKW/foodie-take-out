@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { getMerchantPromoText } from '@/utils/business/merchant'
 
+// 商家卡片展示模型，负责将后端字段整理成页面可直接消费的数据。
 export const useMerchantCard = (item) => {
   const nameText = computed(() => item.value?.merchantName || item.value?.name || '未命名商家')
 

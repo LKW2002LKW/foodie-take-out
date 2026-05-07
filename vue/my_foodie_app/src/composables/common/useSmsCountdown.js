@@ -1,5 +1,6 @@
 import { onBeforeUnmount, ref } from 'vue'
 
+// 短信验证码倒计时逻辑抽离为通用组合式，便于登录、注册、绑手机共用。
 export const useSmsCountdown = (initialSeconds = 60) => {
   const isSending = ref(false)
   const countdown = ref(initialSeconds)

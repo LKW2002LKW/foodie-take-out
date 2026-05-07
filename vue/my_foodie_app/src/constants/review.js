@@ -1,3 +1,4 @@
+// 评价统计字段与页面展示文案的映射，兼容不同接口字段命名。
 export const reviewStatLabelMap = {
   averageRating: '平均评分',
   avgRating: '平均评分',

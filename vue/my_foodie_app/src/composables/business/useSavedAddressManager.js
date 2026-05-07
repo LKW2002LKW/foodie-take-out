@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { showConfirmDialog, showToast } from 'vant'
 import { batchDeleteAddress, getAddressList } from '@/api/modules/address'
 
+// 已保存地址管理层，负责列表加载、批量选择、批删和地址选中回填。
 export const useSavedAddressManager = ({ locationStore }) => {
   const router = useRouter()
 

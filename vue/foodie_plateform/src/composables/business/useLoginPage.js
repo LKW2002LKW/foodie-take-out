@@ -5,6 +5,7 @@ import authApi from '@/api/modules/auth'
 import { routerConfig } from '@/config/router'
 import { usePlatformStore } from '@/stores/modules/platformStore'
 
+// 平台登录页组合式，统一处理表单校验、登录提交与登录态落库。
 export const useLoginPage = () => {
   const router = useRouter()
   const platformStore = usePlatformStore()

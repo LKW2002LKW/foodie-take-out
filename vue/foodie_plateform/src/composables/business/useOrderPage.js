@@ -1,6 +1,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import orderApi from '@/api/modules/order'
 
+// 订单监控页组合式，负责筛选分页、详情查看与异常订单弹窗。
 export const useOrderPage = () => {
   const loading = ref(false)
   const tableData = ref([])

@@ -1,5 +1,6 @@
 <template>
   <div class="mt-login-page mobile-page">
+    <!-- 登录页只承载展示结构，交互逻辑统一下沉到 useLoginPage。 -->
     <div class="mt-login-header">
       <div class="mt-logo-wrap">
         <div class="mt-logo"><van-icon name="bag" size="2.4rem" color="var(--mt-strong)" /></div>

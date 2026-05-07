@@ -3,6 +3,7 @@ import { ElMessage } from 'element-plus'
 import { useAuth } from '@/composables/useAuth'
 import { useMerchantRegisterMap } from '@/composables/business/useMerchantRegisterMap'
 
+// 商户注册页组合式，负责分步校验、注册提交与地图辅助选址。
 export const useRegisterPage = () => {
   const { loading, handleRegister } = useAuth()
 

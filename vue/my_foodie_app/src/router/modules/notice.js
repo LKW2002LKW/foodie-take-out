@@ -1,3 +1,4 @@
+// 公告模块路由，拆分公告列表与详情页，便于按需加载。
 const noticeRoutes = [
   {
     path: '/notice/list',

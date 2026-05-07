@@ -1,5 +1,6 @@
 <template>
   <div class="category">
+    <!-- 分类管理页作为装配层，筛选、弹窗与提交动作统一来自 useCategoryPage。 -->
     <div class="category__header">
       <div class="category__header-info">
         <h1 class="category__title">分类管理</h1>

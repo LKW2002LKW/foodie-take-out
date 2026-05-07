@@ -1,5 +1,6 @@
 <template>
   <div class="review-page">
+    <!-- 顾客评价页只承载筛选、表格与回复弹窗，业务逻辑由 useCustomerReviewPage 管理。 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">评价管理</h1>

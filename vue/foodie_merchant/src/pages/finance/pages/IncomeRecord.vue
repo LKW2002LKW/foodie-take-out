@@ -1,5 +1,6 @@
 <template>
   <div class="income-page">
+    <!-- 收入明细页作为页面装配层，查询与分页逻辑统一由 useFinanceIncomePage 提供。 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">收入明细</h1>

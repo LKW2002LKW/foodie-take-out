@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import statisticsApi from '@/api/modules/statistics'
 
+// 工作台数据仓库，集中管理今日统计、概览统计与趋势图数据。
 export const useDashboardStore = defineStore('dashboard', () => {
   const todayStats = reactive({
     todayRevenue: 0,

@@ -45,6 +45,7 @@ import {
   Uploader,
 } from 'vant'
 
+// 按项目实际用到的组件统一注册，减少页面层重复引入。
 const vantComponents = [
   ActionSheet,
   AddressList,
@@ -92,6 +93,7 @@ const vantComponents = [
   VanImage,
 ]
 
+// 在应用启动阶段一次性挂载 Vant 组件。
 export const registerVant = (app) => {
   vantComponents.forEach((component) => {
     app.use(component)

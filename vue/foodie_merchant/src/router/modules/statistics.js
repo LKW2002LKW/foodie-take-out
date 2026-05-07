@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 报表模块路由，集中销售报表与用户分析等统计页面。
 const statisticsRoutes = [
   {
     path: '/statistics',

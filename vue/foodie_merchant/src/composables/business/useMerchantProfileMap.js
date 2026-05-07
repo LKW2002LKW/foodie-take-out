@@ -2,6 +2,7 @@ import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { geocode, inputTips, loadAmapSdk, reverseGeocode } from '@/services/amap'
 
+// 商户资料页地图模型，负责搜索建议、坐标回填与拖拽选址。
 export const useMerchantProfileMap = (form) => {
   const mapRef = ref(null)
   const locating = ref(false)

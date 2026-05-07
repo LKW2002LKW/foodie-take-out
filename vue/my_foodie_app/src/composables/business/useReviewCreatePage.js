@@ -4,6 +4,7 @@ import { closeToast, showLoadingToast, showSuccessToast, showToast } from 'vant'
 import { commonUpload } from '@/api/modules/common'
 import { getOrderDetail, reviewOrder } from '@/api/modules/order'
 
+// 发布评价页组合式，负责订单校验、图片上传与评价提交。
 export const useReviewCreatePage = () => {
   const route = useRoute()
   const router = useRouter()

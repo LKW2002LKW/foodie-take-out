@@ -1,3 +1,4 @@
+// 认证模块路由，仅承载登录与注册等空白布局页面。
 const authRoutes = [
   {
     path: '/login',

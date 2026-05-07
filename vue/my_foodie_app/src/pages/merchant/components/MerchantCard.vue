@@ -1,5 +1,6 @@
 <template>
   <div class="merchant-card" @click="$emit('click')">
+    <!-- 商家卡片只展示格式化后的商家信息，不在组件内部处理数据请求。 -->
     <div class="card-left">
       <van-image :src="item.logo || item.image" width="8.8rem" height="8.8rem" radius="1.2rem" fit="cover">
         <template #error><van-icon name="photo-o" size="32" color="var(--primary-color-dark)" /></template>

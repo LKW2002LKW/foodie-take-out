@@ -9,6 +9,7 @@ const createMerchantGroup = (merchantId, item) => ({
   totalPrice: 0,
 })
 
+// 将扁平购物车条目按商家分组，便于购物车首页与店铺详情复用。
 export const useCartMerchantGrouping = ({ cartStore, currentMerchantId }) => {
   const groupedCart = computed(() => {
     const groups = {}

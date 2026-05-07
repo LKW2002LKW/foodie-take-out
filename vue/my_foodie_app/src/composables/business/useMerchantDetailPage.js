@@ -9,6 +9,7 @@ import { useMerchantReviewTab } from '@/composables/business/useMerchantReviewTa
 import { useCartStore } from '@/stores/modules/cartStore'
 import { formatFlavorText } from '@/utils/business/flavor'
 
+// 店铺详情页总控组合式，负责商家信息、商品分类、评价和购物车联动。
 export const useMerchantDetailPage = () => {
   const route = useRoute()
   const cartStore = useCartStore()

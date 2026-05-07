@@ -6,6 +6,7 @@ import MobileLayout from '@/layouts/MobileLayout.vue'
 
 const route = useRoute()
 
+// 根据路由元信息切换页面外层布局，保持页面与布局解耦。
 const layoutComponent = computed(() => {
   if (route.meta.layout === 'blank') {
     return BlankLayout

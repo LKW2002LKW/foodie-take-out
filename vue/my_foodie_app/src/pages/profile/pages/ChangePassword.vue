@@ -1,5 +1,6 @@
 <template>
   <div class="change-password mobile-page">
+    <!-- 修改密码页只承载输入表单，提交与退出流程由 useChangePasswordPage 处理。 -->
     <van-nav-bar
       title="修改密码"
       left-arrow

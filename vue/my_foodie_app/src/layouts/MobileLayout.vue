@@ -6,6 +6,7 @@ const route = useRoute()
 </script>
 
 <template>
+  <!-- 默认移动端布局：承载业务页面主体，并按路由元信息决定是否显示底部导航。 -->
   <div class="app-container" :class="{ 'has-tabbar': route.meta.showTabbar }">
     <slot />
     <AppTabbar v-if="route.meta.showTabbar" />

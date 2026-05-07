@@ -8,6 +8,7 @@ import { useUserStore } from '@/stores/modules/userStore'
 
 const DEFAULT_DATE = ['1990', '01', '01']
 
+// 个人资料编辑页组合式，负责资料回填、头像上传和保存提交。
 export const useProfileEditPage = () => {
   const router = useRouter()
   const userStore = useUserStore()

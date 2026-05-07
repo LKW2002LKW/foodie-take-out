@@ -10,6 +10,7 @@ import {
 import { useMerchantStore } from '@/stores/modules/merchantStore'
 import { useMerchantProfileMap } from '@/composables/business/useMerchantProfileMap'
 
+// 商户资料页总控组合式，串联资料加载、上传、营业状态与地图定位。
 export const useMerchantProfilePage = () => {
   const merchantStore = useMerchantStore()
 

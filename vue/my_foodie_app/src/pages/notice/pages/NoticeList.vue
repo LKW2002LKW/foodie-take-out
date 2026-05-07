@@ -1,5 +1,6 @@
 <template>
     <div class="notice-list-page mobile-page">
+    <!-- 公告列表页只负责列表渲染与交互绑定，分页筛选逻辑下沉到组合式。 -->
     <van-nav-bar title="消息通知" left-arrow fixed placeholder @click-left="onClickLeft" />
     
         <van-tabs :active="activeTab" @update:active="activeTab = $event" sticky @change="onTabChange" color="var(--primary-color)" title-active-color="var(--mt-strong)">

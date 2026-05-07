@@ -7,6 +7,7 @@ import { submitOrder } from '@/api/modules/order'
 import { useCartStore } from '@/stores/modules/cartStore'
 import { formatFlavorText } from '@/utils/business/flavor'
 
+// 确认订单页组合式，串联地址、商家、购物车与最终下单动作。
 export const useCreateOrderPage = () => {
   const router = useRouter()
   const route = useRoute()

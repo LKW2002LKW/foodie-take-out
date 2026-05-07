@@ -1,5 +1,6 @@
 <template>
   <div class="notice-container">
+    <!-- 公告管理页作为装配层，公告发布与列表查询逻辑统一来自 useNoticePage。 -->
     <el-card>
       <div class="mb-20">
         <el-button type="primary" icon="Plus" @click="handleOpenDialog">发布公告</el-button>

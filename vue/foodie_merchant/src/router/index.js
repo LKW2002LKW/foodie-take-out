@@ -11,6 +11,7 @@ import productRoutes from '@/router/modules/product'
 import reviewRoutes from '@/router/modules/review'
 import statisticsRoutes from '@/router/modules/statistics'
 
+// 主路由只负责聚合各业务模块的路由声明。
 const routes = [
   ...authRoutes,
   ...dashboardRoutes,
@@ -22,6 +23,7 @@ const routes = [
   ...statisticsRoutes,
 ]
 
+// 路由实例统一从配置层获取 history，避免出现多处硬编码。
 const router = createRouter({
   history: routerConfig.history,
   routes,

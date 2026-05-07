@@ -3,6 +3,7 @@ import { geocode, inputTips, reverseGeocode } from '@/utils/location/amapLoader'
 
 const getRegeoCity = (regeo) => regeo?.addressComponent?.city || regeo?.addressComponent?.province || ''
 
+// 负责地址列表页顶部搜索建议，最终将选中的地点同步回定位仓库。
 export const useAddressSearchSuggestions = ({ locationStore, router }) => {
   const searchQuery = ref('')
   const isSearching = ref(false)

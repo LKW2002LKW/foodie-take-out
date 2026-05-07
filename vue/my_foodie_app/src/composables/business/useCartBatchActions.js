@@ -1,5 +1,6 @@
 import { showConfirmDialog, showToast } from 'vant'
 
+// 购物车批量管理动作层，服务于编辑模式下的批删与整店清空。
 export const useCartBatchActions = ({
   clearAllCart,
   clearMerchantCart,

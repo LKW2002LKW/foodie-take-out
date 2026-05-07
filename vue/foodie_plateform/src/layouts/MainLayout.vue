@@ -1,4 +1,5 @@
 <template>
+  <!-- 平台端主布局负责装配侧边导航、顶部栏与页面内容区。 -->
   <div class="common-layout">
     <el-container class="layout-container">
       <el-aside width="220px">

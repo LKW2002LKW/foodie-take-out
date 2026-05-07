@@ -11,6 +11,7 @@ const createInitialQueryParams = () => ({
   status: undefined,
 })
 
+// 套餐列表页组合式，负责列表筛选、批量上下架与表单弹窗装配。
 export const useSetmealListPage = () => {
   const loading = ref(false)
   const setmealList = ref([])

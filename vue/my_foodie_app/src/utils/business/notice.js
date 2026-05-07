@@ -1,5 +1,6 @@
 import { noticeTagTypeMap } from '@/constants/notice'
 
+// 公告模块的展示与权限判断逻辑统一沉到工具层复用。
 export const getNoticeTagType = (type) => noticeTagTypeMap[type] || 'default'
 
 export const canReadUserNotice = (detail) => (

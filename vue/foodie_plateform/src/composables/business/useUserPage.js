@@ -2,6 +2,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import userApi from '@/api/modules/user'
 
+// 用户管理页组合式，负责用户分页、详情查看与状态启停控制。
 export const useUserPage = () => {
   const loading = ref(false)
   const tableData = ref([])

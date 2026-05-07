@@ -1,5 +1,6 @@
 <template>
     <div class="notice-detail-page mobile-page">
+    <!-- 公告详情页只消费 useNoticeDetailPage 暴露的数据与动作。 -->
     <van-nav-bar title="公告详情" left-arrow fixed placeholder @click-left="onClickLeft" />
 
     <div v-if="loading" class="loading-box">

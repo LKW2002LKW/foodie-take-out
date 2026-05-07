@@ -2,6 +2,7 @@ import { showToast } from 'vant'
 import { getCurrentLocation } from '@/utils/location.js'
 import { loadAmapSdk, reverseGeocode } from '@/utils/location/amapLoader'
 
+// 负责地址编辑页地图交互，包括定位、拖拽选点与逆地理解析。
 export const useAddressEditMap = ({
   currentCity,
   displayAddress,

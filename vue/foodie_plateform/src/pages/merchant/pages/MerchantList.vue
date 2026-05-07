@@ -1,5 +1,6 @@
 <template>
   <div class="merchant-manage">
+    <!-- 商户管理页只负责筛选、表格与弹窗渲染，业务逻辑由 useMerchantPage 托管。 -->
     <el-card shadow="never" class="merchant-manage__filter-card">
       <el-form :inline="true" :model="queryParams" class="merchant-manage__filter-form">
         <el-form-item label="商户名称">

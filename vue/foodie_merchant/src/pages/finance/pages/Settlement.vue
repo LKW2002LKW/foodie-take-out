@@ -1,5 +1,6 @@
 <template>
   <div class="settlement-page">
+    <!-- 结算记录页只负责表格与筛选渲染，业务查询逻辑下沉到 useFinanceSettlementPage。 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">结算账单</h1>

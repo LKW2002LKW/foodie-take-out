@@ -1,5 +1,6 @@
 <template>
   <div class="mt-cart-bar-wrapper">
+    <!-- 底部购物车栏只消费父层传入的数据，不直接依赖接口与仓库。 -->
     <div class="mt-cart-bar" :class="{ 'mt-cart-active': displayTotalNum > 0 }">
       <div class="mt-cart-left" @click="emit('toggle-cart-popup')">
         <div class="mt-cart-icon-box" :class="{ 'mt-pop-anim': displayTotalNum > 0 }">

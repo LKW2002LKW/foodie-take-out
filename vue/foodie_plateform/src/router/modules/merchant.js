@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 商户管理模块路由，集中挂载商户审核与监管页面。
 const merchantRoutes = [
   {
     path: '/',

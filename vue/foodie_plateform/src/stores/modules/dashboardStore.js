@@ -18,6 +18,7 @@ const createTrendData = () => ({
   userCountList: [],
 })
 
+// 工作台数据仓库，集中维护统计卡片与趋势图原始数据。
 export const useDashboardStore = defineStore('dashboard', () => {
   const stats = reactive(createStats())
   const trendData = reactive(createTrendData())

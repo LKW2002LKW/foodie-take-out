@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 评价监管模块路由，服务评价列表与审核相关场景。
 const reviewRoutes = [
   {
     path: '/',

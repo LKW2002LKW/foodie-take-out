@@ -4,6 +4,7 @@ import { showToast } from 'vant'
 import { getNoticeDetail } from '@/api/modules/notice'
 import { canReadUserNotice, formatNoticeContentHtml, getNoticeTagType } from '@/utils/business/notice'
 
+// 公告详情页组合式，负责权限判断、详情加载与内容格式化。
 export const useNoticeDetailPage = () => {
   const route = useRoute()
   const router = useRouter()

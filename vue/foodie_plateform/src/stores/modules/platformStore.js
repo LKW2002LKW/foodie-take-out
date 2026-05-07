@@ -10,6 +10,7 @@ const getInitialUser = () => {
   }
 }
 
+// 平台登录态仓库，统一维护令牌、管理员信息与本地持久化。
 export const usePlatformStore = defineStore('platform', () => {
   const token = ref(localStorage.getItem(PLATFORM_TOKEN_KEY) || '')
   const userInfo = ref(getInitialUser())

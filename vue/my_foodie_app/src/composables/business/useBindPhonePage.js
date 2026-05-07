@@ -4,6 +4,7 @@ import { showLoadingToast, showSuccessToast, showToast } from 'vant'
 import { useSmsCountdown } from '@/composables/common/useSmsCountdown'
 import { bindPhone, sendBindPhoneCode } from '@/api/modules/user'
 
+// 负责个人中心绑定手机号流程，包含验证码发送与提交绑定。
 export const useBindPhonePage = () => {
   const router = useRouter()
 

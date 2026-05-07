@@ -4,6 +4,7 @@ import { showToast } from 'vant'
 import { DEFAULT_PAGE_SIZE } from '@/constants/pagination'
 import { getOrderPage } from '@/api/modules/order'
 
+// 订单列表页组合式，负责按状态分页查询和下拉刷新。
 export const useOrderListPage = () => {
   const router = useRouter()
 

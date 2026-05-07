@@ -1,5 +1,6 @@
 <template>
   <div class="mt-merchant-header" :style="headerStyle">
+    <!-- 店铺头部组件聚焦展示，文案与样式所需数据都来自 useMerchantHeader。 -->
     <div class="mt-header-content">
       <div class="mt-header-top">
         <van-image

@@ -11,6 +11,7 @@ import noticeRoutes from './modules/notice'
 import { registerBeforeEachGuard } from './guards/beforeEach'
 import { registerAfterEachGuard } from './guards/afterEach'
 
+// 主路由只负责聚合各业务模块的路由声明。
 const routes = [
   ...authRoutes,
   ...merchantRoutes,
@@ -22,6 +23,7 @@ const routes = [
   ...noticeRoutes,
 ]
 
+// 路由实例统一从配置层读取 history，避免散落硬编码。
 const router = createRouter({
   history: routerConfig.history,
   routes,

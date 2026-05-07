@@ -4,6 +4,7 @@ import dashboardApi from '@/api/modules/dashboard'
 import { useCharts } from '@/composables/useCharts'
 import { useDashboardStore } from '@/stores/modules/dashboardStore'
 
+// 平台工作台组合式，负责统计卡片、趋势图与刷新动作装配。
 export const useDashboardPage = () => {
   const days = ref(7)
   const chartRef = ref(null)

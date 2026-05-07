@@ -3,6 +3,7 @@ import router from '@/router'
 import { routerConfig } from '@/config/router'
 import { useUserStore } from '@/stores/modules/userStore'
 
+// 拦截器统一处理令牌透传、通用响应结构与登录失效跳转。
 export const setupInterceptors = (service) => {
   service.interceptors.request.use(
     (config) => {

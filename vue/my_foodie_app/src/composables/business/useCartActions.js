@@ -10,6 +10,7 @@ const showActionError = (result, fallbackMessage) => {
   return result
 }
 
+// 购物车动作层，统一处理加购、减购和跨商家冲突确认。
 export const useCartActions = () => {
   const cartStore = useCartStore()
 

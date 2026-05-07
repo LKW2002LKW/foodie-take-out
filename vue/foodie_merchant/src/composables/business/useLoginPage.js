@@ -22,6 +22,7 @@ export const loginIconMap = {
   User,
 }
 
+// 商家登录页组合式，统一处理表单校验、登录提交与登录态落库。
 export const useLoginPage = ({ router, message }) => {
   const merchantStore = useMerchantStore()
 

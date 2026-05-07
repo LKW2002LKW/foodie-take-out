@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { TOKEN_STORAGE_KEY } from '@/constants/storageKeys'
 import { getLocal, removeLocal, setLocal } from '@/utils/common/storage'
 
+// 用户状态仅维护登录令牌与当前用户基础信息。
 export const useUserStore = defineStore('user', () => {
   const token = ref(getLocal(TOKEN_STORAGE_KEY, ''))
   const userInfo = ref({})

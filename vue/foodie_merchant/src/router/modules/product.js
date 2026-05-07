@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 商品模块路由，负责商品、分类、套餐及扩展页面装配。
 const productRoutes = [
   {
     path: '/product',

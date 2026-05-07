@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { closeToast, showConfirmDialog, showLoadingToast, showSuccessToast, showToast } from 'vant'
 import { cancelOrder, paySuccess, payment } from '@/api/modules/order'
 
+// 订单支付动作层，统一处理支付面板、模拟支付成功与取消订单。
 export const useOrderPaymentActions = (order, payTypeModel, reloadOrder) => {
   const showPayPanel = ref(false)
 

@@ -2,6 +2,7 @@ import { ElMessage } from 'element-plus'
 import { routerConfig } from '@/config/router'
 import { PLATFORM_TOKEN_KEY } from '@/constants/storageKeys'
 
+// 拦截器统一处理平台令牌透传、接口失败提示与登录失效跳转。
 export const setupInterceptors = (service) => {
   service.interceptors.request.use(
     (config) => {

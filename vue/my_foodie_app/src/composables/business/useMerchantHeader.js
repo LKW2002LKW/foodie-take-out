@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { getMerchantPromoText } from '@/utils/business/merchant'
 
+// 商家头部展示模型，负责封面、配送信息和活动文案等展示数据计算。
 export const useMerchantHeader = (merchantInfo) => {
   const bgUrl = computed(() => merchantInfo.value?.image || merchantInfo.value?.logo || '')
 

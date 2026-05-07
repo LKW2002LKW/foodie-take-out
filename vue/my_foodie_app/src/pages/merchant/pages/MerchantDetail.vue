@@ -1,5 +1,6 @@
 <template>
   <div class="merchant-detail mobile-page" :class="{ 'has-cart-bar': shouldShowCartBar }">
+    <!-- 店铺详情页作为页面装配层，只组合商品、评价与购物车子模块。 -->
     <van-nav-bar left-arrow title="店铺详情" fixed placeholder @click-left="$router.back()" />
     <merchant-header :merchant-info="merchantInfo" />
 

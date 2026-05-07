@@ -1,5 +1,6 @@
 <template>
   <div class="report-container">
+    <!-- 数据报表页作为装配层，图表查询与实例管理逻辑统一来自 useReportPage。 -->
     <el-card>
       <el-tabs v-model="activeTab" type="card" @tab-change="handleTabChange">
         <el-tab-pane label="营业额报表" name="revenue">

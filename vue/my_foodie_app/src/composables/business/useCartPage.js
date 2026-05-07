@@ -7,6 +7,7 @@ import { useCartPageState } from '@/composables/business/useCartPageState'
 import { useCartStore } from '@/stores/modules/cartStore'
 import { formatFlavorText } from '@/utils/business/flavor'
 
+// 购物车页面总控组合式，负责拼装分组、操作和页面状态三个子模型。
 export const useCartPage = () => {
   const router = useRouter()
   const cartStore = useCartStore()

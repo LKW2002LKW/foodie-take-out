@@ -6,6 +6,7 @@ import { getCurrentLocation } from '@/utils/location.js'
 const getRegeoCity = (regeo) => regeo?.addressComponent?.city || regeo?.addressComponent?.province || ''
 const getRegeoAdcode = (regeo) => regeo?.addressComponent?.adcode || ''
 
+// 负责地址列表页的当前定位、定位回退与手动城市模式判断。
 export const useAddressCurrentLocation = ({ locationStore, onBack, showCityPicker }) => {
   const locating = ref(false)
   const isManualCityMode = computed(() => locationStore.isManual && locationStore.manualMode === 'city')

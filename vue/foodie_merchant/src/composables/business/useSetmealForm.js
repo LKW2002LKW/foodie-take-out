@@ -15,6 +15,7 @@ const createInitialForm = () => ({
   setmealDishes: [],
 })
 
+// 套餐表单组合式，负责回填、校验、菜品明细维护与保存提交。
 export const useSetmealForm = (props, emit) => {
   const loading = ref(false)
   const formRef = ref(null)

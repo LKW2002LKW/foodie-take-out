@@ -1,3 +1,4 @@
+// 个人中心模块路由，收口资料、密码与绑定手机等页面。
 const profileRoutes = [
   {
     path: '/profile',

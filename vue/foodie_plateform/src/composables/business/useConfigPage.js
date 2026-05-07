@@ -2,6 +2,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import configApi from '@/api/modules/config'
 
+// 系统配置页组合式，负责配置项加载、变更标记和批量保存。
 export const useConfigPage = () => {
   const loading = ref(false)
   const configList = ref([])

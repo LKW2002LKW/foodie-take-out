@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { MERCHANT_INFO_KEY, MERCHANT_TOKEN_KEY } from '@/constants/storageKeys'
 
+// 商家登录态仓库，统一维护令牌、商户资料与本地持久化。
 export const useMerchantStore = defineStore('merchant', () => {
   const token = ref(localStorage.getItem(MERCHANT_TOKEN_KEY) || '')
   const merchantInfo = ref(JSON.parse(localStorage.getItem(MERCHANT_INFO_KEY) || '{}'))

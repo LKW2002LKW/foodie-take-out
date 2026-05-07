@@ -1,5 +1,6 @@
 <template>
   <div class="register-page mobile-page">
+    <!-- 注册页仅负责表单呈现，注册业务逻辑由 useRegisterPage 统一维护。 -->
     <van-nav-bar class="register-nav" title="注册" left-arrow fixed placeholder @click-left="goBack" />
 
     <section class="register-content">

@@ -9,6 +9,7 @@ const createInitialQueryParams = () => ({
   endDate: '',
 })
 
+// 收入明细页组合式，负责分页查询与日期区间筛选。
 export const useFinanceIncomePage = () => {
   const loading = ref(false)
   const tableData = ref([])

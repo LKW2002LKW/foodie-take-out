@@ -2,6 +2,7 @@ import { computed, nextTick, onBeforeUnmount, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { geocode, inputTips, loadAmapSdk, reverseGeocode } from '@/services/amap'
 
+// 商户注册页地图模型，负责注册阶段的城市定位、选址与地址联动。
 export const useMerchantRegisterMap = (form) => {
   const mapRef = ref(null)
   const locating = ref(false)

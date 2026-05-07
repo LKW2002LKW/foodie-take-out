@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { usePendingReviewList } from '@/composables/business/usePendingReviewList'
 import { useReviewedReviewList } from '@/composables/business/useReviewedReviewList'
 
+// 我的评价页总控组合式，负责已评价与待评价两个标签的数据切换。
 export const useMyReviewPage = () => {
   const router = useRouter()
 

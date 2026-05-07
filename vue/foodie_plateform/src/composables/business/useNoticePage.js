@@ -2,6 +2,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import noticeApi from '@/api/modules/notice'
 
+// 公告管理页组合式，负责列表筛选、发布公告与草稿保存流程。
 export const useNoticePage = () => {
   const loading = ref(false)
   const tableData = ref([])

@@ -1,3 +1,4 @@
+// 评价模块路由，区分发布评价与我的评价两个业务入口。
 const reviewRoutes = [
   {
     path: '/review/create',

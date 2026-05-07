@@ -4,6 +4,7 @@ import { closeToast, showLoadingToast, showSuccessToast, showToast } from 'vant'
 import { commonUpload } from '@/api/modules/common'
 import { reviewOrder } from '@/api/modules/order'
 
+// 订单评价动作层，负责图片上传、评价提交与跳转发布评价页。
 export const useOrderReviewActions = (order, reloadOrder) => {
   const router = useRouter()
 

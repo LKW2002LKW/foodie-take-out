@@ -1,5 +1,6 @@
 <template>
   <div class="mt-menu-container">
+    <!-- 菜品列表组件只负责渲染分类与菜品，具体业务行为通过事件上抛。 -->
     <div class="mt-sidebar">
       <div v-for="(cat, index) in categories" :key="cat.id" class="mt-sidebar-item" :class="{ 'mt-sidebar-active': activeCategoryIndex === index }" @click="onCategoryChange(index)">
         <span class="mt-sidebar-text">{{ cat.name }}</span>

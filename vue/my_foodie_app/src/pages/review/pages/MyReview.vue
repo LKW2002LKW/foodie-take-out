@@ -1,5 +1,6 @@
 <template>
   <div class="my-review-page mobile-page">
+    <!-- 我的评价页只负责标签与列表展示，数据拆分到已评价/待评价子模型中。 -->
     <van-nav-bar title="我的评价" left-arrow fixed placeholder @click-left="goBack" />
 
     <van-tabs :active="activeTab" @change="onTabChange" class="review-tabs">

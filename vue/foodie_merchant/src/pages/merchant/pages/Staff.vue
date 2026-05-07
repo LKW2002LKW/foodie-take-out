@@ -1,5 +1,6 @@
 <template>
   <div class="staff-page">
+    <!-- 员工管理页只负责视图渲染，新增、编辑与重置密码逻辑由 useStaffPage 托管。 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">商户员工</h1>

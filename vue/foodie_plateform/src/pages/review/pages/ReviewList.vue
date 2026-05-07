@@ -1,5 +1,6 @@
 <template>
   <div class="review-container">
+    <!-- 评价管理页只负责列表与筛选渲染，预警和删除逻辑由 useReviewPage 托管。 -->
     <el-card>
       <el-tabs v-model="activeTab" @tab-change="handleTabChange">
         <el-tab-pane label="评价列表" name="all" />

@@ -9,6 +9,7 @@ const parseFlavorValue = (val) => {
   }
 }
 
+// 规格口味选择器逻辑，统一处理默认值解析、选中状态与确认输出。
 export const useFlavorPicker = (props, emit) => {
   const selections = ref({})
 

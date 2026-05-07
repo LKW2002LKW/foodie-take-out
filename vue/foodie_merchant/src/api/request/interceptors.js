@@ -2,6 +2,7 @@ import { ElMessage } from 'element-plus'
 import { routerConfig } from '@/config/router'
 import { useMerchantStore } from '@/stores/modules/merchantStore'
 
+// 拦截器统一处理商家端令牌透传、认证失效与错误提示。
 export const registerRequestInterceptors = (service) => {
   service.interceptors.request.use(
     (config) => {

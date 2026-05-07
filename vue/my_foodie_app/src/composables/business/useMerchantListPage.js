@@ -15,6 +15,7 @@ import { getCurrentLocation } from '@/utils/location.js'
 
 const getRegeoCity = (regeo) => regeo?.addressComponent?.city || regeo?.addressComponent?.province || ''
 
+// 商家列表页组合式，负责定位初始化、筛选搜索与分页加载。
 export const useMerchantListPage = () => {
   const router = useRouter()
   const locationStore = useLocationStore()

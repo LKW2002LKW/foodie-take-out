@@ -4,6 +4,7 @@ import { useDashboardCharts } from '@/composables/useDashboardCharts'
 import { useTimer } from '@/composables/useTimer'
 import { useDashboardStore } from '@/stores/modules/dashboardStore'
 
+// 工作台页面总控组合式，负责统计卡片、趋势图和时间展示。
 export const useDashboardPage = () => {
   const store = useDashboardStore()
   const { currentTime } = useTimer()

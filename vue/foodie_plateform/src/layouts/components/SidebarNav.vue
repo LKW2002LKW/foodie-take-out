@@ -1,4 +1,5 @@
 <template>
+  <!-- 侧边导航只维护平台主业务入口，不承载具体业务状态。 -->
   <aside class="aside">
     <div class="logo">
       <span>吃货联盟管理平台</span>

@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 用户管理模块路由，承接平台用户列表与分析页面。
 const userRoutes = [
   {
     path: '/',

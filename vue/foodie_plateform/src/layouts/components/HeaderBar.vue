@@ -1,4 +1,5 @@
 <template>
+  <!-- 顶部栏只负责展示当前页面标题和管理员退出入口。 -->
   <header class="header">
     <div class="header__left">
       <h2 class="header__title">{{ currentRouteTitle }}</h2>

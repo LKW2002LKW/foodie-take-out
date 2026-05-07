@@ -7,6 +7,7 @@ import { formatNoticeTime, getNoticeBrief, getNoticeTagType } from '@/utils/busi
 
 const getNoticeRows = (data) => data?.list || data?.records || []
 
+// 公告列表页组合式，负责分页加载、用户可见过滤和详情跳转。
 export const useNoticeListPage = () => {
   const router = useRouter()
 

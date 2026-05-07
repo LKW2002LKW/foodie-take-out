@@ -1,5 +1,6 @@
 <template>
   <div class="profile-page">
+    <!-- 商户资料页作为装配层，资料、上传和地图能力统一由 useMerchantProfilePage 提供。 -->
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">商户信息管理</h1>

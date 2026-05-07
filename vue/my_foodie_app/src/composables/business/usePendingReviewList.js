@@ -3,6 +3,7 @@ import { showToast } from 'vant'
 import { DEFAULT_PAGE_SIZE } from '@/constants/pagination'
 import { getOrderPage } from '@/api/modules/order'
 
+// 待评价列表数据层，只拉取已完成且尚未评价的订单。
 export const usePendingReviewList = ({ refreshing }) => {
   const pendingOrderList = ref([])
   const pendingLoading = ref(false)

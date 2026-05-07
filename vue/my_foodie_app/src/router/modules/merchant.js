@@ -1,3 +1,4 @@
+// 商家模块路由，负责首页列表与店铺详情的页面装配。
 const merchantRoutes = [
   {
     path: '/',

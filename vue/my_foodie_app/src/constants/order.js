@@ -1,3 +1,4 @@
+// 订单状态码与前端文案的统一映射，供订单列表和详情共用。
 export const orderStatusTextMap = {
   1: '待付款',
   2: '待接单',

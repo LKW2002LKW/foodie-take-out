@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout.vue'
 
+// 工作台模块路由，作为平台端首页入口。
 const dashboardRoutes = [
   {
     path: '/',
