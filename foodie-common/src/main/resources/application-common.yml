@@ -1,12 +1,12 @@
 foodie:
   minio:
-    endpoint: http://192.168.1.11:9000
-    accessKey: admin
-    secretKey: lkw2468LKW@
-    bucket: foodie-images
-    publicUrl: http://192.168.1.11:9000/foodie-images
-    basePath: upload
-    maxSize: 5
+    endpoint: ${MINIO_ENDPOINT:http://192.168.1.11:9000}
+    accessKey: ${MINIO_ACCESS_KEY:admin}
+    secretKey: ${MINIO_SECRET_KEY:lkw2468LKW@}
+    bucket: ${MINIO_BUCKET:foodie-images}
+    publicUrl: ${MINIO_PUBLIC_URL:http://192.168.1.11:9000/foodie-images}
+    basePath: ${MINIO_BASE_PATH:upload}
+    maxSize: ${MINIO_MAX_SIZE:5}
     allowedTypes:
       - jpg
       - jpeg

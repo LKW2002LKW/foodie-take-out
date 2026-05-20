@@ -16,9 +16,8 @@ spring:
 # -------------------------
 foodie:
   jwt:
-    platform-secret-key: foodie-platform-20260109-secret-key  # JWT 秘钥
-    platform-ttl: 7200000                                      # token 有效期：2小时
-    platform-token-name: platform-token                         # token 名称（header 或 cookie）
+    platform-secret-key: ${PLATFORM_JWT_SECRET_KEY:foodie-platform-20260109-secret-key}  # JWT 秘钥
+    platform-ttl: ${PLATFORM_JWT_TTL:7200000}                                      # token 有效期：2小时
+    platform-token-name: ${PLATFORM_TOKEN_NAME:platform-token}                         # token 名称（header 或 cookie）
   upload:
     service-path: platform
-

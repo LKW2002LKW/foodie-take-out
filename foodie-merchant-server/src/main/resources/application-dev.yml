@@ -13,8 +13,8 @@ spring:
 # -------------------------
 foodie:
   jwt:
-    merchant-secret-key: foodie-merchant-20260109-secret-key
-    merchant-ttl: 7200000
-    merchant-token-name: merchant-token
+    merchant-secret-key: ${MERCHANT_JWT_SECRET_KEY:foodie-merchant-20260109-secret-key}
+    merchant-ttl: ${MERCHANT_JWT_TTL:7200000}
+    merchant-token-name: ${MERCHANT_TOKEN_NAME:merchant-token}
   upload:
     service-path: merchant

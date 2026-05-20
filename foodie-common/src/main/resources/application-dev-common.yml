@@ -4,31 +4,31 @@ spring:
   # -------------------------
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.11:3306/foodie_alliance?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
+    url: jdbc:mysql://${DB_HOST:192.168.1.11}:${DB_PORT:3306}/${DB_NAME:foodie_alliance}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:lkw2468}
     type: com.alibaba.druid.pool.DruidDataSource
 
     druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
+      initial-size: ${DRUID_INITIAL_SIZE:5}
+      min-idle: ${DRUID_MIN_IDLE:5}
+      max-active: ${DRUID_MAX_ACTIVE:20}
+      max-wait: ${DRUID_MAX_WAIT:60000}
 
   # -------------------------
   # Redis 配置
   # -------------------------
   redis:
-    host: 192.168.1.11
-    port: 6379
+    host: ${REDIS_HOST:192.168.1.11}
+    port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:lkw2468}
-    timeout: 3000ms
+    timeout: ${REDIS_TIMEOUT:3000ms}
     lettuce:
       pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
+        max-active: ${REDIS_POOL_MAX_ACTIVE:8}
+        max-wait: ${REDIS_POOL_MAX_WAIT:-1ms}
+        max-idle: ${REDIS_POOL_MAX_IDLE:8}
+        min-idle: ${REDIS_POOL_MIN_IDLE:0}
 
   mvc:
     pathmatch:
@@ -55,7 +55,7 @@ mybatis-plus:
 # Knife4j 接口文档配置
 # -------------------------
 knife4j:
-  enable: true
+  enable: ${KNIFE4J_ENABLE:true}
   setting:
     language: zh-CN
 
@@ -64,6 +64,6 @@ knife4j:
 # -------------------------
 logging:
   level:
-    com.foodie: debug                     # 业务日志调试级别
+    com.foodie: ${APP_LOG_LEVEL:debug}    # 业务日志调试级别
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"

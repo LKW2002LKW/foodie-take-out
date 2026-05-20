@@ -3,7 +3,10 @@ import axios from 'axios'
 let amapSdkPromise = null
 
 const amapInstance = axios.create({
-  baseURL: '/amap-api'
+  baseURL: '/amap-api',
+  params: {
+    key: import.meta.env.VITE_AMAP_KEY,
+  },
 })
 
 export const loadAmapSdk = async () => {

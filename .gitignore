@@ -7,3 +7,6 @@
 /.claude
 
 /.gemini
+
+/.env.docker
+/docker-data/

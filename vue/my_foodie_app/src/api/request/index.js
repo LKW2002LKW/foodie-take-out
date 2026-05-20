@@ -4,6 +4,7 @@ import { setupInterceptors } from './interceptors'
 
 // 项目统一请求实例，负责承接超时、鉴权与异常处理。
 const service = axios.create({
+  baseURL: appEnv.apiBaseUrl,
   timeout: appEnv.requestTimeout,
 })
 
