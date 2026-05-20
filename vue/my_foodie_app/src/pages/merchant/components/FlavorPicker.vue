@@ -1,6 +1,6 @@
 <template>
+  <!-- 口味选择弹层只负责选择结果输出，具体加购动作在父层完成。 -->
   <van-popup
-    <!-- 口味选择弹层只负责选择结果输出，具体加购动作在父层完成。 -->
     :show="show"
     @update:show="$emit('update:show', $event)"
     position="bottom"
