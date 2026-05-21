@@ -14,6 +14,7 @@ public class ShoppingCartVO implements Serializable {
     private String merchantName;   // 商户名称（冗余）
     private Long dishId;
     private Long setmealId;
+    private Long categoryId;
     private String name;           // 商品名称
     private String image;          // 商品图片
     private String dishFlavor;     // 菜品口味

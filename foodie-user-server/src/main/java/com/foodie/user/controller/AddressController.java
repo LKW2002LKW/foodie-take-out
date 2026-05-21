@@ -7,8 +7,8 @@ import com.foodie.user.service.AddressService;
 import com.foodie.vo.user.AddressVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,10 +21,10 @@ import java.util.List;
 @RequestMapping("/user/address")
 @Api(tags = "地址管理")
 @Slf4j
+@RequiredArgsConstructor
 public class AddressController {
 
-    @Autowired
-    private AddressService addressService;
+    private final AddressService addressService;
 
     /**
      * 新增地址
@@ -65,6 +65,20 @@ public class AddressController {
         log.info("删除地址：userId={}, addressId={}", userId, id);
 
         addressService.deleteAddress(userId, id);
+        return Result.success(MessageConstant.ADDRESS_DELETE_SUCCESS);
+    }
+
+    /**
+     * 批量删除地址
+     */
+    @DeleteMapping("/batch")
+    @ApiOperation("批量删除地址")
+    public Result<String> batchDeleteAddress(@RequestBody List<Long> ids,
+                                             HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        log.info("批量删除地址：userId={}, ids={}", userId, ids);
+
+        addressService.batchDeleteAddress(userId, ids);
         return Result.success(MessageConstant.ADDRESS_DELETE_SUCCESS);
     }
 

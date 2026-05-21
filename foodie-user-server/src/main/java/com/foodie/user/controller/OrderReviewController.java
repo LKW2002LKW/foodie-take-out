@@ -1,23 +1,17 @@
 package com.foodie.user.controller;
 
-import com.foodie.common.context.BaseContext;
 import com.foodie.common.result.Result;
-
-import com.foodie.dto.user.OrderReviewDTO;
 import com.foodie.dto.user.ReviewQueryDTO;
-import com.foodie.entity.User;
 import com.foodie.user.service.OrderReviewService;
 import com.foodie.vo.user.OrderReviewVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -27,10 +21,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user/review")
 @Api(tags = "用户端-订单评价")
+@RequiredArgsConstructor
 public class OrderReviewController {
 
-    @Resource
-    private OrderReviewService orderReviewService;
+    private final OrderReviewService orderReviewService;
     /**
      * 分页查询商户评价列表
      */
@@ -38,7 +32,7 @@ public class OrderReviewController {
     @ApiOperation("分页查询商户评价列表")
     public Result<Map<String, Object>> getReviewPage(
             @ApiParam("商户ID") @RequestParam Long merchantId,
-            @ApiParam("评分筛选(0-全部 5-好评 3-中评 1-差评)") @RequestParam(required = false) Integer ratingFilter,
+            @ApiParam("评分筛选(0-全部 5-好评(4-5星) 3-中评(3星) 1-差评(1-2星))") @RequestParam(required = false) Integer ratingFilter,
             @ApiParam("是否只看有图") @RequestParam(required = false, defaultValue = "false") Boolean hasImage,
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页大小") @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -98,16 +92,29 @@ public class OrderReviewController {
     public Result<Map<String, Object>> getMyReviews(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页大小") @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestHeader("userId") Long userId) {
+            HttpServletRequest request) {
 
+        Long userId = (Long) request.getAttribute("userId");
         log.info("查询用户评价列表, userId={}, page={}, pageSize={}", userId, page, pageSize);
 
-        // TODO: 实现查询用户自己的评价列表
-        // 这里可以复用上面的方法，只需要在Mapper中增加userId查询条件
-
-        return Result.success();
+        Map<String, Object> result = orderReviewService.getMyReviewPage(userId, page, pageSize);
+        return Result.success(result);
     }
 
+    /**
+     * 删除用户自己的评价
+     */
+    @DeleteMapping("/{reviewId}")
+    @ApiOperation("删除我的评价")
+    public Result<Void> deleteMyReview(
+            @ApiParam("评价ID") @PathVariable Long reviewId,
+            HttpServletRequest request) {
 
+        Long userId = (Long) request.getAttribute("userId");
+        log.info("删除用户评价, userId={}, reviewId={}", userId, reviewId);
+
+        orderReviewService.deleteMyReview(userId, reviewId);
+        return Result.success();
+    }
 
 }

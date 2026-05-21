@@ -101,6 +101,36 @@ const flavorOptions = reactive({
   '温度': ['热饮', '常温', '去冰', '少冰', '多冰']
 });
 
+import dishApi from '@/api/modules/dish'
+import { onMounted } from 'vue'
+
+const fetchFlavors = async () => {
+    try {
+        const res = await dishApi.getFlavors();
+        if (res.code === 1 && res.data) {
+            res.data.forEach(item => {
+                if (item.name && item.value) {
+                    try {
+                        const vals = typeof item.value === 'string' ? JSON.parse(item.value) : item.value;
+                        if (Array.isArray(vals)) {
+                            // Merge with existing or overwrite
+                            flavorOptions[item.name] = vals;
+                        }
+                    } catch (e) {
+                        console.error('Parse flavor value error', e);
+                    }
+                }
+            });
+        }
+    } catch (e) {
+        console.error('Fetch flavors error', e);
+    }
+}
+
+onMounted(() => {
+    fetchFlavors();
+})
+
 // 计算属性：获取所有预定义的口味名称
 const preDefinedFlavors = computed(() => Object.keys(flavorOptions));
 
@@ -174,20 +204,15 @@ const removeFlavor = (index) => {
 };
 
 const handleNameChange = (flavor) => {
-  // 根据选择的口味名称，自动填充预定义的选项
+  // 根据选择的口味名称，如果当前没有选项，则自动填充预定义的选项
   const options = flavorOptions[flavor.name];
-  if (options) {
-    // 如果存在预定义选项，则直接使用（复制一份防止引用污染）
+  if (options && flavor.value.length === 0) {
+    // 只有在当前口味选项为空时才自动填充
     flavor.value = [...options];
-  } else {
-    // 如果是新输入的口味，先清空值
-    flavor.value = [];
-    // 立即为该新口味初始化一个空选项列表，确保后续 input focus 时能找到对应的 options（即使为空）
-    if (flavor.name) {
-       // 使用 Object.assign 或直接赋值触发响应式更新
-       if (!flavorOptions[flavor.name]) {
-           flavorOptions[flavor.name] = [];
-       }
+  } else if (!options && flavor.name) {
+    // 如果是新输入的口味且 options 不存在，初始化一个
+    if (!flavorOptions[flavor.name]) {
+       flavorOptions[flavor.name] = [];
     }
   }
 };

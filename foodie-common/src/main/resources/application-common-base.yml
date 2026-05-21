@@ -1,0 +1,9 @@
+spring:
+  # -------------------------
+  # 激活环境（多环境配置）
+  # -------------------------
+  profiles:
+    active: dev   # 当前激活环境为 dev
+
+  config:
+    import: optional:classpath:application-common.yml

@@ -3,7 +3,7 @@ package com.foodie.merchant.controller;
 import com.foodie.common.constant.MessageConstant;
 import com.foodie.common.context.BaseContext;
 import com.foodie.common.result.Result;
-import com.foodie.common.service.FileStorageService;
+import com.foodie.common.service.UploadFacade;
 import com.foodie.dto.merchant.MerchantBusinessHoursDTO;
 import com.foodie.dto.merchant.MerchantStatusDTO;
 import com.foodie.dto.merchant.MerchantUpdateDTO;
@@ -11,8 +11,8 @@ import com.foodie.merchant.service.MerchantService;
 import com.foodie.vo.merchant.MerchantVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,13 +26,12 @@ import java.io.IOException;
 @RequestMapping("/merchant/info")
 @Api(tags = "商户信息管理")
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantInfoController {
 
-    @Autowired
-    private MerchantService merchantService;
+    private final MerchantService merchantService;
 
-    @Autowired
-    private FileStorageService fileStorageService;
+    private final UploadFacade uploadFacade;
 
 
     /**
@@ -97,16 +96,15 @@ public class MerchantInfoController {
 
     @PostMapping("/upload/logo")
     @ApiOperation("上传商户Logo")
-    public Result uploadLogo(@RequestParam("file") MultipartFile file) throws IOException {
+    public Result uploadLogo(@RequestParam("file") MultipartFile file,@RequestParam Long merchantId) throws IOException {
         log.info("上传商户Logo，文件名：{}", file.getOriginalFilename());
 
         // 1️⃣ 上传图片，获取 URL
-        String logoUrl = fileStorageService.upload(file, "merchant");
+        String logoUrl = uploadFacade.upload(file);
 
 
 
         // 2️⃣ 更新数据库
-        Long merchantId = BaseContext.getCurrentId(); // 获取当前商户ID
         merchantService.updateLogo(merchantId, logoUrl);
 
         // 3️⃣ 返回最终结果

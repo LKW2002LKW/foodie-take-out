@@ -8,8 +8,8 @@ import com.foodie.vo.user.CategoryVO;
 import com.foodie.vo.user.MerchantVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +21,15 @@ import java.util.List;
 @RequestMapping("/user/merchant")
 @Api(tags = "商户浏览")
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantController {
 
-    @Autowired
-    private MerchantService merchantService;
+    private final MerchantService merchantService;
 
     /**
      * 分页查询商户列表
+     * sortType：0-综合排序 1-距离优先 2-销量优先 3-评分优先 4-起送价最低 5-配送费最低
+     * 距离优先在经纬度缺失时自动降级为综合排序
      */
     @GetMapping("/page")
     @ApiOperation("分页查询商户列表")

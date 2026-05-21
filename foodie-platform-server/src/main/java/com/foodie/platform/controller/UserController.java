@@ -9,8 +9,8 @@ import com.foodie.platform.service.UserService;
 import com.foodie.vo.platform.UserDetailVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/platform/user")
 @Api(tags = "平台端-用户管理接口")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     /**
      * 用户分页查询

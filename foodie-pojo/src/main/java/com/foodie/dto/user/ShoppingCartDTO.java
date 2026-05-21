@@ -10,5 +10,5 @@ public class ShoppingCartDTO implements Serializable {
     private Long setmealId;     // 套餐ID（菜品和套餐二选一）
     private Long merchantId;    //商户id
     private String dishFlavor;  // 菜品口味（JSON格式）
-    private Integer number;     // 数量（加购时传1，修改时传具体数量）
+    private Integer number;     // 数量（当前购物车接口按增量处理，add固定传1）
 }

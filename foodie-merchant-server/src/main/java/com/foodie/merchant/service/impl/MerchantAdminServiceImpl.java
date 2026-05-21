@@ -25,9 +25,9 @@ import com.foodie.merchant.service.MerchantAdminService;
 import com.foodie.merchant.service.SystemConfigService;
 import com.foodie.vo.merchant.MerchantLoginVO;
 import com.foodie.vo.merchant.MerchantRegisterVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,22 +40,18 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantAdminServiceImpl implements MerchantAdminService {
 
-    @Autowired
-    private MerchantAdminMapper merchantAdminMapper;
+    private final MerchantAdminMapper merchantAdminMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
-    @Autowired
-    private SystemConfigService systemConfigService;
+    private final SystemConfigService systemConfigService;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 商户注册

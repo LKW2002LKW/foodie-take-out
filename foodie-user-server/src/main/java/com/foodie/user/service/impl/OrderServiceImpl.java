@@ -18,9 +18,9 @@ import com.foodie.user.mapper.*;
 import com.foodie.user.service.OrderService;
 import com.foodie.user.service.ShoppingCartService;
 import com.foodie.vo.user.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -29,33 +29,29 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrderService {
 
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+    private final ShoppingCartService shoppingCartService;
 
-    @Autowired
-    private ShoppingCartMapper shoppingCartMapper;
+    private final ShoppingCartMapper shoppingCartMapper;
 
-    @Autowired
-    private AddressMapper addressMapper;
+    private final AddressMapper addressMapper;
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
-    @Autowired
-    private OrderDetailMapper orderDetailMapper;
+    private final OrderDetailMapper orderDetailMapper;
 
-    @Autowired
-    private OrdersMapper orderMapper;
+    private final OrdersMapper orderMapper;
 
-    @Autowired
-    private OrderReviewMapper orderReviewMapper;
+    private final OrderReviewMapper orderReviewMapper;
 
 
     /**
@@ -72,9 +68,15 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
             throw new BaseException(MessageConstant.ADDRESS_EMPTY);
         }
 
-        // 2. 查询购物车
+        Long merchantId = ordersSubmitDTO.getMerchantId();
+        if (merchantId == null) {
+            throw new BaseException("商户ID不能为空");
+        }
+
+        // 2. 查询该商户购物车
         LambdaQueryWrapper<ShoppingCart> cartWrapper = new LambdaQueryWrapper<>();
-        cartWrapper.eq(ShoppingCart::getUserId, userId);
+        cartWrapper.eq(ShoppingCart::getUserId, userId)
+                .eq(ShoppingCart::getMerchantId, merchantId);
         List<ShoppingCart> cartList = shoppingCartMapper.selectList(cartWrapper);
 
         if (cartList == null || cartList.isEmpty()) {
@@ -82,7 +84,6 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         }
 
         // 3. 检查商户状态
-        Long merchantId = cartList.get(0).getMerchantId();
         Merchant merchant = merchantMapper.selectById(merchantId);
 
         if (merchant == null || !merchant.getStatus().equals(StatusConstant.MERCHANT_OPEN)) {
@@ -150,8 +151,8 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
         orderDetails.forEach(orderDetailMapper::insert);
 
-        // 8. 清空购物车
-        shoppingCartService.cleanCart(userId);
+        // 8. 清空当前商户购物车
+        shoppingCartService.cleanCartByMerchant(userId, merchantId);
 
         // 9. 返回结果
         return OrderSubmitVO.builder()
@@ -305,15 +306,8 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     public Page<OrderVO> pageQuery(OrdersPageQueryDTO orderPageQueryDTO) {
         Long userId = BaseContext.getCurrentId();
 
-        Page<Orders> page = new Page<>(orderPageQueryDTO.getPage(), orderPageQueryDTO.getPageSize());
-
-        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Orders::getUserId, userId)
-                .eq(orderPageQueryDTO.getStatus() != null && orderPageQueryDTO.getStatus() != 0,
-                        Orders::getStatus, orderPageQueryDTO.getStatus())
-                .orderByDesc(Orders::getOrderTime);
-
-        Page<Orders> ordersPage = orderMapper.selectPage(page, queryWrapper);
+        Page<OrderVO> page = new Page<>(orderPageQueryDTO.getPage(), orderPageQueryDTO.getPageSize());
+        Page<OrderVO> ordersPage = orderMapper.pageQuery(page, orderPageQueryDTO, userId);
 
         // 转换为VO
         Page<OrderVO> result = new Page<>();
@@ -322,26 +316,43 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         result.setTotal(ordersPage.getTotal());
         result.setPages(ordersPage.getPages());
 
-        List<OrderVO> orderVOList = ordersPage.getRecords().stream().map(orders -> {
+        List<Long> orderIds = ordersPage.getRecords().stream()
+                .map(OrderVO::getId)
+                .collect(Collectors.toList());
+
+        Set<Long> reviewedOrderIds = new HashSet<>();
+        if (!orderIds.isEmpty()) {
+            LambdaQueryWrapper<OrderReview> reviewWrapper = new LambdaQueryWrapper<>();
+            reviewWrapper.in(OrderReview::getOrderId, orderIds);
+            List<OrderReview> reviews = orderReviewMapper.selectList(reviewWrapper);
+            reviewedOrderIds = reviews.stream()
+                    .map(OrderReview::getOrderId)
+                    .collect(Collectors.toSet());
+        }
+
+        Set<Long> finalReviewedOrderIds = reviewedOrderIds;
+        List<OrderVO> orderVOList = ordersPage.getRecords().stream().map(orderItem -> {
             OrderVO orderVO = OrderVO.builder()
-                    .id(orders.getId())
-                    .orderNumber(orders.getOrderNumber())
-                    .merchantId(orders.getMerchantId())
-                    .status(orders.getStatus())
-                    .statusText(getStatusDesc(orders.getStatus()))
-                    .orderTime(orders.getOrderTime())
-                    .totalAmount(orders.getTotalAmount())
+                    .id(orderItem.getId())
+                    .orderNumber(orderItem.getOrderNumber())
+                    .merchantId(orderItem.getMerchantId())
+                    .status(orderItem.getStatus())
+                    .statusText(getStatusDesc(orderItem.getStatus()))
+                    .canReview(orderItem.getStatus().equals(StatusConstant.ORDER_COMPLETED)
+                            && !finalReviewedOrderIds.contains(orderItem.getId()))
+                    .orderTime(orderItem.getOrderTime())
+                    .totalAmount(orderItem.getTotalAmount())
                     .build();
 
             // 查询订单明细
             LambdaQueryWrapper<OrderDetail> detailWrapper = new LambdaQueryWrapper<>();
-            detailWrapper.eq(OrderDetail::getOrderId, orders.getId());
+            detailWrapper.eq(OrderDetail::getOrderId, orderItem.getId());
             List<OrderDetail> orderDetails = orderDetailMapper.selectList(detailWrapper);
             orderVO.setOrderDetails(orderDetails);
             orderVO.setOrderDetailCount(orderDetails.size());
 
             // ✅ 查询商户信息
-            Merchant merchant = merchantMapper.selectById(orders.getMerchantId());
+            Merchant merchant = merchantMapper.selectById(orderItem.getMerchantId());
             if (merchant != null) {
                 orderVO.setMerchantName(merchant.getMerchantName());
                 //orderVO.setLogo(merchant.getLogo());
@@ -585,9 +596,9 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
                 .merchantId(orders.getMerchantId())
                 .rating(orderReviewDTO.getRating())
                 .content(orderReviewDTO.getContent())
-                .images((org.springframework.util.StringUtils.hasText(orderReviewDTO.getImages())
-                        ? orderReviewDTO.getImages().split(",")[0]
-                        : null))
+                .images(org.springframework.util.StringUtils.hasText(orderReviewDTO.getImages())
+                        ? orderReviewDTO.getImages()
+                        : null)
                 .build();
 
         orderReviewMapper.insert(orderReview);

@@ -1,129 +1,35 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import MainLayout from '../layout/MainLayout.vue'
+import { createRouter } from 'vue-router'
+import { routerConfig } from '@/config/router'
+import { registerAfterEachGuard } from '@/router/guards/afterEach'
+import { registerBeforeEachGuard } from '@/router/guards/beforeEach'
+import authRoutes from '@/router/modules/auth'
+import dashboardRoutes from '@/router/modules/dashboard'
+import financeRoutes from '@/router/modules/finance'
+import merchantRoutes from '@/router/modules/merchant'
+import orderRoutes from '@/router/modules/order'
+import productRoutes from '@/router/modules/product'
+import reviewRoutes from '@/router/modules/review'
+import statisticsRoutes from '@/router/modules/statistics'
 
+// 主路由只负责聚合各业务模块的路由声明。
 const routes = [
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue')
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('../views/Register.vue')
-  },
-  {
-    path: '/',
-    component: MainLayout,
-    children: [
-      {
-        path: '',
-        name: 'Dashboard',
-        component: () => import('../views/Dashboard.vue')
-      },
-      // Product
-      {
-        path: 'product/list',
-        name: 'ProductList',
-        component: () => import('../views/product/ProductList.vue')
-      },
-      {
-        path: 'product/category',
-        name: 'ProductCategory',
-        component: () => import('../views/product/Category.vue')
-      },
-      {
-        path: 'product/setmeal',
-        name: 'SetmealList',
-        component: () => import('../views/setmeal/SetmealList.vue')
-      },
-      {
-        path: 'product/inventory',
-        name: 'ProductInventory',
-        component: () => import('../views/product/Inventory.vue')
-      },
-      {
-        path: 'product/audit',
-        name: 'ProductAudit',
-        component: () => import('../views/product/Audit.vue')
-      },
-      // Order
-      {
-        path: 'order/list',
-        name: 'OrderList',
-        component: () => import('../views/order/OrderList.vue')
-      },
-      {
-        path: 'order/statistics',
-        name: 'OrderStatistics',
-        component: () => import('../views/order/Statistics.vue')
-      },
-      {
-        path: 'order/aftersales',
-        name: 'OrderAfterSales',
-        component: () => import('../views/order/AfterSales.vue')
-      },
-      // Finance
-      {
-        path: 'finance/settlement',
-        name: 'FinanceSettlement',
-        component: () => import('../views/finance/Settlement.vue')
-      },
-      {
-        path: 'finance/income',
-        name: 'FinanceIncome',
-        component: () => import('../views/finance/IncomeRecord.vue')
-      },
-      {
-        path: 'finance/recharge',
-        name: 'FinanceRecharge',
-        component: () => import('../views/finance/Recharge.vue')
-      },
-      {
-        path: 'finance/config',
-        name: 'FinanceConfig',
-        component: () => import('../views/finance/Config.vue')
-      },
-      // Merchant
-      {
-        path: 'merchant/profile',
-        name: 'MerchantProfile',
-        component: () => import('../views/merchant/Profile.vue')
-      },
-      {
-        path: 'merchant/staff',
-        name: 'MerchantStaff',
-        component: () => import('../views/merchant/Staff.vue')
-      },
-      // Review
-      {
-        path: 'review/customer',
-        name: 'ReviewCustomer',
-        component: () => import('../views/review/CustomerReview.vue')
-      },
-      {
-        path: 'review/reply',
-        name: 'ReviewReply',
-        component: () => import('../views/review/ReviewReply.vue')
-      },
-      // Statistics
-      {
-        path: 'statistics/sales',
-        name: 'StatisticsSales',
-        component: () => import('../views/statistics/SalesReport.vue')
-      },
-      {
-        path: 'statistics/user',
-        name: 'StatisticsUser',
-        component: () => import('../views/statistics/UserAnalysis.vue')
-      }
-    ]
-  }
+  ...authRoutes,
+  ...dashboardRoutes,
+  ...productRoutes,
+  ...orderRoutes,
+  ...financeRoutes,
+  ...merchantRoutes,
+  ...reviewRoutes,
+  ...statisticsRoutes,
 ]
 
+// 路由实例统一从配置层获取 history，避免出现多处硬编码。
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+  history: routerConfig.history,
+  routes,
 })
+
+registerBeforeEachGuard(router)
+registerAfterEachGuard(router)
 
 export default router

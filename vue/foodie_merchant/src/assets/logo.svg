@@ -1,0 +1,25 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="240" rx="40" fill="#FFD54F"/>
+
+  <!-- 涂鸦碗 -->
+  <path d="M50 130 Q120 190 190 130" fill="#000"/>
+
+  <!-- 表情 -->
+  <circle cx="95" cy="120" r="6" fill="#000"/>
+  <circle cx="145" cy="120" r="6" fill="#000"/>
+  <path d="M95 145 Q120 165 145 145" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+  <!-- 筷子 -->
+  <rect x="150" y="40" width="6" height="70" fill="#000" transform="rotate(25 150 40)"/>
+  <rect x="165" y="40" width="6" height="70" fill="#000" transform="rotate(25 165 40)"/>
+
+  <!-- 中文 -->
+  <text x="120" y="200" text-anchor="middle" font-size="22" fill="#000" font-weight="bold">
+    吃货联盟
+  </text>
+
+  <!-- 英文 -->
+  <text x="120" y="220" text-anchor="middle" font-size="12" fill="#000">
+    FOODIE UNION
+  </text>
+</svg>

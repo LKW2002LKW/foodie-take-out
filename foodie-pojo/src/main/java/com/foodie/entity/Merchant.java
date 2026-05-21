@@ -77,6 +77,9 @@ public class Merchant implements Serializable {
     /** 商户描述 */
     private String description;
 
+    /** 首页业务分类ID（前端写死分类映射） */
+    private Long bizCategoryId;
+
     /** 营业时间 */
     private String businessHours;
 

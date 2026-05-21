@@ -1,149 +1,158 @@
 <template>
   <el-dialog
     :model-value="visible"
-    :title="title"
-    width="800px"
-    @close="handleClose"
+    :title="isEdit ? '编辑菜品详情' : '新增美味菜品'"
+    width="860px"
+    class="dish-dialog"
     destroy-on-close
     append-to-body
     :close-on-click-modal="false"
+    @close="$emit('update:visible', false)"
   >
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="dish-form">
-      <!-- 基本信息 -->
-      <h3 class="section-title">基本信息</h3>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="菜品名称" prop="name">
-            <el-input v-model="form.name" placeholder="请输入菜品名称" maxlength="20" show-word-limit />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="菜品分类" prop="categoryId">
-            <el-select v-model="form.categoryId" placeholder="请选择菜品分类" style="width: 100%">
-              <el-option
-                v-for="item in categoryList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="菜品价格" prop="price">
-            <el-input-number 
-              v-model="form.price" 
-              :precision="2" 
-              :step="0.1" 
-              :min="0.01" 
-              :max="10000" 
-              style="width: 100%"
-              placeholder="请输入价格"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="售卖状态" prop="status">
-             <el-radio-group v-model="form.status">
-                <el-radio :label="1">起售</el-radio>
-                <el-radio :label="0">停售</el-radio>
-             </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <!-- 图片上传 -->
-       <el-form-item label="菜品图片" prop="image">
-         <div class="upload-container">
+    <el-form 
+      ref="formRef" 
+      :model="form" 
+      :rules="rules" 
+      label-width="100px" 
+      label-position="top"
+      class="dish-form"
+    >
+      <div class="dish-form__container">
+        <!-- 左侧：图片上传 -->
+        <div class="dish-form__aside">
+          <el-form-item prop="image" label="菜品封面">
             <el-upload
-              class="avatar-uploader"
+              class="dish-form__uploader"
               :action="uploadUrl"
               :show-file-list="false"
               :headers="headers"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
+              :on-success="handleUploadSuccess"
+              :before-upload="beforeUpload"
               drag
             >
-              <img v-if="form.image" :src="form.image" class="avatar" />
-              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-              
-              <template #tip>
-                  <div class="el-upload__tip">
-                    只能上传 jpg/png 文件，且不超过 2MB。建议尺寸 800x800
-                  </div>
-              </template>
+              <img v-if="form.image" :src="form.image" class="dish-form__preview" />
+              <div v-else class="dish-form__placeholder">
+                <el-icon class="dish-form__upload-icon"><Plus /></el-icon>
+                <span>点击或拖拽上传</span>
+              </div>
             </el-upload>
-         </div>
-      </el-form-item>
+            <p class="dish-form__tip">推荐尺寸 800x800，大小不超过 2MB</p>
+          </el-form-item>
+        </div>
 
-      <el-form-item label="菜品描述" prop="description">
-        <el-input 
-          v-model="form.description" 
-          type="textarea" 
-          rows="3" 
-          placeholder="请输入菜品描述，让顾客更了解这道菜"
-          maxlength="200"
-          show-word-limit
-        />
-      </el-form-item>
+        <!-- 右侧：详情表单 -->
+        <div class="dish-form__main">
+          <el-row :gutter="20">
+            <el-col :span="14">
+              <el-form-item label="菜品名称" prop="name">
+                <el-input v-model="form.name" placeholder="请输入菜品名称" maxlength="20" show-word-limit />
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item label="所属分类" prop="categoryId">
+                <el-select v-model="form.categoryId" placeholder="请选择分类" style="width: 100%">
+                  <el-option
+                    v-for="item in categoryList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-      <!-- 口味配置 -->
-      <h3 class="section-title">口味配置</h3>
-      <div class="flavor-wrapper">
-        <el-form-item prop="flavors" label-width="0">
-           <FlavorConfig v-model="form.flavors" />
-        </el-form-item>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="售卖价格 (元)" prop="price">
+                <el-input-number 
+                  v-model="form.price" 
+                  :precision="2" 
+                  :step="1" 
+                  :min="0" 
+                  style="width: 100%"
+                  controls-position="right"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="售卖状态" prop="status">
+                <el-radio-group v-model="form.status" class="dish-form__radio-group">
+                  <el-radio-button :label="1">立即起售</el-radio-button>
+                  <el-radio-button :label="0">暂不上架</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-form-item label="菜品描述" prop="description">
+            <el-input 
+              v-model="form.description" 
+              type="textarea" 
+              :rows="3" 
+              placeholder="请简单介绍菜品的特色、食材等信息..."
+              maxlength="200"
+              show-word-limit
+            />
+          </el-form-item>
+        </div>
       </div>
 
+      <!-- 底部：口味配置 -->
+      <div class="dish-form__flavors">
+        <div class="dish-form__flavors-header">
+          <h3 class="dish-form__section-title">口味定制选项</h3>
+          <p class="dish-form__section-subtitle">顾客在下单时可以选择的个性化口味</p>
+        </div>
+        <el-form-item prop="flavors">
+          <FlavorConfig v-model="form.flavors" />
+        </el-form-item>
+      </div>
     </el-form>
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" @click="submitForm" :loading="loading">保存</el-button>
-      </span>
+      <div class="dish-dialog__footer">
+        <el-button @click="$emit('update:visible', false)">取消</el-button>
+        <el-button 
+          type="primary" 
+          size="large"
+          class="dish-dialog__submit"
+          :loading="loading" 
+          @click="onSubmit"
+        >
+          {{ isEdit ? '确认修改' : '立即创建' }}
+        </el-button>
+      </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed } from 'vue';
-import { ElMessage } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
-import FlavorConfig from '@/components/FlavorConfig.vue';
-import dishApi from '@/api/dish';
-import categoryApi from '@/api/category';
+import { ref, reactive, watch, computed } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
+import FlavorConfig from '@/components/FlavorConfig.vue'
+import { appEnv } from '@/config/env'
+import dishApi from '@/api/modules/dish'
+import categoryApi from '@/api/modules/category'
 
 const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  },
-  isEdit: {
-    type: Boolean,
-    default: false
-  },
-  dishId: {
-    type: [Number, String],
-    default: undefined
-  }
-});
+  visible: Boolean,
+  isEdit: Boolean,
+  dishId: [Number, String]
+})
 
-const emit = defineEmits(['update:visible', 'success']);
+const emit = defineEmits(['update:visible', 'success'])
 
-// --- State ---
-const loading = ref(false);
-const formRef = ref(null);
-const categoryList = ref([]);
-const uploadUrl = 'http://localhost:8082/merchant/common/upload'; // 假设通用上传接口
-const headers = computed(() => {
-  return {
-    Authorization: 'Bearer ' + localStorage.getItem('merchant_token')
-  }
-});
+// 1. 基础状态
+const loading = ref(false)
+const formRef = ref(null)
+const categoryList = ref([])
+const uploadUrl = `${appEnv.apiBaseUrl}/merchant/common/upload`
+
+const headers = computed(() => ({
+  Authorization: 'Bearer ' + localStorage.getItem('merchant_token')
+}))
 
 const form = reactive({
   id: undefined,
@@ -152,224 +161,230 @@ const form = reactive({
   price: undefined,
   image: '',
   description: '',
-  status: 1, // 默认为起售
+  status: 1,
   flavors: []
-});
+})
 
 const rules = {
-  name: [
-    { required: true, message: '请输入菜品名称', trigger: 'blur' }
-  ],
-  categoryId: [
-    { required: true, message: '请选择菜品分类', trigger: 'change' }
-  ],
-  price: [
-    { required: true, message: '请输入价格', trigger: 'blur' }
-  ],
-  image: [
-    { required: true, message: '请上传菜品图片', trigger: 'change' }
-  ]
-};
+  name: [{ required: true, message: '菜品名称不能为空', trigger: 'blur' }],
+  categoryId: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
+  price: [{ required: true, message: '请输入售卖价格', trigger: 'blur' }],
+  image: [{ required: true, message: '请上传菜品封面', trigger: 'change' }]
+}
 
-const title = computed(() => props.isEdit ? '编辑菜品' : '新增菜品');
-
-// --- Watchers ---
-watch(
-  () => props.visible,
-  async (val) => {
-    if (val) {
-      await getCategoryList();
-      if (props.isEdit && props.dishId) {
-        await getDishDetail(props.dishId);
-      } else {
-        resetForm();
-      }
+// 2. 监听弹窗开启获取数据
+watch(() => props.visible, async (val) => {
+  if (val) {
+    fetchCategories()
+    if (props.isEdit && props.dishId) {
+      fetchDetail(props.dishId)
+    } else {
+      resetForm()
     }
   }
-);
+})
 
-// --- Methods ---
-
+// 3. 方法
 const resetForm = () => {
-  form.id = undefined;
-  form.name = '';
-  form.categoryId = undefined;
-  form.price = undefined;
-  form.image = '';
-  form.description = '';
-  form.status = 1;
-  form.flavors = [];
-  if (formRef.value) formRef.value.clearValidate();
-};
+  Object.assign(form, {
+    id: undefined,
+    name: '',
+    categoryId: undefined,
+    price: undefined,
+    image: '',
+    description: '',
+    status: 1,
+    flavors: []
+  })
+  formRef.value?.clearValidate()
+}
 
-const getCategoryList = async () => {
-  try {
-    const res = await categoryApi.getCategoryList(1); // 1 for Dish type
-    categoryList.value = res.data || [];
-  } catch (error) {
-    console.error('Fetch categories failed', error);
-  }
-};
+const fetchCategories = async () => {
+  const { data } = await categoryApi.getCategoryList(1)
+  categoryList.value = data || []
+}
 
-const getDishDetail = async (id) => {
-  loading.value = true;
+const fetchDetail = async (id) => {
+  loading.value = true
   try {
-    const res = await dishApi.getDishById(id);
-    if (res.data) {
-      const data = res.data;
-      Object.assign(form, data);
-      
-      // Ensure flavors is parsed if backend returns string in value, 
-      // but usually backend for detail returns objects. 
-      // Assuming backend returns: flavors: [{name: '...', value: '["a","b"]'}, ...]
-      // We need to consistency for FlavorConfig which expects value as Array.
-      // But FlavorConfig handles string parse in watch prop. 
-      // Let's check FlavorConfig implementation. 
-      // Yes, FlavorConfig parses string to array in watch.
-      // However, if the backend returns the "flavors" list, we should make sure it is assigned to form.flavors correctly.
-      
+    const { data } = await dishApi.getDishById(id)
+    if (data) {
+      // 处理口味数据，确保 value 是数组
+      if (data.flavors) {
+        data.flavors = data.flavors.map(f => ({
+          ...f,
+          value: typeof f.value === 'string' ? JSON.parse(f.value) : f.value
+        }))
+      }
+      Object.assign(form, data)
     }
-  } catch (error) {
-    ElMessage.error('获取详情失败');
+  } catch (e) {
+    ElMessage.error('加载菜品详情失败')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-const handleClose = () => {
-  emit('update:visible', false);
-};
-
-const handleAvatarSuccess = (response, uploadFile) => {
-  // Assuming response structure: { code: 1, data: 'url...', msg: '' }
-  // or { code: 200, data: 'url...' }
-  if (response.code === 1 || response.code === 200) {
-     form.image = response.data;
-     if (formRef.value) formRef.value.validateField('image');
+const handleUploadSuccess = (res) => {
+  if (res.code === 1) {
+    form.image = res.data
+    formRef.value?.validateField('image')
   } else {
-     ElMessage.error('上传失败: ' + response.msg);
+    ElMessage.error('图片上传失败')
   }
-};
+}
 
-const beforeAvatarUpload = (rawFile) => {
-  const isImage = rawFile.type === 'image/jpeg' || rawFile.type === 'image/png';
-  const isLt2M = rawFile.size / 1024 / 1024 < 2;
+const beforeUpload = (file) => {
+  const isImg = ['image/jpeg', 'image/png'].includes(file.type)
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isImg) ElMessage.error('只支持 JPG/PNG 格式')
+  if (!isLt2M) ElMessage.error('图片大小不能超过 2MB')
+  return isImg && isLt2M
+}
 
-  if (!isImage) {
-    ElMessage.error('上传头像图片只能是 JPG/PNG 格式!');
-    return false;
-  }
-  if (!isLt2M) {
-    ElMessage.error('上传头像图片大小不能超过 2MB!');
-    return false;
-  }
-  return true;
-};
-
-const submitForm = async () => {
-  if (!formRef.value) return;
+const onSubmit = async () => {
+  if (!formRef.value) return
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      loading.value = true;
+      loading.value = true
       try {
-        // Deep copy to avoid modifying reactive form state used by UI
-        const payload = JSON.parse(JSON.stringify(form));
-        
-        // Transform flavors value (Array -> JSON String) for backend
-        if (payload.flavors && payload.flavors.length > 0) {
-            payload.flavors.forEach(f => {
-                if (Array.isArray(f.value)) {
-                    f.value = JSON.stringify(f.value);
-                }
-            });
-        }
+        const payload = JSON.parse(JSON.stringify(form))
+        // 转换口味数据格式为后端要求的字符串
+        payload.flavors?.forEach(f => {
+          if (Array.isArray(f.value)) f.value = JSON.stringify(f.value)
+        })
         
         if (props.isEdit) {
-            await dishApi.updateDish(payload);
-            ElMessage.success('更新成功');
+          await dishApi.updateDish(payload)
+          ElMessage.success('更新成功')
         } else {
-            await dishApi.addDish(payload);
-            ElMessage.success('新增成功');
+          await dishApi.addDish(payload)
+          ElMessage.success('添加成功')
         }
-        emit('success');
-        handleClose();
-      } catch (error) {
-        console.error(error);
+        emit('success')
+        emit('update:visible', false)
       } finally {
-        loading.value = false;
+        loading.value = false
       }
     }
-  });
-};
+  })
+}
 </script>
 
 <style scoped>
-.section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #303133;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ebeef5;
-}
-.dish-form {
-    max-height: 600px;
-    overflow-y: auto;
-    padding-right: 10px;
-}
-/* Scrollbar styling */
-.dish-form::-webkit-scrollbar {
-  width: 6px;
-}
-.dish-form::-webkit-scrollbar-thumb {
-  background: #dcdfe6;
-  border-radius: 4px;
+.dish-dialog :deep(.el-dialog__header) {
+  padding: 24px;
+  margin-right: 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.upload-container {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    width: 200px; 
-    height: 200px; /* Force square for consistency */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: var(--el-transition-duration-fast);
+.dish-dialog :deep(.el-dialog__title) {
+  font-weight: 700;
+  color: #1e293b;
 }
-.upload-container:hover {
-    border-color: var(--el-color-primary);
+
+.dish-form {
+  padding: 8px;
 }
-.avatar-uploader .el-upload {
+
+.dish-form__container {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.dish-form__aside {
+  width: 240px;
+}
+
+.dish-form__main {
+  flex: 1;
+}
+
+.dish-form__uploader {
+  width: 240px;
+  height: 240px;
+}
+
+:deep(.el-upload-dragger) {
+  padding: 0;
   width: 100%;
   height: 100%;
-}
-.avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Cover mode to look good */
-  display: block;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  display: flex !important;
+  display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.3s;
 }
-:deep(.el-upload-dragger) {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
+
+:deep(.el-upload-dragger:hover) {
+  border-color: #2563eb;
+  background: #f8fafc;
+}
+
+.dish-form__preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.dish-form__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+}
+
+.dish-form__upload-icon {
+  font-size: 32px;
+}
+
+.dish-form__tip {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.dish-form__section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px;
+}
+
+.dish-form__section-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 20px;
+}
+
+.dish-form__flavors {
+  background: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+}
+
+.dish-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 8px 12px;
+}
+
+.dish-dialog__submit {
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 600;
+  color: #475569;
 }
 </style>

@@ -81,5 +81,15 @@ export default {
       url: `/merchant/dish/status/${id}/${status}`,
       method: 'put'
     })
+  },
+
+  /**
+   * 获取所有口味选项
+   */
+  getFlavors() {
+    return request({
+      url: '/merchant/dish/flavors',
+      method: 'get'
+    })
   }
 }

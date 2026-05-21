@@ -1,83 +1,20 @@
 spring:
   # -------------------------
-  # 数据源配置（MySQL + Druid）
-  # -------------------------
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.11:3306/foodie_alliance?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: lkw2468
-    type: com.alibaba.druid.pool.DruidDataSource
-
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
-
-  # -------------------------
   # Redis 配置
   # -------------------------
   redis:
-    host: 192.168.1.11
-    port: 6379
-    password: lkw2468
-    database: 1          # 使用不同的数据库
-    timeout: 3000ms
-    lettuce:
-      pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
+    database: 3         # 使用不同的数据库
 
-# -------------------------
-# MyBatis-Plus 配置
-# -------------------------
-mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.foodie.entity
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  global-config:
-    db-config:
-      id-type: auto
+  config:
+    import: classpath:application-dev-common.yml
 
 # -------------------------
 # JWT 配置（商户端）
 # -------------------------
 foodie:
   jwt:
-    merchant-secret-key: foodie-merchant-20260109-secret-key
-    merchant-ttl: 7200000
-    merchant-token-name: merchant-token
-  minio:
-    endpoint: http://192.168.1.11:9000
-    accessKey: admin
-    secretKey: lkw2468LKW@
-    bucket: foodie-images
-    publicUrl: http://192.168.1.11:9000/foodie-images
-    basePath: upload
-    maxSize: 5
-    allowedTypes:
-      - jpg
-      - jpeg
-      - png
-      - gif
-      - webp
-
-# -------------------------
-# Knife4j 接口文档配置
-# -------------------------
-knife4j:
-  enable: true
-  setting:
-    language: zh-CN
-
-# -------------------------
-# 日志配置
-# -------------------------
-logging:
-  level:
-    com.foodie: debug
+    merchant-secret-key: ${MERCHANT_JWT_SECRET_KEY:foodie-merchant-20260109-secret-key}
+    merchant-ttl: ${MERCHANT_JWT_TTL:7200000}
+    merchant-token-name: ${MERCHANT_TOKEN_NAME:merchant-token}
+  upload:
+    service-path: merchant

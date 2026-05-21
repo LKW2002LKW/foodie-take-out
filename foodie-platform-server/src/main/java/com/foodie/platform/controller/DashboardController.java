@@ -7,8 +7,8 @@ import com.foodie.vo.platform.DashboardVO;
 import com.foodie.vo.platform.TrendDataVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
  * 数据统计控制器
  */
 @RestController
-@RequestMapping("/platform/dashboard")
+@RequestMapping("/platform/admin/dashboard")
 @Api(tags = "平台端-数据统计接口")
 @Slf4j
+@RequiredArgsConstructor
 public class DashboardController {
 
-    @Autowired
-    private DashboardService dashboardService;
+    private final DashboardService dashboardService;
 
     /**
      * 获取数据统计面板数据

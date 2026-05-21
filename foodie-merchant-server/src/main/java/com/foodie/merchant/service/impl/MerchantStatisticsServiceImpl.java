@@ -11,8 +11,8 @@ import com.foodie.dto.merchant.TodayStatisticsVO;
 import com.foodie.dto.merchant.TrendStatisticsVO;
 import com.foodie.merchant.mapper.MerchantStatisticsMapper;
 import com.foodie.merchant.service.MerchantStatisticsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,10 +28,10 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantStatisticsServiceImpl implements MerchantStatisticsService {
 
-    @Autowired
-    private MerchantStatisticsMapper statisticsMapper;
+    private final MerchantStatisticsMapper statisticsMapper;
 
     /**
      * 获取今日统计数据

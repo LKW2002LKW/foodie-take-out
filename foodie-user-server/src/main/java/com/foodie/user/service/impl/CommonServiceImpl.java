@@ -1,9 +1,9 @@
 package com.foodie.user.service.impl;
 
-import com.foodie.common.service.FileStorageService;
+import com.foodie.common.service.UploadFacade;
 import com.foodie.user.service.CommonService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,14 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CommonServiceImpl implements CommonService {
 
-    @Autowired
-    private FileStorageService fileStorageService;
+    private final UploadFacade uploadFacade;
 
     @Override
     public String upload(MultipartFile file) {
-        String url = fileStorageService.upload(file, "user");
+        String url = uploadFacade.upload(file);
         log.info("文件上传成功：{}", url);
         return url;
     }

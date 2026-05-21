@@ -14,8 +14,8 @@ import com.foodie.merchant.service.MerchantReviewService;
 import com.foodie.vo.merchant.MerchantReviewVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +26,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/merchant/review")
 @Api(tags = "商家端-评价管理接口")
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantReviewController {
 
-    @Autowired
-    private MerchantReviewService reviewService;
+    private final MerchantReviewService reviewService;
 
     /**
      * 评价分页查询

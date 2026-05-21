@@ -9,6 +9,9 @@ public class RedisKeyConstant {
     // 购物车缓存：cart:user:{userId}:merchant:{merchantId}
     public static final String SHOPPING_CART = "cart:user:%s:merchant:%s";
 
+    // 用户全部购物车缓存匹配：cart:user:{userId}:merchant:*
+    public static final String SHOPPING_CART_PATTERN = "cart:user:%s:merchant:*";
+
     // 验证码缓存：sms:code:{phone}
     public static final String SMS_CODE = "sms:code:%s";
 
@@ -19,4 +22,3 @@ public class RedisKeyConstant {
     public static final String MERCHANT_STATUS = "merchant:status:%s";
 
 }
-

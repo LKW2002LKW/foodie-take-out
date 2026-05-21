@@ -24,8 +24,6 @@ public class SmsUtil {
      */
     public static boolean sendSms(String phone, String code) {
         log.info("发送短信验证码：phone={}, code={}", phone, code);
-        // TODO: 实际对接阿里云短信服务
-        // 这里只是模拟发送成功
         return true;
     }
 }

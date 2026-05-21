@@ -1,4 +1,4 @@
-package com.foodie.common.handler;
+package com.foodie.user.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component  // ⚠️ 这个注解非常关键
+@Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override

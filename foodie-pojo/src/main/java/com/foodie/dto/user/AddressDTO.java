@@ -19,6 +19,7 @@ public class AddressDTO implements Serializable {
     private String districtName;   // 区县名称
     private String detail;         // 详细地址
     private String label;          // 地址标签：家、公司、学校
+    private Integer isDefault;     // 是否默认 1是 0否（可选）
     private BigDecimal longitude;  // 经度
     private BigDecimal latitude;   // 纬度
 }

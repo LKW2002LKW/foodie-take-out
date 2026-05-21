@@ -15,7 +15,9 @@
         m.delivery_fee,
         m.status,
         m.longitude,
-        m.latitude
+        m.latitude,
+        IFNULL(os.sales_volume, 0) AS salesVolume,
+        IFNULL(orv.rating, 0) AS rating
         <if test="query.longitude != null and query.latitude != null">
             ,
             ROUND(
@@ -31,17 +33,51 @@
             ) AS distance
         </if>
         FROM merchant m
+        LEFT JOIN (
+            SELECT merchant_id, COUNT(*) AS sales_volume
+            FROM orders
+            WHERE status = 5
+              AND pay_status = 1
+            GROUP BY merchant_id
+        ) os ON os.merchant_id = m.id
+        LEFT JOIN (
+            SELECT merchant_id, ROUND(AVG(rating), 1) AS rating
+            FROM order_review
+            GROUP BY merchant_id
+        ) orv ON orv.merchant_id = m.id
         WHERE m.audit_status = 1
         AND m.status IN (1, 2)
         <if test="query.name != null and query.name != ''">
             AND m.merchant_name LIKE CONCAT('%', #{query.name}, '%')
         </if>
+        <if test="query.categoryId != null">
+            AND m.biz_category_id = #{query.categoryId}
+        </if>
         <choose>
             <when test="query.sortType == 1 and query.longitude != null and query.latitude != null">
-                ORDER BY distance ASC
+                ORDER BY distance ASC, m.create_time DESC
+            </when>
+            <when test="query.sortType == 2">
+                ORDER BY salesVolume DESC, m.create_time DESC
+            </when>
+            <when test="query.sortType == 3">
+                ORDER BY rating DESC, salesVolume DESC, m.create_time DESC
+            </when>
+            <when test="query.sortType == 4">
+                ORDER BY m.min_delivery_amount ASC, m.create_time DESC
+            </when>
+            <when test="query.sortType == 5">
+                ORDER BY m.delivery_fee ASC, m.create_time DESC
             </when>
             <otherwise>
-                ORDER BY m.create_time DESC
+                <choose>
+                    <when test="query.longitude != null and query.latitude != null">
+                        ORDER BY m.status ASC, distance ASC, salesVolume DESC, rating DESC, m.create_time DESC
+                    </when>
+                    <otherwise>
+                        ORDER BY m.status ASC, salesVolume DESC, rating DESC, m.create_time DESC
+                    </otherwise>
+                </choose>
             </otherwise>
         </choose>
     </select>

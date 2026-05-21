@@ -9,18 +9,18 @@ import com.foodie.user.mapper.DishFlavorMapper;
 import com.foodie.user.mapper.DishMapper;
 import com.foodie.user.service.DishService;
 import com.foodie.vo.user.DishVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
 
-    @Autowired
-    private DishFlavorMapper dishFlavorMapper;
+    private final DishFlavorMapper dishFlavorMapper;
 
     /**
      * 根据商户ID和分类ID查询菜品

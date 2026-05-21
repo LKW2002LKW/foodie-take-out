@@ -25,6 +25,11 @@ public interface AddressService extends IService<AddressBook> {
     void deleteAddress(Long userId, Long id);
 
     /**
+     * 批量删除地址
+     */
+    void batchDeleteAddress(Long userId, List<Long> ids);
+
+    /**
      * 根据ID查询地址
      */
     AddressVO getAddressById(Long userId, Long id);

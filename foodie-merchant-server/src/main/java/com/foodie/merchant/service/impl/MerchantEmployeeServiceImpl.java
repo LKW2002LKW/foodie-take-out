@@ -19,12 +19,12 @@ import com.foodie.merchant.mapper.MerchantEmployeeMapper;
 import com.foodie.merchant.service.MerchantEmployeeService;
 
 import com.foodie.vo.merchant.MerchantEmployeeVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +34,10 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MerchantEmployeeServiceImpl implements MerchantEmployeeService {
 
-    @Resource
-    private MerchantEmployeeMapper merchantEmployeeMapper;
+    private final MerchantEmployeeMapper merchantEmployeeMapper;
 
     @Override
     public Map<String, Object> getEmployeePage(EmployeeQueryDTO query) {

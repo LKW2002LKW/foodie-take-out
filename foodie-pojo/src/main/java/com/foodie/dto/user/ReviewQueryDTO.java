@@ -22,7 +22,7 @@ public class ReviewQueryDTO implements Serializable {
 
     /**
      * 评分筛选
-     * 0-全部 5-好评(5星) 3-中评(3-4星) 1-差评(1-2星)
+     * 0-全部 5-好评(4-5星) 3-中评(3星) 1-差评(1-2星)
      */
     private Integer ratingFilter;
 

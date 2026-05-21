@@ -22,6 +22,7 @@ public class MerchantUpdateDTO implements Serializable {
     private BigDecimal latitude;
     private String logo;
     private String description;
+    private Long bizCategoryId;
     private String businessHours;
     private BigDecimal minDeliveryAmount;
     private BigDecimal deliveryFee;

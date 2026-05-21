@@ -11,8 +11,8 @@ import com.foodie.vo.merchant.OrderDetailVO;
 import com.foodie.vo.merchant.OrderStatisticsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/merchant/order")
 @Api(tags = "商户端-订单管理接口")
 @Slf4j
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     /**
      * 订单分页查询

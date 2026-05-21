@@ -8,8 +8,8 @@ import com.foodie.entity.SystemNotice;
 import com.foodie.platform.service.NoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/platform/notice")
 @Api(tags = "平台端-公告管理接口")
 @Slf4j
+@RequiredArgsConstructor
 public class NoticeController {
 
-    @Autowired
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
 
     /**
      * 公告分页查询

@@ -16,9 +16,9 @@ import com.foodie.platform.mapper.MerchantMapper;
 import com.foodie.platform.mapper.OrderMapper;
 import com.foodie.platform.service.MerchantService;
 import com.foodie.vo.platform.MerchantDetailVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -30,13 +30,12 @@ import java.math.BigDecimal;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MerchantServiceImpl implements MerchantService {
 
-    @Autowired
-    private MerchantMapper merchantMapper;
+    private final MerchantMapper merchantMapper;
 
-    @Autowired
-    private OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
     /**
      * 商户分页查询

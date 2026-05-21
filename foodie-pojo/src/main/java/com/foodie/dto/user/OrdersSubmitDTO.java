@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class OrdersSubmitDTO implements Serializable {
 
     private Long addressBookId;              // 地址ID
+    private Long merchantId;                 // 商户ID（本次结算商户）
     private Integer payMethod;               // 支付方式：1-微信 2-支付宝
     private String remark;                   // 备注
     private LocalDateTime estimatedDeliveryTime; // 预计送达时间

@@ -1,0 +1,12 @@
+# Build outputs
+**/target/
+
+# Maven/Gradle build directories
+/target/
+
+/.claude
+
+/.gemini
+
+/.env.docker
+/docker-data/

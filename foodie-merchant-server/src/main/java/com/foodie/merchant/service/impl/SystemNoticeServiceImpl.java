@@ -8,11 +8,11 @@ import com.foodie.merchant.service.SystemNoticeService;
 import com.foodie.pojo.dto.NoticeQueryDTO;
 
 import com.foodie.pojo.vo.SystemNoticeVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +22,10 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SystemNoticeServiceImpl implements SystemNoticeService {
 
-    @Resource
-    private SystemNoticeMapper systemNoticeMapper;
+    private final SystemNoticeMapper systemNoticeMapper;
 
     @Override
     public Map<String, Object> getNoticePage(NoticeQueryDTO query) {

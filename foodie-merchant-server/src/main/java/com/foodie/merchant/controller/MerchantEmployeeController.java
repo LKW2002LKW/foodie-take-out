@@ -18,11 +18,11 @@ import com.foodie.vo.merchant.MerchantEmployeeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -32,10 +32,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/merchant/employee")
 @Api(tags = "商户端-员工管理")
+@RequiredArgsConstructor
 public class MerchantEmployeeController {
 
-    @Resource
-    private MerchantEmployeeService merchantEmployeeService;
+    private final MerchantEmployeeService merchantEmployeeService;
 
     /**
      * 分页查询员工列表

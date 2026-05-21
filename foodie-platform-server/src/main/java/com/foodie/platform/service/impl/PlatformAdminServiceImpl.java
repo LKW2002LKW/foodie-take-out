@@ -20,8 +20,8 @@ import com.foodie.platform.mapper.PlatformAdminMapper;
 
 import com.foodie.platform.service.PlatformAdminService;
 import com.foodie.vo.platform.AdminLoginVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,15 +35,14 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PlatformAdminServiceImpl implements PlatformAdminService {
 
-    @Autowired
-    private PlatformAdminMapper platformAdminMapper;
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final PlatformAdminMapper platformAdminMapper;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final JwtProperties jwtProperties;
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 管理员登录

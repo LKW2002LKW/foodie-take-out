@@ -3,121 +3,21 @@
 # =========================
 spring:
   # -------------------------
-  # 数据源配置（MySQL + Druid）
-  # -------------------------
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.11:3306/foodie_alliance?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: lkw2468
-    type: com.alibaba.druid.pool.DruidDataSource
-
-    druid:
-      # 连接池基本参数
-      initial-size: 5                  # 初始连接数
-      min-idle: 5                      # 最小空闲连接数
-      max-active: 20                   # 最大活跃连接数
-      max-wait: 60000                  # 最大等待时间（毫秒）
-      time-between-eviction-runs-millis: 60000  # 空闲连接检测周期
-      min-evictable-idle-time-millis: 300000    # 连接最小空闲时间
-      validation-query: SELECT 1       # 验证连接是否有效的 SQL
-      test-while-idle: true            # 空闲时检测连接有效性
-      test-on-borrow: false            # 获取连接时是否检测
-      test-on-return: false            # 归还连接时是否检测
-      pool-prepared-statements: true   # 是否缓存 PreparedStatement
-      max-pool-prepared-statement-per-connection-size: 20
-      filters: stat,wall               # 开启 SQL 监控和防火墙
-      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000  # SQL慢查询阈值5s
-
-      # Druid Web 统计过滤器
-      web-stat-filter:
-        enabled: true
-        url-pattern: /*
-        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
-
-      # Druid 控制台配置
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        reset-enable: false
-        login-username: admin
-        login-password: admin
-
-  # -------------------------
   # Redis 配置
   # -------------------------
   redis:
-    host: 192.168.1.11
-    port: 6379
-    password: lkw2468
     database: 3
-    timeout: 3000ms
-    lettuce:
-      pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
 
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-
-# -------------------------
-# MyBatis-Plus 配置
-# -------------------------
-mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml         # Mapper XML 文件路径
-  type-aliases-package: com.foodie.entity         # 实体类路径
-  configuration:
-    map-underscore-to-camel-case: true           # 开启下划线转驼峰
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 控制台打印 SQL
-    cache-enabled: false                          # 禁用二级缓存
-  global-config:
-    db-config:
-      id-type: auto                               # 主键自增策略
-      logic-delete-field: isDeleted               # 逻辑删除字段
-      logic-delete-value: 1                       # 已删除值
-      logic-not-delete-value: 0                   # 未删除值
+  config:
+    import: classpath:application-dev-common.yml
 
 # -------------------------
 # JWT 配置
 # -------------------------
 foodie:
   jwt:
-    platform-secret-key: foodie-platform-20260109-secret-key  # JWT 秘钥
-    platform-ttl: 7200000                                      # token 有效期：2小时
-    platform-token-name: platform-token                         # token 名称（header 或 cookie）
-  minio:
-    endpoint: http://192.168.1.11:9000
-    accessKey: admin
-    secretKey: lkw2468LKW@
-    bucket: foodie-images
-    publicUrl: http://192.168.1.11:9000/foodie-images
-    basePath: upload
-    maxSize: 5
-    allowedTypes:
-      - jpg
-      - jpeg
-      - png
-      - gif
-      - webp
-
-# -------------------------
-# Knife4j 接口文档配置
-# -------------------------
-knife4j:
-  enable: true
-  setting:
-    language: zh-CN
-
-# -------------------------
-# 日志配置
-# -------------------------
-logging:
-  level:
-    com.foodie: debug                     # 业务日志调试级别
-    org.springframework.security: debug   # Spring Security 调试日志
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
-
+    platform-secret-key: ${PLATFORM_JWT_SECRET_KEY:foodie-platform-20260109-secret-key}  # JWT 秘钥
+    platform-ttl: ${PLATFORM_JWT_TTL:7200000}                                      # token 有效期：2小时
+    platform-token-name: ${PLATFORM_TOKEN_NAME:platform-token}                         # token 名称（header 或 cookie）
+  upload:
+    service-path: platform

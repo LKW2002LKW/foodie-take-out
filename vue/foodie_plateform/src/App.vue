@@ -1,4 +1,5 @@
 <template>
+  <!-- 根组件只保留路由出口，布局选择交给路由模块和页面层处理。 -->
   <router-view />
 </template>
 
